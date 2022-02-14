@@ -25,7 +25,23 @@ namespace Infrastructure.Repositories
             else return false;
         }
 
+        public static string NormalizeDate(DateTime dateCreated)
+        {
+            var res = DateTime.Now - dateCreated;
 
+            int years = 0;
+            int months = 0;
+            for (int i = 1; i <= res.Days; i++)
+            {
+                if (i > 30) months++;
+                if (i > 364) years++;
+            }
+
+            if (years > 0) return $"{years} год. назад";
+            else if (months > 0) return $"{months} мес. назад";
+            else if (res.Days < 1) return "cегодня";
+            else return $"{res.Days} дн. назад";
+        }
         public static List<HomeIdeaReactionDto> GroupIdeaReactions(
             ICollection<Reaction> baseReactionsTypes,
             ICollection<IdeaReaction> reactions, 

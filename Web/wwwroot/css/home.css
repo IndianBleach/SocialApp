@@ -19,12 +19,41 @@
     border-radius: 19px;
     transition: all 0.15s ease-in;
     font-size: 22px;
+    box-shadow: 1px 2px 24px #242424;
+    background-color: #4e4e4e59;
 }
 
     .sort-react:hover {
         background: rgba(0, 0, 0, 0.21);
         transform: scale(1.3);
     }
+
+.search-dropdown {
+    color: rgb(129, 129, 129) !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    padding: 6px 13px !important;
+}
+
+.search-nav-form {
+    background: #141414 !important;
+}
+
+    .search-nav-form button {
+        background: #141414 !important;
+    }
+
+.search-form {
+    height: 38px !important;
+}
+
+.search-dropdown:focus {
+    background-color: #161616 !important;
+}
+
+.search-dropdown:hover {
+    background-color: #161616 !important;
+}
 
 .asideRotateIdea {
     position: absolute;
@@ -69,6 +98,11 @@
     }
 
 @media (min-width: 230px) {
+    .search-nav-dropdown {
+        border: 1px solid #1b1b1b !important;
+        width: 80vw !important;
+    }
+
     .idea_home_adaptive {
         width: 95% !important;
     }
@@ -93,6 +127,11 @@
 }
 
 @media (min-width: 672px) {
+    .search-nav-dropdown {
+        border: 1px solid #1b1b1b !important;
+        width: 560px !important;
+    }
+
     .idea-home-post {
         width: 615.01px !important;
         height: 379.51px !important;

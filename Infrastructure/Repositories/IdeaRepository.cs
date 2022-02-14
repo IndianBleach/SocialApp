@@ -64,7 +64,7 @@ namespace Infrastructure.Repositories
             return new CreateOperationResult(false, null, "Что-то пошло не так"); ;
         }        
 
-        public ICollection<HomeIdeaDto> GetIdeasPerPage(int? page, string? currentUserId)
+        public ICollection<HomeIdeaDto> GetIdeasPerPage(int? page, string? currentUserId, string? sortReact, string? key, string? tag, string? search)
         {
             int correctPage = page ?? 1;
 
@@ -72,7 +72,10 @@ namespace Infrastructure.Repositories
 
             ICollection<Reaction> allBaseReacts = _dbContext.Reactions.ToList();
 
-            IQueryable<Idea> getIdeas = _dbContext.Ideas
+            IQueryable<Idea> getIdeas;
+            if (!string.IsNullOrEmpty(sortReact))
+            {
+                getIdeas = _dbContext.Ideas
                 .Include(x => x.Reactions)
                     .ThenInclude(x => x.Reaction)
                 .Include(x => x.Avatar)
@@ -80,10 +83,96 @@ namespace Infrastructure.Repositories
                 .Include(x => x.Goals)
                 .Include(x => x.Invitations)
                 .Include(x => x.Members)
+                .OrderByDescending(x => x.Reactions
+                    .Where(x => x.ReactionId.Equals(sortReact)).Count())
                 .Skip((correctPage - 1) * count)
-                .Take(count);                
+                .Take(count);
+            }
+            else if (!string.IsNullOrWhiteSpace(search))
+            {
+                getIdeas = _dbContext.Ideas
+                   .Include(x => x.Reactions)
+                       .ThenInclude(x => x.Reaction)
+                   .Include(x => x.Avatar)
+                   .Include(x => x.Topics)
+                   .Include(x => x.Goals)
+                   .Include(x => x.Invitations)
+                   .Include(x => x.Members)
+                   .Where(x => x.Name.StartsWith(search))
+                   .Skip((correctPage - 1) * count)
+                   .Take(count);
+            }
+            else if (!string.IsNullOrEmpty(tag))
+            {
+                Tag? getTag = _dbContext.Tags
+                    .FirstOrDefault(x => x.Id.Equals(tag));
+
+                if (getTag == null)
+                    getTag = _dbContext.Tags.First();
+
+                getIdeas = _dbContext.Ideas
+                   .Include(x => x.Reactions)
+                       .ThenInclude(x => x.Reaction)
+                   .Include(x => x.Avatar)
+                   .Include(x => x.Topics)
+                   .Include(x => x.Goals)
+                   .Include(x => x.Invitations)
+                   .Include(x => x.Members)
+                   .Where(x => x.Tags.Contains(getTag))
+                   .Skip((correctPage - 1) * count)
+                   .Take(count);
+            }
+            else if (!string.IsNullOrEmpty(key))
+            {
+                string keyName = key == "popular" ? "popular" :
+                    key == "new" ? "new" : "new";
+
+                if (keyName == "popular")
+                {
+                    getIdeas = _dbContext.Ideas
+                       .Include(x => x.Reactions)
+                           .ThenInclude(x => x.Reaction)
+                       .Include(x => x.Avatar)
+                       .Include(x => x.Topics)
+                       .Include(x => x.Goals)
+                       .Include(x => x.Invitations)
+                       .Include(x => x.Members)
+                       .OrderByDescending(x => x.Reactions.Count)
+                       .Skip((correctPage - 1) * count)
+                       .Take(count);
+                }
+                else
+                {                   
+                    getIdeas = _dbContext.Ideas
+                       .Include(x => x.Reactions)
+                           .ThenInclude(x => x.Reaction)
+                       .Include(x => x.Avatar)
+                       .Include(x => x.Topics)
+                       .Include(x => x.Goals)
+                       .Include(x => x.Invitations)
+                       .Include(x => x.Members)
+                       .OrderByDescending(x => x.DateCreated)
+                       .Skip((correctPage - 1) * count)
+                       .Take(count);
+                }
+
+            }
+            else
+            {
+                getIdeas = _dbContext.Ideas
+                   .Include(x => x.Reactions)
+                       .ThenInclude(x => x.Reaction)
+                   .Include(x => x.Avatar)
+                   .Include(x => x.Topics)
+                   .Include(x => x.Goals)
+                   .Include(x => x.Invitations)
+                   .Include(x => x.Members)
+                   .Skip((correctPage - 1) * count)
+                   .Take(count);
+            }
 
             var config = new MapperConfiguration(conf => conf.CreateMap<Idea, HomeIdeaDto>()
+                .ForMember("DateUpdated", opt => opt.MapFrom(x => IdeaHelper.NormalizeDate(x.DateUpdated)))
                 .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
                 .ForMember("Name", opt => opt.MapFrom(x => x.Name))
                 .ForMember("Description", opt => opt.MapFrom(x => x.Topics

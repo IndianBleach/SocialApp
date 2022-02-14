@@ -14,6 +14,6 @@ namespace ApplicationCore.Interfaces
         Task<CreateOperationResult> CreateIdeaAsync(CreateIdeaDto model);
         Task<ICollection<HomeIdeaReactionDto>> GroupAllReactionsAsync();
         ICollection<IdeaSmallDto> GetRecommendIdeas(string? userGuid);
-        ICollection<HomeIdeaDto> GetIdeasPerPage(int? page, string? currentUserId);
+        ICollection<HomeIdeaDto> GetIdeasPerPage(int? page, string? currentUserId, string? sortReact, string? key, string? tag, string? search);
     }
 }

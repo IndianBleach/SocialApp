@@ -14,5 +14,9 @@ namespace WebUi.Models
         public ICollection<SearchReactionDto> SearchReactions { get; set; }
         public List<TagDto> Tags { get; set; }
         public bool IsAuthorized{ get; set; }
+        public string? SortReact = null;
+        public string? Search = null;
+        public string? SearchTag = null;
+        public string? SearchKey = null;
     }
 }

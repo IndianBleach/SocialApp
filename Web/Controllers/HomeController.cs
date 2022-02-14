@@ -29,22 +29,33 @@ namespace WebUi.Controllers
         }
 
                 
-        public async Task<IActionResult> Index(int? page)
-        {
 
+        
+
+
+        public async Task<IActionResult> Index(int? page, string? react, string? key, string? tag, string? search)
+        {
+            if (!string.IsNullOrEmpty(tag) ||
+                !string.IsNullOrEmpty(key) ||
+                !string.IsNullOrEmpty(search))
+                react = null;
 
             HomeIdeasViewModel indexVm = new()
             {
                 IsAuthorized = IsUserAuthenticated(),
                 Tags = await _tagService.GetAllTagsAsync(),
-                Ideas = _ideaRepository.GetIdeasPerPage(page, GetUserIdOrNull()),
+                Ideas = _ideaRepository.GetIdeasPerPage(page, GetUserIdOrNull(), react, key, tag, search),
                 LastNews = await _globalService.GetLastNewsAsync(),
                 Pages = _globalService.CreatePages(page),
                 RecommendIdeas = _ideaRepository.GetRecommendIdeas(GetUserIdOrNull()),
-                SearchReactions = await _globalService.GetSearchReactionsAsync()                
+                SearchReactions = await _globalService.GetSearchReactionsAsync(),
+                SortReact = react,
+                SearchKey = key,
+                Search = search,
+                SearchTag = tag
             };
 
-            return View("index2", indexVm);
+            return View(indexVm);
         }
 
 
