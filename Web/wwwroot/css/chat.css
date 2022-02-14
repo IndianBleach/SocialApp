@@ -1,0 +1,240 @@
+﻿#asideChatAdaptive {
+    width: 262px;
+    background-color: #060606;
+}
+
+.chat-bg {
+    background-color: #1e1e1e;
+}
+
+#mainChatContainer {
+    background-color: #0a0a0a;
+    height: 683px;
+}
+
+.container-micro {
+    max-width: 932px !important;
+}
+
+.b-none {
+    border: unset !important;
+}
+
+.chatUserSelect {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+    .chatUserSelect img {
+        height: 39px;
+        width: 39px;
+        border-radius: 50%;
+    }
+
+    .chatUserSelect:hover {
+        background-color: #1b1b1b !important;
+    }
+
+#chatUsersLoad {
+    height: 547px;
+    overflow-y: scroll;
+}
+
+.chatMessage {
+    max-width: 66%;
+    padding: 3px;
+    width: fit-content !important;
+    margin-bottom: 2px;
+    font-size: 14px !important;
+    width: 80%;
+    color: #9e9e9e !important;
+}
+
+.mesTime {
+    color: rgb(100, 100, 100);
+    font-size: 12px;
+    font-weight: 400;
+    padding-left: 30px;
+}
+
+.chatMessage img {
+    margin-right: 5px;
+    border-radius: 50%;
+    height: 22px;
+    width: 22px;
+}
+
+.msgRepeat {
+    padding-left: 34px;
+}
+
+    .msgRepeat img {
+        display: none !important;
+    }
+
+#activeChatLoad {
+    height: 557px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.myMessage {
+    margin-bottom: 4px;
+    padding: 6px 10px;
+    margin-left: auto !important;
+    background-color: #232323;
+    border-radius: 11px;
+    text-align: right !important;
+}
+
+.msgRepost {
+    margin-bottom: 5px !important;
+    display: flex;
+}
+
+    .msgRepost div {
+        margin-top: 3px;
+        margin-left: 2px;
+        width: 181px;
+        height: 106px;
+        border-radius: 6px;
+        background-size: 100% auto !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+    }
+
+    .msgRepost a {
+        margin-left: 4px;
+        --bs-text-opacity: 1;
+        color: #6c757d !important;
+        font-weight: 500 !important;
+        font-size: 12px !important;
+    }
+
+    .msgRepost span {
+        padding: 46px 10px;
+        display: inline-block !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 150px;
+    }
+
+#inviteWindow {
+    background-color: black;
+    width: 360px;
+    min-height: 500px;
+    border: 1px solid #242424;
+}
+
+#inviteWindowLoad {
+    overflow-x: hidden;
+    height: 268px;
+    overflow-y: scroll;
+}
+
+.chatUserSelect {
+    padding-left: 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+    padding-right: 0.5rem !important;
+}
+
+    .chatUserSelect button {
+        --bs-bg-opacity: 1;
+        background-color: transparent !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        display: flex !important;
+        flex: 0 0 auto;
+        width: 100%;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        color: white !important;
+    }
+
+    .chatUserSelect div {
+        padding-left: 0.25rem !important;
+        text-align: left !important;
+    }
+
+    .chatUserSelect span {
+        --bs-text-opacity: 1;
+        color: #6c757d !important;
+        font-size: 12px !important;
+    }
+
+@media (min-width: 230px) {
+    .chat_hide_elems {
+        display: none !important;
+    }
+
+    .showNewChatBtn {
+        font-size: 0px !important;
+    }
+
+        .showNewChatBtn svg {
+            height: 28px !important;
+            width: 28px !important;
+        }
+
+    #asideChatAdaptive {
+        width: 58px;
+        border-right: 1px solid #242424;
+    }
+
+    .asyncSelectChatBtn div {
+        display: none;
+    }
+
+    .asyncSelectChatBtn {
+        padding: 0px !important;
+    }
+
+    .chatMessage {
+        font-size: 11px !important;
+    }
+}
+
+@media (min-width: 676px) {
+    .chat_hide_elems {
+        display: unset !important;
+    }
+
+    .showNewChatBtn {
+        font-size: unset !important;
+    }
+
+        .showNewChatBtn svg {
+            height: unset !important;
+            width: unset !important;
+        }
+
+    #asideChatAdaptive {
+        width: unset;
+        border-right: unset;
+    }
+
+    .search_chat {
+        display: flex !important;
+    }
+
+    .asyncSelectChatBtn div {
+        display: unset;
+    }
+
+    .asyncSelectChatBtn {
+        padding: 10px !important;
+    }
+
+    .chatMessage {
+        font-size: 14px !important;
+    }
+}

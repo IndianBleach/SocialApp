@@ -1,0 +1,73 @@
+﻿@media (min-width: 230px) {
+    .find-user img {
+        height: 44px !important;
+        width: 44px !important;
+    }
+
+    .user_desc_section {
+        max-width: 200px;
+    }
+
+    .user_tag_section {
+        max-width: 200px;
+    }
+}
+
+@media (min-width: 430px) {
+    .find-user img {
+        height: 55px !important;
+        width: 55px !important;
+    }
+
+    .user_desc_section {
+        max-width: 280px;
+    }
+
+    .user_tag_section {
+        max-width: 300px;
+    }
+}
+
+@media (min-width: 644px) {
+    .position_fixed_user {
+        width: 239px !important;
+    }
+
+    .find_user_adaptive {
+        width: 482px !important;
+    }
+
+    .find-user img {
+        height: 66px !important;
+        width: 66px !important;
+    }
+
+    .user_desc_section {
+        max-width: 480px;
+    }
+
+    .user_tag_section {
+        max-width: 500px;
+    }
+}
+
+@media (min-width: 768px) {
+    .position_fixed_user {
+        width: 238px !important;
+    }
+
+    .find_user_adaptive {
+        width: 514px !important;
+    }
+
+    .find-user img {
+        height: 99px !important;
+        width: 99px !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .find_user_adaptive {
+        width: 626px !important;
+    }
+}

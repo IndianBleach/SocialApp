@@ -1,0 +1,102 @@
+﻿#friendsWindow {
+    background-color: black;
+    width: 360px;
+    min-height: 500px;
+    border: 1px solid #242424;
+}
+
+.btn-full-link {
+    cursor: pointer !important;
+    color: white;
+    font-size: 13px !important;
+    font-weight: 500;
+    border-bottom: 1px solid #4d4d4d;
+    padding: 7px 10px 14px 10px;
+    transition: border-bottom 0.2s ease-in-out;
+    border-radius: 0px !important;
+    width: 100%;
+}
+
+.btn-link-active {
+    color: white !important;
+    border-bottom: 1px solid #1c92ff !important;
+}
+
+.btn-full-link:hover {
+    color: white !important;
+    border-bottom: 1px solid #014f97;
+}
+
+#friendsWindowLoad {
+    overflow-y: scroll;
+    height: 269px;
+}
+
+#friendRequestsWindowLoad {
+    overflow-y: scroll;
+    height: 269px;
+}
+
+.input-avatar {
+    height: 99px !important;
+    width: 99px !important;
+    border-radius: 50% !important;
+    font-size: 0px !important;
+    background-size: 100% auto !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+
+.idea_profile_size h3 {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.1px;
+}
+
+@media (min-width: 230px) {
+    .profile_aside {
+        box-shadow: -3px 3px 7px #1e1e1eb5 !important;
+    }
+
+    .position-fixed-rpofile {
+        width: unset !important;
+    }
+}
+
+@media (min-width: 230px) {
+    .idea_profile_size {
+        width: 100% !important;
+        height: 179.51px !important;
+    }
+}
+
+@media (min-width: 524px) {
+    .idea_profile_size {
+        width: 100% !important;
+        height: 240.51px !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .profile_aside {
+        border-radius: 95px 95px 10px 10px !important;
+        box-shadow: -3px 3px 7px #1e1e1eb5 !important;
+    }
+
+    .position-fixed-rpofile {
+        width: 206px !important;
+    }
+}
+
+@media (min-width: 993px) {
+    .idea_profile_size {
+        width: 100% !important;
+        height: 179.51px !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .profile_inside {
+        max-width: 93% !important;
+    }
+}
