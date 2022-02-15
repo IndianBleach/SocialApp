@@ -82,13 +82,13 @@ namespace WebUi.Controllers
 
         [HttpPost]
         [Route("asyncload/chat/sendmessage")]
-        public async Task<JsonResult> SendMessage(string message, string chatUser, string? chatGuid)
+        public async Task<JsonResult> SendMessage(string message, string chatUser, string? chat)
         {
             string currentUser = GetUserIdOrNull();
 
             if (currentUser != null)
             {
-                var res = await _loadService.SendChatMessageAsync(message, currentUser, chatUser, chatGuid);
+                var res = await _loadService.SendChatMessageAsync(message, currentUser, chatUser, chat);
 
                 return Json(res);
             }

@@ -112,7 +112,27 @@ namespace Infrastructure.Repositories
             }
 
             return null;
-        }        
+        }
+
+        private string? GenerateAddressOrNull(string? country, string? city)
+        {
+            if ((country == null) && (city == null))
+                return null;
+
+            if (string.IsNullOrEmpty(country) && string.IsNullOrEmpty(city))
+                return null;
+
+            if (!string.IsNullOrEmpty(country) && !string.IsNullOrEmpty(city))
+                return $"({country}, {city})";
+
+            if (!string.IsNullOrEmpty(city))
+                return $"({city})";
+
+            if (!string.IsNullOrEmpty(country))
+                return $"({country})";
+
+            return null;
+        }
 
         public ICollection<UserDto> GetUsersPerPage(int? page)
         {
@@ -128,6 +148,7 @@ namespace Infrastructure.Repositories
 
             var config = new MapperConfiguration(conf => conf.CreateMap<ApplicationUser, UserDto>()
                 .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                .ForMember("Address", opt => opt.MapFrom(x => GenerateAddressOrNull(x.AddressCountry, x.AddressCity)))
                 .ForMember("Name", opt => opt.MapFrom(x => x.UserName))
                 .ForMember("Description", opt => opt.MapFrom(x => x.Description))
                 .ForMember("AvatarImageName", opt => opt.MapFrom(x => x.Avatar.Name))
@@ -263,5 +284,33 @@ namespace Infrastructure.Repositories
 
         public bool CheckIsSelfProfile(string currentUserGuid, string userProfileGuid)
             => currentUserGuid.Equals(userProfileGuid);
+
+        public async Task<ActiveChatUserDto?> GetChatUserOrNullAsync(string? userGuid, string currentUserGuid)
+        {
+            if ((userGuid != null) && (currentUserGuid != userGuid) &&
+                (currentUserGuid != null))
+            {
+                ApplicationUser getUser = await _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(userGuid));
+
+                Chat? getChat = await _dbContext.Chats
+                    .FirstOrDefaultAsync(x => x.Users.All(x =>
+                        x.UserId.Equals(getUser.Id) || x.UserId.Equals(currentUserGuid)));
+
+                if (getUser != null)
+                {
+                    return new()
+                    {
+                        UserAvatar = getUser.Avatar.Name,
+                        UserGuid = getUser.Id,
+                        UserName = getUser.UserName,
+                        ChatGuid = getChat?.Id
+                    };                
+                }
+            }
+
+            return null;
+        }
     }
 }

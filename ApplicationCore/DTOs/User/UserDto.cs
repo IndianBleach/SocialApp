@@ -14,6 +14,7 @@ namespace ApplicationCore.DTOs.User
         public string Description { get; set; }
         public string AvatarImageName { get; set; }
         public ICollection<TagDto> Tags { get; set; }  
+        public string? Address { get; set; }
     }
 
     public class RecommendUserDto

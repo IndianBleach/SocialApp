@@ -14,7 +14,7 @@ namespace ApplicationCore.Interfaces
     {
 
 
-        //Task<OperationResultDto> Accept
+        Task<ChatDetailDto?> GetActiveChatOrNullAsync(string? userGuid, string? currentUserGuid);
 
         //
         Task SaveChangesAsync();

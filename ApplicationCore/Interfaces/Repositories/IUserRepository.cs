@@ -12,6 +12,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IUserRepository
     {
+        Task<ActiveChatUserDto> GetChatUserOrNullAsync(string? userGuid, string currentUserGuid);
         Task<ICollection<ChatUserDto>> GetUserChatsAsync(string userGuid);
         Task<ProfileFriendshipType> CheckFriendsAsync(string currentUserGuid, string userProfileGuid);
         bool CheckIsSelfProfile(string currentUserGuid, string userProfileGuid);

@@ -27,6 +27,7 @@ namespace WebUi.Controllers
             _userRepository = userRepository;
         }
 
+        [Route("/find")]
         public async Task<IActionResult> Index(int? page)
         {
             string userGuid = GetUserIdOrNull();
@@ -41,7 +42,7 @@ namespace WebUi.Controllers
                 Users = _userRepository.GetUsersPerPage(page)
             };
 
-            return View(indexVm);
+            return View("index2", indexVm);
         }
     }
 }

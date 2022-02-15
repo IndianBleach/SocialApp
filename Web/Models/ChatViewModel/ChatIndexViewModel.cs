@@ -1,4 +1,5 @@
-﻿using ApplicationCore.DTOs.Tag;
+﻿using ApplicationCore.DTOs.AsyncLoad.Chat;
+using ApplicationCore.DTOs.Tag;
 using ApplicationCore.DTOs.User;
 using System.Collections.Generic;
 
@@ -10,5 +11,7 @@ namespace WebUi.Models.ChatViewModel
         public string Guid { get; set; }
         public List<TagDto> Tags { get; set; }
         public bool IsAuthorized { get; set; }
+        public ActiveChatUserDto ActiveChatUser { get; set; }
+        //public ChatDetailDto? ActiveChatDetail { get; set; }
     }
 }

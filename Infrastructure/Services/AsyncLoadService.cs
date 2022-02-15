@@ -299,7 +299,9 @@ namespace Infrastructure.Services
 
                 if ((author != null) && (getChat != null))
                 {
-                    string lastAG = getChat.Messages.Last().AuthorId;
+                    string lastAG = getChat.Messages
+                        .OrderBy(x => x.DateCreated)
+                        .Last().AuthorId;
 
                     bool isRepeatMessage = lastAG == authorGuid;
 
@@ -419,6 +421,52 @@ namespace Infrastructure.Services
             }
 
             return new(false, "При отправке данных что-то пошло не так");
+        }
+
+        public async Task<ChatDetailDto?> GetActiveChatOrNullAsync(string? userGuid, string? currentUserGuid)
+        {
+            if ((userGuid != null) && (currentUserGuid != null) &&
+                (userGuid != currentUserGuid))
+            {
+                Chat getChat = await _dbContext.Chats
+                    .Include(x => x.Messages)
+                    .ThenInclude(x => x.Author)
+                    .ThenInclude(x => x.Avatar)
+                    .FirstOrDefaultAsync(x => x.Users.All(x =>
+                        x.UserId.Equals(userGuid) || x.UserId.Equals(currentUserGuid)));
+
+                if (getChat != null)
+                {
+                    var config = new MapperConfiguration(conf => conf.CreateMap<ChatMessage, ChatMessageDto>()
+                            .ForMember("IsMy", opt => opt.MapFrom(x => x.AuthorId.Equals(currentUserGuid)))
+                            .ForMember("AuthorGuid", opt => opt.MapFrom(x => x.AuthorId))
+                            .ForMember("AuthorName", opt => opt.MapFrom(x => x.Author.UserName))
+                            .ForMember("AuthorAvatar", opt => opt.MapFrom(x => x.Author.Avatar.Name))
+                            .ForMember("Message", opt => opt.MapFrom(x => x.Text))
+                            .ForMember("DatePublish", opt => opt.MapFrom(x => GeneratePublishDate(x.DateCreated))));
+
+                    var mapper = new Mapper(config);
+
+                    IEnumerable<ChatMessage> messages = getChat.Messages
+                        .OrderBy(x => x.DateCreated)
+                        .Take(30);
+
+                    ICollection<ChatMessageDto> dtos = mapper.Map<ICollection<ChatMessageDto>>(messages);
+
+                    FillRepeatMessages(dtos);
+
+                    ChatDetailDto resultDto = new()
+                    {
+                        ChatGuid = getChat.Id,
+                        CurrentUserGuid = currentUserGuid,
+                        Messages = dtos,
+                    };
+
+                    return resultDto;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -470,6 +470,12 @@ a {
     border-bottom: 1px solid #014f97;
 }
 
+#topNavbar {
+    top: 0px!important;
+    width: 100%!important;
+    position: fixed!important;
+}
+
 .btn {
     border: unset;
 }

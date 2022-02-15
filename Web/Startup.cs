@@ -1,3 +1,4 @@
+using ApplicationCore.ChatHub;
 using ApplicationCore.Identity;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -74,9 +75,11 @@ namespace Web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<ChatHub>("/chatHub");
+
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Account}/{action=Login}/{id?}");
+                    pattern: "{controller=Account}/{action=Login}/{id?}");                
             });
         }
     }

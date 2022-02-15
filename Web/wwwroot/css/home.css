@@ -224,6 +224,21 @@
     line-height: 45px !important;
 }
 
+
+@media (min-width: 230px) {
+    .btn-tag-sm {
+        padding: 4px 4px!important;
+        font-size: 10px!important;
+    }
+}
+
+@media (min-width: 768px) {
+    .btn-tag-sm {
+        padding: 6px 8px!important;
+        font-size: 11px !important;
+    }
+}
+
 .btn-tag-sm {
     padding: 6px 8px;
 }

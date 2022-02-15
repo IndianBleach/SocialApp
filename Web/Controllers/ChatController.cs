@@ -16,22 +16,25 @@ namespace WebUi.Controllers
         private readonly IIdeaRepository _ideaRepository;
         private readonly IHubContext<ChatHub> _chatContext;
         private readonly IUserRepository _userRepository;
+        private readonly IAsyncLoadService _loadService;
 
         public ChatController(ITagService tagService,
             IIdeaRepository ideaRepository,
             IUserRepository userRepository,
-            IHubContext<ChatHub> chatContext)
+            IHubContext<ChatHub> chatContext,
+            IAsyncLoadService loadService)
         {
             _tagService = tagService;
             _ideaRepository = ideaRepository;
             _userRepository = userRepository;
             _chatContext = chatContext;
+            _loadService = loadService;
         }
 
         
         [HttpPost]
         [Route("chat/join/{connectionId}/{chatGuid}")]
-        public async Task<IActionResult> Join(string connectionId, string chatGuid)
+        public async Task<IActionResult> Join(string connectionId, string? chatGuid)
         {
             await _chatContext.Groups.AddToGroupAsync(connectionId, chatGuid);
 
@@ -39,19 +42,23 @@ namespace WebUi.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? user)
         {
             string curUserGuid = GetUserIdOrNull();
+
+            if (curUserGuid == null)
+                return RedirectToAction("login", "account");
 
             ChatIndexViewModel indexVm = new()
             {
                 Tags = await _tagService.GetAllTagsAsync(),
                 IsAuthorized = IsUserAuthenticated(),
                 Guid = curUserGuid,
-                ChatUsers = await _userRepository.GetUserChatsAsync(curUserGuid)
+                ChatUsers = await _userRepository.GetUserChatsAsync(curUserGuid),
+                ActiveChatUser = await _userRepository.GetChatUserOrNullAsync(user, curUserGuid),                
             };
 
-            return View(indexVm);
+            return View("index2", indexVm);
         }
     }
 }

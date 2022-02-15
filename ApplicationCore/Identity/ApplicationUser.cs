@@ -14,6 +14,8 @@ namespace ApplicationCore.Identity
 {
     public class ApplicationUser : IdentityUser, IBaseEntity
     {
+        public string? AddressCountry { get; set; }
+        public string? AddressCity { get; set; }
         public DateTime DateCreated { get; set; }
         public string? Description { get; set; }
         public ICollection<Friendship> Friends { get; set; }
@@ -30,6 +32,8 @@ namespace ApplicationCore.Identity
 
         public ApplicationUser()
         {
+            AddressCity = null;
+            AddressCountry = null;
             DateCreated = DateTime.Now;
             Friends = new List<Friendship>();
             Ideas = new List<IdeaMember>();
