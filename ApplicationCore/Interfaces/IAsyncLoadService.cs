@@ -13,6 +13,8 @@ namespace ApplicationCore.Interfaces
     public interface IAsyncLoadService
     {
 
+        Task<OperationResultDto> SendIdeaInviteAsync(string? currentUserGuid, string userGuid, string ideaGuid);
+        IEnumerable<IdeaToInviteDto> GetUserIdeasToInvite(string userGuid);
         Task<OperationResultDto> RepostIdeaAsync(string userGuid, string ideaGuid, string currentUserGuid);
         Task<ChatDetailDto?> GetActiveChatOrNullAsync(string? userGuid, string? currentUserGuid);
 

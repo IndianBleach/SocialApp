@@ -131,28 +131,56 @@
         });
     });
    
-            
-    //invite
+
+    /*
+    // INVITE - Show
     $(".showInviteWindowBtn").on("click", (e) => {
         $("#inviteWindow").removeClass("d-none");
         $("#hideBackgroundWrapper").removeClass("d-none");
         $("body").addClass("overflow-hidden");
-    });
 
-    //asyncInviteBtn
-    $(".asyncInviteBtn").on("click", (e) => {
-        e.preventDefault();
-        e.target.classList.add("clr-mute");
-        e.target.textContent = "Отправлено";
-        e.target.setAttribute("disabled", true);
-    });
+        $("#inviteWindowLoadPrev").removeClass("d-none");
 
+        $("#inviteWindowUsername").text($("#activeChatUsername").text());
+        $("#inviteWindowAvatar").attr("src", $("#activeChatUserAvatar").attr("src"));
+
+        let userGuid = e.target.dataset.user;
+
+        $.get("/asyncload/user/getinvite", {}, resp => {
+            console.log(resp);
+            if (resp.length > 0) {
+                $("#inviteWindowLoadPrev").addClass("d-none");
+                resp.forEach(x => {
+                    $("#inviteWindowLoad").append(`<div class="mb-2 repostToUser"><a class="inviteIdeaLink" href="/idea/${x.ideaGuid}"><span class="ideaInviteLink hover-white">${x.ideaName}</span></a><button data-idea="${x.ideaGuid}" class="asyncInviteBtn btn">Отправить</button></div>`)
+                });
+
+
+
+                // INVITE - Send
+                $(".asyncInviteBtn").on("click", (e) => {
+                    e.preventDefault();
+                    e.target.classList.add("clr-mute");
+                    e.target.textContent = "Отправлено";
+                    e.target.setAttribute("disabled", true);
+
+                    let userGuid = "";
+                    let ideaGuid = e.target.dataset.idea;
+                    $.post("/asyncload/user/sendinvite", { ideaGuid, userGuid }, resp => {
+                        console.log(resp);
+                    });
+                });
+            }
+        })       
+    });
+   
     $(".closeInviteWindowBtn").on("click", (e) => {
         e.preventDefault();
         $("#hideBackgroundWrapper").addClass("d-none");
         $("body").removeClass("overflow-hidden");
         $("#inviteWindow").addClass("d-none");
-    });
+    })
+    ;
+    */
 
 
     

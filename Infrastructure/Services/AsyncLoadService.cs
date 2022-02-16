@@ -552,5 +552,65 @@ namespace Infrastructure.Services
 
             return new(false, "При отправлении репоста что-то пошло не так");
         }
+
+        public IEnumerable<IdeaToInviteDto> GetUserIdeasToInvite(string userGuid)
+        {
+            if (userGuid != null)
+            {
+                var ideas = _dbContext.Ideas
+                    .Include(x => x.Members)
+                    .Where(x => x.Members.Any(x => x.UserId.Equals(userGuid) &&
+                    x.Role.Equals(IdeaMemberRoles.Author)))
+                    .OrderByDescending(x => x.DateCreated)
+                    .Take(30);
+
+                var config = new MapperConfiguration(conf => conf.CreateMap<Idea, IdeaToInviteDto>()
+                    .ForMember("IdeaGuid", opt => opt.MapFrom(x => x.Id))
+                    .ForMember("IdeaName", opt => opt.MapFrom(x => x.Name)));
+
+                var mapper = new Mapper(config);
+
+                IEnumerable<IdeaToInviteDto> dtos = mapper.Map<IEnumerable<IdeaToInviteDto>>(ideas);
+
+                return dtos;
+            }
+            else return null;
+        }
+
+        public async Task<OperationResultDto> SendIdeaInviteAsync(string currentUserGuid, string userGuid, string ideaGuid)
+        {
+            if (!string.IsNullOrEmpty(currentUserGuid) &&
+                !string.IsNullOrEmpty(userGuid) &&
+                !string.IsNullOrEmpty(ideaGuid))
+            {
+                IdeaInvitation getOrCheckExist = await _dbContext.IdeaInvitations
+                    .FirstOrDefaultAsync(x => x.Idea.Id.Equals(ideaGuid) &&
+                        x.UserId.Equals(userGuid));
+
+                Idea isRealAuthorIdea = await _dbContext.Ideas
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync(x => x.Members.Any(x => x.UserId.Equals(currentUserGuid) &&
+                        x.Role.Equals(IdeaMemberRoles.Author) &&
+                        x.Idea.Id.Equals(ideaGuid)));
+
+                if (isRealAuthorIdea != null)
+                {
+                    if (getOrCheckExist != null)
+                    {
+                        getOrCheckExist.DateCreated = DateTime.Now;
+                        _dbContext.IdeaInvitations.Update(getOrCheckExist);
+                    }
+                    else
+                    {
+                        IdeaInvitation create = new(IdeaInvitationType.Invite, userGuid, isRealAuthorIdea);
+                        await _dbContext.IdeaInvitations.AddAsync(create);
+                    }
+                    await _dbContext.SaveChangesAsync();
+
+                    return new(true, "Приглашение в идею отправлено");
+                }
+            }
+            return new(false, "При отправке запроса что-то пошло не так");
+        }
     }
 }

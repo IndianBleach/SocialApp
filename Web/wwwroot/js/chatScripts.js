@@ -114,14 +114,20 @@
         $("#activeChatContainer").removeClass("d-none");
         $("#defaultChatContainer").addClass("d-none");
         $("#activeChatWindowLoadPrev").removeClass("d-none");
+        $("#activeChatWarning").remove();
 
         sessionStorage.setItem("activeChat", chatGuid);
         sessionStorage.setItem("chatWith", user);
 
+        $("#activeChatProfileLink").attr("href", "/user/" + user);
         $("#activeChatUserAvatar").attr("src", avatar)
         $("#activeChatUserName").text(name);
         $("#activeChatUserLink").attr("href", "/user/" + user);
 
+        sessionStorage.setItem("inviteUser", user);
+        $("#inviteWindowUsername").text(name);
+        $("#inviteWindowAvatar").attr("src", avatar);
+       
         joinChat(chatGuid);
 
         $.get("/asyncload/chat/getchat", { chatGuid }, resp => {
@@ -175,8 +181,13 @@
                 sessionStorage.setItem("activeChat", chat);
                 sessionStorage.setItem("chatWith", userGuid);
 
-                $("#activeChatUserAvatar").attr("src", normalizeAvatar);
+                $("#activeChatUserAvatar").attr("src", normalizeAvatar);               
                 $("#activeChatUserName").text(userName);
+
+                sessionStorage.setItem("inviteUser", userGuid);
+                $("#inviteWindowUsername").text(userName);
+                $("#inviteWindowAvatar").attr("src", normalizeAvatar);
+                $("#activeChatProfileLink").attr("href", "/user/" + userGuid);
 
             } else LoadActiveChat(chat, normalizeAvatar, userGuid, userName);
         }        
@@ -192,7 +203,7 @@
         let chatGuid = elem.dataset.guid;
         let avatar = elem.getElementsByTagName("img")[0].src;
         let userGuid = elem.dataset.user;
-        let name = elem.dataset.name;
+        let name = elem.dataset.name;        
 
         LoadActiveChat(chatGuid, avatar, userGuid, name);
     });
@@ -248,5 +259,46 @@
 
     $("#closeEmojiWindowBtn").on("click", (e) => {
         $("#choiceEmojiWindow").addClass("d-none");
-    });    
+    });
+
+    // INVITE - Show
+    $(".showInviteWindowBtn").on("click", (e) => {
+        $("#inviteWindow").removeClass("d-none");
+        $("#hideBackgroundWrapper").removeClass("d-none");
+        $("body").addClass("overflow-hidden");
+
+        $("#inviteWindowLoadPrev").removeClass("d-none");        
+
+        $.get("/asyncload/user/getinvite", {}, resp => {
+            console.log(resp);
+            if (resp.length > 0) {
+                $("#inviteWindowLoadPrev").addClass("d-none");
+                resp.forEach(x => {
+                    $("#inviteWindowLoad").append(`<div class="mb-2 repostToUser"><a class="inviteIdeaLink text-truncate" href="/idea/${x.ideaGuid}"><span class="ideaInviteLink hover-white">${x.ideaName}</span></a><button data-idea="${x.ideaGuid}" class="asyncInviteBtn btn">Отправить</button></div>`)
+                });
+
+                // INVITE - Send
+                $(".asyncInviteBtn").on("click", (e) => {
+                    e.preventDefault();
+                    e.target.classList.add("clr-mute");
+                    e.target.textContent = "Отправлено";
+                    e.target.setAttribute("disabled", true);
+
+                    let user = sessionStorage.getItem("inviteUser");
+                    let idea = e.target.dataset.idea;
+                    $.post("/asyncload/user/sendinvite", { user, idea }, resp => {
+                        console.log(resp);
+                    });
+                });
+            }
+        })
+    });
+
+    $(".closeInviteWindowBtn").on("click", (e) => {
+        e.preventDefault();
+        $("#hideBackgroundWrapper").addClass("d-none");
+        $("body").removeClass("overflow-hidden");
+        $("#inviteWindow").addClass("d-none");
+    });
+
 });

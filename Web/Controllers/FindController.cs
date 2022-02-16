@@ -53,7 +53,7 @@ namespace WebUi.Controllers
                     .CreateSearchResultString(tag, search, country, city)
             };
 
-            return View("index2", indexVm);
+            return View(indexVm);
         }
     }
 }

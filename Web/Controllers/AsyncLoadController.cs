@@ -24,6 +24,33 @@ namespace WebUi.Controllers
             return true;
         }
 
+
+
+        [HttpPost]
+        [Route("/asyncload/user/sendinvite")]
+        public async Task<JsonResult> SendUserInviteToIdea(string user, string idea)
+        {
+            var res = await _loadService.SendIdeaInviteAsync(GetUserIdOrNull(), user, idea);
+
+            return Json(res);
+        }
+
+        [HttpGet]
+        [Route("/asyncload/user/getinvite")]
+        public async Task<JsonResult> GetUserIdeasToInvite()
+        {
+            string curUserid = GetUserIdOrNull();
+
+            if (curUserid != null)
+            {
+                var res = _loadService.GetUserIdeasToInvite(curUserid);
+
+                return Json(res);
+            }
+
+            return Json(null);
+        }
+
         [HttpPost]
         [Route("/asyncload/chat/repostidea")]
         public async Task<JsonResult> RepostIdea(string user, string idea)
