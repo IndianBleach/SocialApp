@@ -19,7 +19,7 @@ namespace ApplicationCore.Interfaces
         int GetUserIdeasCountByRole(string userGuid, IdeaMemberRoles role);
         ICollection<HomeIdeaDto> GetUserIdeasPerPage(int? page, string userGuid);
         Task<UserDetailDto?> GetUserDetailOrNullAsync(string userGuid); 
-        ICollection<UserDto> GetUsersPerPage(int? page);
+        ICollection<UserDto> GetUsersPerPage(int? page, string? search, string? tag, string? country, string? city);
         Task<ICollection<RecommendUserDto>?> GetRecommendsUsersOrNullAsync(string? userGuid);
     }
 }

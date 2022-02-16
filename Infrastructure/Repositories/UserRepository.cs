@@ -134,17 +134,120 @@ namespace Infrastructure.Repositories
             return null;
         }
 
-        public ICollection<UserDto> GetUsersPerPage(int? page)
+        public ICollection<UserDto> GetUsersPerPage(int? page, string? search, string? tag, string? country, string? city)
         {
-            int correctPage = page ?? 1;
+            int correctPage = page ?? 1;            
 
             int count = ConstantsHelper.CountUsersPerPage;
 
-            IQueryable<ApplicationUser> getUsers = _dbContext.Users
-                .Include(x => x.Avatar)
-                .Include(x => x.Tags)
-                .Skip((correctPage - 1) * count)
-                .Take(count);
+            IQueryable<ApplicationUser> getUsers;
+
+            // country + city + search
+            if (!string.IsNullOrWhiteSpace(country) &&
+                (!string.IsNullOrWhiteSpace(city)))
+            {
+                if (!string.IsNullOrWhiteSpace(search))
+                    getUsers = _dbContext.Users
+                        .Include(x => x.Avatar)
+                        .Include(x => x.Tags)
+                        .Where(x =>
+                            x.AddressCountry.StartsWith(country) &&
+                            x.AddressCity.StartsWith(city) &&
+                            x.UserName.StartsWith(search))
+                        .Skip((correctPage - 1) * count)
+                        .Take(count);
+
+                else getUsers = _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Where(x =>
+                        x.AddressCountry.StartsWith(country) &&
+                        x.AddressCity.StartsWith(city))
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);
+            }            
+            // country + search            
+            else if (!string.IsNullOrWhiteSpace(country))
+            {
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    getUsers = _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Where(x =>
+                        x.AddressCountry.StartsWith(country) && 
+                        x.UserName.StartsWith(search))
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);
+                }
+                else
+                {
+                    getUsers = _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Where(x =>
+                        x.AddressCountry.StartsWith(country))
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);
+                }
+            }
+            // city + search
+            else if (!string.IsNullOrWhiteSpace(city))
+            {
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    getUsers = _dbContext.Users
+                        .Include(x => x.Avatar)
+                        .Include(x => x.Tags)
+                        .Where(x =>
+                            x.AddressCity.StartsWith(city) &&
+                            x.UserName.StartsWith(search))
+                        .Skip((correctPage - 1) * count)
+                        .Take(count);
+                }
+                else
+                {
+                    getUsers = _dbContext.Users
+                        .Include(x => x.Avatar)
+                        .Include(x => x.Tags)
+                        .Where(x =>
+                            x.AddressCity.StartsWith(city))
+                        .Skip((correctPage - 1) * count)
+                        .Take(count);
+                }
+            }            
+            else if (!string.IsNullOrWhiteSpace(search))
+            {
+                getUsers = _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Where(x => x.UserName.StartsWith(search))
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);
+            }
+            else if (!string.IsNullOrWhiteSpace(tag))
+            {
+                Tag? getTag = _dbContext.Tags
+                    .FirstOrDefault(x => x.Id.Equals(tag));
+
+                if (getTag == null)
+                    getTag = _dbContext.Tags.FirstOrDefault();
+
+                getUsers = _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Where(x => x.Tags.Contains(getTag))
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);
+            }                        
+            else
+            {
+                getUsers = _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);
+            }
 
             var config = new MapperConfiguration(conf => conf.CreateMap<ApplicationUser, UserDto>()
                 .ForMember("Guid", opt => opt.MapFrom(x => x.Id))

@@ -89,6 +89,35 @@ namespace Infrastructure.Services
             return pageInfoDtos;
         }
 
+        public string? CreateSearchResultString(string? tag, string? search, string? country, string? city)
+        {
+            // поиск по рез. Username с тегом (, страна - , город - )
+            if (!string.IsNullOrWhiteSpace(search) &&
+                !string.IsNullOrWhiteSpace(tag))
+                return $"Поиск по рез. {search} по тегу";
+
+            else if (!string.IsNullOrWhiteSpace(country) &&
+                !string.IsNullOrWhiteSpace(city))
+                return search != null ? $"Поиск по рез. {search}, страна - {country}, город - {city}" :
+                    $"Поиск по рез. страна - {country}, город - {city}";
+
+            else if (!string.IsNullOrWhiteSpace(country))
+                return search != null ? $"Поиск по рез. {search}, страна - {country}" :
+                    $"Поиск по рез. страна - {country}";
+
+            else if (!string.IsNullOrWhiteSpace(city))
+                return search != null ? $"Поиск по рез. {search}, страна - {city}" :
+                   $"Поиск по рез. город - {city}";
+
+            if (!string.IsNullOrWhiteSpace(tag))
+                return "Поиск по тегу";
+
+            if (!string.IsNullOrWhiteSpace(search))
+                return $"Поиск по рез. {search}";
+
+            return null;
+        }
+
         public async Task<ICollection<HomeNewsDto>> GetLastNewsAsync()
         {
             List<HomeNewsDto> users = await _dbContext.Users

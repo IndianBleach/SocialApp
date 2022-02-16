@@ -58,7 +58,7 @@ namespace WebUi.Controllers
                 ActiveChatUser = await _userRepository.GetChatUserOrNullAsync(user, curUserGuid),                
             };
 
-            return View("index2", indexVm);
+            return View(indexVm);
         }
     }
 }

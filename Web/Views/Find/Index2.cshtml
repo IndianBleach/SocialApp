@@ -271,7 +271,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <form asp-action="index" asp-controller="home" class="search-nav-form flex-form-dark circle-flex-search">
+                <form asp-action="index" asp-controller="find" class="search-nav-form flex-form-dark circle-flex-search">
                     <div class="dropdown">
                         <input name="search"
                                id="dropdownMenuLink"
@@ -279,7 +279,7 @@
                                aria-expanded="false"
                                class="search-form form-upd dropdown-toggle t-md form-control me-2 form-control"
                                type="search"
-                               placeholder="Найти идею"
+                               placeholder="Найти участника"
                                aria-label="Search" />
                         <ul class="mt-2 search-nav-dropdown pt-2 pb-2 col-12 rad-md bg-darkc dropdown-menu p-0 t-sm t-semi-bold"
                             aria-labelledby="dropdownMenuLink">
@@ -287,17 +287,24 @@
                             <div class="p-2 pt-0 col-12 d-flex flex-wrap">
                                 @foreach (var tag in Model.Tags)
                                 {
-                                    <a asp-route-tag="@tag.Guid" asp-action="index" asp-controller="home" class="btn-tag">
+                                    <a asp-route-tag="@tag.Guid" asp-action="index" asp-controller="find" class="btn-tag">
                                         @tag.Name
                                     </a>
                                 }
                             </div>
-                            <li>
-                                <a asp-controller="home" asp-action="index" class="search-dropdown dropdown-item" asp-route-key="popular">Популярные</a>
-                            </li>
-                            <li>
-                                <a asp-controller="home" asp-action="index" class="search-dropdown dropdown-item" asp-route-key="new">Новые</a>
-                            </li>
+                            <h6 class="dropdown-header t-sm t-med">Найти по тегам</h6>
+                            <div class="p-2 pt-0 col-12 d-flex">
+                                <div class="pe-2 col">
+                                    <input name="country"
+                                    placeholder="Страна"
+                                    class="form-upd p-2 form-control" />
+                                </div>
+                                <div class="pe-2 col">
+                                    <input name="city"
+                                    placeholder="Город"
+                                    class="form-upd p-2 form-control" />
+                                </div>
+                            </div>
                         </ul>
                     </div>
                     <button class="btn btn-unfocus" type="submit">
@@ -452,6 +459,13 @@ else
 
 <div class="container-sm main_idea" style="margin-top: 140px;">
     <main>
+        @if (Model.SearchParamsResultString != null)
+        { 
+        <div class="p-2 col-12 d-flex flex-wrap justify-content-center">
+            <label class="text-muted t-sm t-smbold">@Model.SearchParamsResultString</label>
+            <a asp-controller="find" class="t-smbold clr-blue t-sm ms-2">Сбросить</a>
+        </div>
+        }
         <div class="find_user_adaptive idea_adaptive">
             <div style="padding: 0px !important;"
                  class="idea_inside bg-darkn rad-lg b-all">
@@ -565,7 +579,7 @@ else
                     </div>
                     }
                 </div>
-                <div class="mt-2 d-flex">
+                <div class="p-2 d-flex">
                     @foreach (var pageInfo in Model.Pages)
                     {
                         <div class="me-1">
@@ -577,7 +591,7 @@ else
                             }
                             else
                             {
-                                <a asp-controller="find" asp-action="index" asp-route-page="@pageInfo.NumberValue" class="me-1 btn btn-page">
+                                <a asp-route-tag="@Model.SearchTag" asp-route-search="@Model.Search" asp-route-country="@Model.SearchCountry" asp-route-city="@Model.SearchCity" asp-controller="find" asp-action="index" asp-route-page="@pageInfo.NumberValue" class="me-1 btn btn-page">
                                     @pageInfo.NumberValue
                                 </a>
                             }

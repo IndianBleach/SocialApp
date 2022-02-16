@@ -13,5 +13,10 @@ namespace WebUi.Models
         public ICollection<UserDto> Users { get; set; }
         public List<TagDto> Tags { get; set; }
         public bool IsAuthorized { get; set; }
+        public string? Search { get; set; }
+        public string? SearchTag { get; set; }
+        public string? SearchCountry { get; set; }
+        public string? SearchCity { get; set; }
+        public string? SearchParamsResultString { get; set; }
     }
 }

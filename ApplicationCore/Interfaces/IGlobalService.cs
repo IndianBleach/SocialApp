@@ -12,6 +12,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IGlobalService<T> where T : class, IBaseEntity
     {
+        string? CreateSearchResultString(string? tag, string? search, string? country, string? city);
         ICollection<PageInfoDto> CreatePages(int totalCount, int? currentPage);
         ICollection<PageInfoDto> CreatePages(int? currentPage);
         Task<ICollection<HomeNewsDto>> GetLastNewsAsync();
