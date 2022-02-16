@@ -387,7 +387,7 @@ else
         <aside>
             <section>
                 <div class="p-2 pt-3 d-flex justify-content-center align-items-center">
-                    <img src="./icon.png" height="33" width="33" />
+                    <img class="chat_hide_elems" src="./icon.png" height="33" width="33" />
                     <button data-guid="@Model.Guid"
                             class="showNewChatBtn btn bg-transparent btn-unfocus clr-white t-smbold">
                         Новый чат
@@ -403,7 +403,7 @@ else
                         </svg>
                     </button>
                 </div>
-                <div class="p-2 ps-2 pe-2 d-flex justify-content-center">
+                <div class="search_chat chat_hide_elems p-2 ps-2 pe-2 d-flex justify-content-center">
                     <form class="col-12 flex-form-dark b-none">
                         <div class="col form-floating">
                             <input type="text"
@@ -475,14 +475,15 @@ else
                                     <section>
                                         <div class="b-bottom p-2 ps-3 pe-3 col-12 d-flex justify-content-between">
                                             <div>
-                                                <img id="activeChatUserAvatar"
-                                                     src="./avatar.jpg"
-                                                     height="33"
-                                                     width="33"
-                                                     class="me-1 rounded-circle" />
-                                                <span id="activeChatUserName" class="t-sm clr-white t-smbold">
-                                                    Xxxvevra
-                                                </span>
+                                                <a id="activeChatUserLink">
+                                                    <img id="activeChatUserAvatar"
+                                                         src="./avatar.jpg"
+                                                         height="33"
+                                                         width="33"
+                                                         class="me-1 rounded-circle" />
+                                                    <span id="activeChatUserName" class="t-sm clr-white t-smbold">
+                                                    </span>
+                                                </a>
                                             </div>
                                             <div class="dropdown z-0">
                                                 <button style="color: transparent !important;"
@@ -539,7 +540,7 @@ else
                                             <img src="~/media/userAvatars/@avatar"
                                                  height="44"
                                                  width="44"
-                                                 class="rounded-circle" />
+                                                 class="chat_hide_elems rounded-circle" />
                                             <div class="ms-1 position-relative">
                                                 <div id="choiceEmojiWindow"
                                                      class="d-none position-absolute bg-primary">
@@ -795,7 +796,9 @@ else
                                             </div>
                                             <form id="chatMessageForm"
                                                   class="rad-md col ms-2 flex-form-dark">
-                                                <input id="chatMessageInput"
+                                                <input required
+                                                       maxlength="200"
+                                                       id="chatMessageInput"
                                                        class="form-control"
                                                        placeholder="Введите сообщение" />
                                                 <button class="btn bg-transparent">

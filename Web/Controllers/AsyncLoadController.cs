@@ -25,6 +25,23 @@ namespace WebUi.Controllers
         }
 
         [HttpPost]
+        [Route("/asyncload/chat/repostidea")]
+        public async Task<JsonResult> RepostIdea(string user, string idea)
+        {
+            string userGuid = GetUserIdOrNull();
+
+            if ((userGuid != null) && (idea != null) && (user != null))
+            {
+                var res = await _loadService.RepostIdeaAsync(user, idea, userGuid);
+
+                return Json(res);
+            }
+
+            return Json(null);
+        }
+
+
+        [HttpPost]
         [Route("/asyncload/idea/setreaction")]
         public async Task<JsonResult> IdeaSetReaction(string reaction, string idea)
         {
@@ -78,7 +95,6 @@ namespace WebUi.Controllers
 
             return Json(null);
         }
-
 
         [HttpPost]
         [Route("asyncload/chat/sendmessage")]
@@ -201,7 +217,7 @@ namespace WebUi.Controllers
         {
             var author = GetUserIdOrNull();
 
-            if (author != null)
+            if ((author != null) && (author != userGuid))
             {
                 var res = await _loadService.SendFriendRequestAsync(author, userGuid);
                 return Json(res);

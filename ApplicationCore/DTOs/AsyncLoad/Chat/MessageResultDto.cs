@@ -8,6 +8,10 @@ namespace ApplicationCore.DTOs.AsyncLoad.Chat
 {
     public class MessageResultDto
     {
+        public bool IsRepost { get; set; }
+        public string? IdeaGuid { get; set; }
+        public string? IdeaAvatar { get; set; }
+
         public bool IsRepeat { get; set; }
         public string ChatGuid { get; set; }
         public string AuthorGuid { get; set; }

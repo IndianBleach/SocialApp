@@ -28,6 +28,10 @@
     transition: all 0.2s ease;
 }
 
+    .chatUserSelect button.active {
+        background-color: #1b1b1b !important;
+    }
+
     .chatUserSelect img {
         height: 39px;
         width: 39px;
@@ -44,6 +48,7 @@
 }
 
 .chatMessage {
+    word-break: break-all!important;
     max-width: 66%;
     padding: 3px;
     width: fit-content !important;
@@ -68,7 +73,7 @@
 }
 
 .msgRepeat {
-    padding-left: 34px;
+    padding-left: 31px;
 }
 
     .msgRepeat img {

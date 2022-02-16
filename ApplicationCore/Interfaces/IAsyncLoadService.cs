@@ -13,7 +13,7 @@ namespace ApplicationCore.Interfaces
     public interface IAsyncLoadService
     {
 
-
+        Task<OperationResultDto> RepostIdeaAsync(string userGuid, string ideaGuid, string currentUserGuid);
         Task<ChatDetailDto?> GetActiveChatOrNullAsync(string? userGuid, string? currentUserGuid);
 
         //

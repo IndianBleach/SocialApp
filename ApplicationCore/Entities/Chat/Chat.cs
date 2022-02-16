@@ -10,11 +10,23 @@ namespace ApplicationCore.Entities.Chat
 {
     public class ChatMessage : BaseEntity
     {
+        public bool IsRepost { get; set; }
+        public Idea? Idea { get; set; }
         public string AuthorId { get; set; }
         public ApplicationUser Author { get; set; }
         public string Text { get; set; }
         public DateTime DateCreated { get; set; }
         public Chat Chat { get; set; }
+
+        public ChatMessage(ApplicationUser author, Chat chat, Idea idea)
+        {
+            IsRepost = true;
+            Idea = idea;
+            Author = author;
+            Text = idea.Name;
+            DateCreated = DateTime.Now;
+            Chat = chat;
+        }
 
         public ChatMessage(ApplicationUser author, string text, Chat chat)
         {
@@ -63,13 +75,13 @@ namespace ApplicationCore.Entities.Chat
     {
         public ICollection<ChatUser> Users { get; set; }
         public ICollection<ChatMessage> Messages { get; set; }
-        public ICollection<IdeaRepost> Reposts { get; set; }
+        //public ICollection<IdeaRepost> Reposts { get; set; }
 
         public Chat()
         {
             Messages = new List<ChatMessage>();
             Users = new List<ChatUser>();
-            Reposts = new List<IdeaRepost>();
+            //Reposts = new List<IdeaRepost>();
         }
     }
 }

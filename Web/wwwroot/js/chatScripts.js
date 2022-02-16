@@ -120,26 +120,34 @@
 
         $("#activeChatUserAvatar").attr("src", avatar)
         $("#activeChatUserName").text(name);
+        $("#activeChatUserLink").attr("href", "/user/" + user);
 
         joinChat(chatGuid);
 
         $.get("/asyncload/chat/getchat", { chatGuid }, resp => {
+            console.log(resp);
             $("#activeChatWindowLoadPrev").addClass("d-none");
             if (resp.messages.length > 0) {
                 resp.messages.forEach(x => {
                     if (x.isMy == true) {
-                        if (x.isRepeat) {
-                            $("#activeChatLoad").prepend(`<div class="chatMessage myMessage msgRepeat">${x.message}</div>`);
+                        if (x.isRepost) {
+                            $("#activeChatLoad").append(`<div class="chatMessage msgRepost myMessage"><a href="/idea/${x.ideaGuid}">Поделился идеей<div style="background: linear-gradient(0deg,rgba(0, 0, 0, 0.44),rgba(0, 0, 0, 0.44)),url(../media/ideaAvatars/${x.ideaAvatar});"><span>${x.message}</span></div></a></div>`);
+                        }
+                        else if (x.isRepeat) {
+                            $("#activeChatLoad").append(`<div class="chatMessage myMessage msgRepeat">${x.message}</div>`);
                         }
                         else {
-                            $("#activeChatLoad").prepend(`<div class="chatMessage myMessage">${x.message}<br><span class="mesTime">${x.datePublish}</span></div>`);
+                            $("#activeChatLoad").append(`<div class="chatMessage myMessage">${x.message}<br><span class="mesTime">${x.datePublish}</span></div>`);
                         }
                     }
                     else if (x.isMy == false) {
-                        if (x.isRepeat == true) {
-                            $("#activeChatLoad").prepend(`<div class="chatMessage msgRepeat"><img src="../media/userAvatars/${x.authorAvatar}"/>${x.message}</div>`);
+                        if (x.isRepost) {
+                            $("#activeChatLoad").append(`<div class="chatMessage msgRepost"><img src="../media/userAvatars/${x.authorAvatar}" /><a href="/idea/${x.ideaGuid}">Поделился идеей<div style="background: linear-gradient(0deg,rgba(0, 0, 0, 0.44),rgba(0, 0, 0, 0.44)),url(../media/ideaAvatars/${x.ideaAvatar});"><span>${x.message}</span></div></a></div>`);
+                        }
+                        else if (x.isRepeat == true) {
+                            $("#activeChatLoad").append(`<div class="chatMessage msgRepeat"><img src="../media/userAvatars/${x.authorAvatar}"/>${x.message}</div>`);
                         } else {
-                            $("#activeChatLoad").prepend(`<div class="chatMessage"><img src="../media/userAvatars/${x.authorAvatar}"/>${x.message}<br><span class="mesTime">${x.datePublish}</span></div>`);
+                            $("#activeChatLoad").append(`<div class="chatMessage"><img src="../media/userAvatars/${x.authorAvatar}"/>${x.message}<br><span class="mesTime">${x.datePublish}</span></div>`);
                         }
                     }
                 })
@@ -177,10 +185,14 @@
     
     // CHAT - Select
     $(".asyncSelectChatBtn").on("click", (e) => {
-        let chatGuid = e.target.closest("button").dataset.guid;
-        let avatar = e.target.closest("button").getElementsByTagName("img")[0].src;
-        let userGuid = e.target.closest("button").dataset.user;
-        let name = e.target.closest("button").dataset.name;
+
+        let elem = e.target.closest("button");
+        elem.classList.add("active");
+
+        let chatGuid = elem.dataset.guid;
+        let avatar = elem.getElementsByTagName("img")[0].src;
+        let userGuid = elem.dataset.user;
+        let name = elem.dataset.name;
 
         LoadActiveChat(chatGuid, avatar, userGuid, name);
     });
@@ -195,9 +207,15 @@
    
     // Chat - Recieve
     connection.on("RecieveMessage", (x) => {
+
+        console.log(x);
+
         let isMy = sessionStorage.getItem("chatWith") !== x.authorGuid;
         if (isMy == true) {
-            if (x.isRepeat) {
+            if (x.isRepost) {
+                $("#activeChatLoad").prepend(`<div class="chatMessage msgRepost myMessage"><a href="/idea/${x.ideaGuid}">Поделился идеей<div style="background: linear-gradient(0deg,rgba(0, 0, 0, 0.44),rgba(0, 0, 0, 0.44)),url(../media/ideaAvatars/${x.ideaAvatar});"><span>${x.message}</span></div></a></div>`);
+            }
+            else if (x.isRepeat) {
                 $("#activeChatLoad").prepend(`<div class="chatMessage myMessage msgRepeat">${x.message}</div>`);
             }
             else {
@@ -205,7 +223,10 @@
             }
         }
         else if (isMy == false) {
-            if (x.isRepeat == true) {
+            if (x.isRepost) {
+                $("#activeChatLoad").prepend(`<div class="chatMessage msgRepost"><img src="../media/userAvatars/${x.authorAvatar}" /><a href="/idea/${x.ideaGuid}">Поделился идеей<div style="background: linear-gradient(0deg,rgba(0, 0, 0, 0.44),rgba(0, 0, 0, 0.44)),url(../media/ideaAvatars/${x.ideaAvatar});"><span>${x.message}</span></div></a></div>`);
+            }
+            else if (x.isRepeat == true) {
                 $("#activeChatLoad").prepend(`<div class="chatMessage msgRepeat"><img src="../media/userAvatars/${x.authorAvatar}"/>${x.message}</div>`);
             } else {
                 $("#activeChatLoad").prepend(`<div class="chatMessage"><img src="../media/userAvatars/${x.authorAvatar}"/>${x.message}<br><span class="mesTime">сегодня</span></div>`);

@@ -52,7 +52,7 @@ namespace Infrastructure.Repositories
                     .Where(x => x.UserId != userGuid).First().User.Avatar.Name))
                 .ForMember("LastMessageDate", opt => opt.MapFrom(x => GeneratePublishDate(x.Messages
                     .OrderBy(x => x.DateCreated)
-                    .First()
+                    .FirstOrDefault()
                     .DateCreated)));
             });
 

@@ -96,28 +96,30 @@ namespace Infrastructure.Services
         //fix
         public async Task<OperationResultDto> AcceptFriendRequestAsync(string guid)
         {
-            var getFriendship = await _dbContext.FriendshipRequests
+            var getRequest = await _dbContext.FriendshipRequests
                 .FirstOrDefaultAsync(x => x.Id.Equals(guid));
 
-            if (getFriendship != null)
+            if (getRequest != null)
             {
                 List<ApplicationUser> users = new List<ApplicationUser>();
 
                 ApplicationUser getFirst = await _dbContext.Users
-                    .FirstOrDefaultAsync(x => x.Id.Equals(getFriendship.AuthorId));
+                    .FirstOrDefaultAsync(x => x.Id.Equals(getRequest.AuthorId));
 
                 ApplicationUser getSecond = await _dbContext.Users
-                    .FirstOrDefaultAsync(x => x.Id.Equals(getFriendship.RequestToUserId));
+                    .FirstOrDefaultAsync(x => x.Id.Equals(getRequest.RequestToUserId));                
 
                 if ((getFirst != null) && (getSecond != null))
                 {
                     users.Add(getSecond);
                     users.Add(getFirst);
 
+                    _dbContext.FriendshipRequests.Remove(getRequest);
+
                     var createFriend = new Friendship(FriendshipType.Accepted, users);
                     await _dbContext.Friendships.AddAsync(createFriend);
                     await _dbContext.SaveChangesAsync();
-                    return new OperationResultDto(true, "Запрос отправлен");
+                    return new OperationResultDto(true, "Запрос выполнен");
                 }
 
                 await _dbContext.SaveChangesAsync();
@@ -333,35 +335,42 @@ namespace Infrastructure.Services
         {
             Chat getChat = await _dbContext.Chats
                 .Include(x => x.Messages)
+                .ThenInclude(x => x.Idea)
+                .ThenInclude(x => x.Avatar)
+                .Include(x => x.Messages)
                 .ThenInclude(x => x.Author)
                 .ThenInclude(x => x.Avatar)
                 .FirstOrDefaultAsync(x => x.Id.Equals(chatGuid));
 
             if (getChat != null)
             {
+                // messages
                 var config = new MapperConfiguration(conf => conf.CreateMap<ChatMessage, ChatMessageDto>()
+                    .ForMember("IsRepost", opt => opt.MapFrom(x => x.IsRepost))
+                    .ForMember("IdeaAvatar", opt => opt.MapFrom(x => x.Idea.Avatar.Name))
+                    .ForMember("IdeaGuid", opt => opt.MapFrom(x => x.Idea.Id))
                     .ForMember("IsMy", opt => opt.MapFrom(x => x.AuthorId.Equals(currentUserGuid)))
                     .ForMember("AuthorGuid", opt => opt.MapFrom(x => x.AuthorId))
                     .ForMember("AuthorName", opt => opt.MapFrom(x => x.Author.UserName))
                     .ForMember("AuthorAvatar", opt => opt.MapFrom(x => x.Author.Avatar.Name))
                     .ForMember("Message", opt => opt.MapFrom(x => x.Text))
-                    .ForMember("DatePublish", opt => opt.MapFrom(x => GeneratePublishDate(x.DateCreated))));                   
+                    .ForMember("DatePublish", opt => opt.MapFrom(x => GeneratePublishDate(x.DateCreated))));                  
 
                 var mapper = new Mapper(config);
 
                 IEnumerable<ChatMessage> messages = getChat.Messages
-                    .OrderBy(x => x.DateCreated)
-                    .Take(30);
+                    .OrderByDescending(x => x.DateCreated)
+                    .Take(20);
 
-                ICollection<ChatMessageDto> dtos = mapper.Map<ICollection<ChatMessageDto>>(messages);
+                ICollection<ChatMessageDto> messageDtos = mapper.Map<ICollection<ChatMessageDto>>(messages);
 
-                FillRepeatMessages(dtos);
+                FillRepeatMessages(messageDtos);
 
                 ChatDetailDto resultDto = new()
                 {
                     ChatGuid = getChat.Id,
                     CurrentUserGuid = currentUserGuid,
-                    Messages = dtos,
+                    Messages = messageDtos,
                 };
 
                 return resultDto;
@@ -369,9 +378,7 @@ namespace Infrastructure.Services
 
             return null;
         }
-
-        // today
-
+        
         public async Task SaveChangesAsync()
             => await _dbContext.SaveChangesAsync();
 
@@ -467,6 +474,83 @@ namespace Infrastructure.Services
             }
 
             return null;
+        }
+
+        public async Task<OperationResultDto> RepostIdeaAsync(string userGuid, string ideaGuid, string currentUserGuid)
+        {
+            Chat getChat = await _dbContext.Chats
+                    .FirstOrDefaultAsync(x => x.Users.All(x =>
+                        x.UserId.Equals(userGuid) || x.UserId.Equals(currentUserGuid)));
+
+            Idea getIdea = await _dbContext.Ideas
+                .Include(x => x.Avatar)
+                .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+            ApplicationUser getAuthor = await _dbContext.Users
+                .Include(x => x.Avatar)
+                .FirstOrDefaultAsync(x => x.Id.Equals(currentUserGuid));
+
+            if ((getChat != null) && (getIdea != null) && (getAuthor != null))
+            {
+                //IdeaRepost createRepost = new(getChat, currentUserGuid, getIdea);
+
+                ChatMessage createRepost = new(getAuthor, getChat, getIdea);
+
+                await _dbContext.ChatMessages.AddAsync(createRepost);
+                await _dbContext.SaveChangesAsync();
+
+                MessageResultDto dto = new()
+                {
+                    AuthorAvatar = getAuthor.Avatar.Name,
+                    AuthorGuid = getAuthor.Id,
+                    AuthorName = getAuthor.UserName,
+                    ChatGuid = getChat.Id,
+                    IsRepeat = false,
+                    Message = getIdea.Name,
+                    IdeaAvatar = getIdea.Avatar.Name,
+                    IdeaGuid = getIdea.Id,
+                    IsRepost = true
+                };
+
+                await _chatContext.Clients.Group(getChat.Id).SendAsync("RecieveMessage", dto);
+
+                return new(true, "Репост отправлен");
+            }
+            else if ((getAuthor != null) && (getIdea != null))
+            {
+                Chat createChat = new Chat();
+                ChatUser chatUser = new ChatUser(currentUserGuid, createChat);
+                ChatUser chatUserSec = new ChatUser(userGuid, createChat);
+
+                ChatMessage createRepost = new(getAuthor, createChat, getIdea);
+
+                await _dbContext.ChatMessages.AddAsync(createRepost);
+                
+                createChat.Users.Add(chatUser);
+                createChat.Users.Add(chatUserSec);
+
+                await _dbContext.Chats.AddAsync(createChat);
+                await _dbContext.SaveChangesAsync();
+
+                MessageResultDto dto = new()
+                {
+                    AuthorAvatar = getAuthor.Avatar.Name,
+                    AuthorGuid = getAuthor.Id,
+                    AuthorName = getAuthor.UserName,
+                    ChatGuid = createChat.Id,
+                    IsRepeat = false,
+                    Message = getIdea.Name,
+                    IdeaAvatar = getIdea.Avatar.Name,
+                    IdeaGuid = getIdea.Id,
+                    IsRepost = true
+                };
+
+                await _chatContext.Clients.Group(createChat.Id).SendAsync("RecieveMessage", dto);
+
+                return new(true, "Success");
+            }
+
+            return new(false, "При отправлении репоста что-то пошло не так");
         }
     }
 }
