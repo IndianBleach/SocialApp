@@ -1,6 +1,6 @@
 ﻿#topicWindow {
     background-color: black;
-    min-height: 600px;
+    min-height: 450px;
     border: 1px solid #242424;
 }
 
@@ -62,7 +62,7 @@
 #topicWindowCommentsLoad {
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 374px;
+    height: 398px;
 }
 
 #goalWindowLoad {
@@ -184,6 +184,11 @@
 }
 
 @media (min-width: 230px) {
+
+    .window_resize {
+        width:90vw!important;
+    }
+
     #idea-react-adaptive {
         padding-top: 0.5rem;
     }
@@ -293,12 +298,21 @@
 }
 
 @media (min-width: 400px) {
+    .window_resize {
+        width: 86vw !important;
+    }
     #mainIdeaContainer {
         width: 400px !important;
     }
 }
 
 @media (min-width: 768px) {
+    #topicWindowCommentsLoad {
+        height: 276px;
+    }
+    .window_resize {
+        width: 812px!important;
+    }
     #idea-react-adaptive {
         padding-top: 2rem;
     }
@@ -368,10 +382,6 @@
         position: fixed !important;
     }
 
-    #topicWindowCommentsLoad {
-        height: 374px;
-    }
-
     .idea-wrapper-adaptive {
         padding-left: 1.5rem !important;
         padding-right: 1.5rem !important;
@@ -385,18 +395,21 @@
 }
 
 @media (min-width: 1200px) {
+    #topicWindowCommentsLoad {
+        height: 374px;
+    }
+    .window_resize {
+        width: 1000px !important;
+    }
     #settings-main-adaptive button {
         font-size: 12px !important;
     }
-
     #idea-react-adaptive {
         padding-top: 3rem;
     }
-
     #mainIdeaContainer {
         width: unset !important;
     }
-
     .idea-post-upd {
         width: 615.01px !important;
         height: 379.51px !important;
@@ -405,20 +418,16 @@
         .idea-post-upd h3 {
             font-size: 36px !important;
         }
-
     .idea-full-wrapper {
         height: 439px !important;
     }
-
     .section-link {
         font-size: 13px !important;
     }
-
         .section-link svg {
             width: unset !important;
             height: unset !important;
         }
-
     .topic-description {
         max-width: 482px !important;
     }
@@ -439,5 +448,11 @@
 
     #ideaSecondContainer {
         width: 615.01px !important;
+    }
+}
+
+@media (min-width: 1600px) {
+    #topicWindowCommentsLoad {
+        height: 424px;
     }
 }

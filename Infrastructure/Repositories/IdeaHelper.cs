@@ -42,6 +42,7 @@ namespace Infrastructure.Repositories
             else if (res.Days < 1) return "cегодня";
             else return $"{res.Days} дн. назад";
         }
+        
         public static List<HomeIdeaReactionDto> GroupIdeaReactions(
             ICollection<Reaction> baseReactionsTypes,
             ICollection<IdeaReaction> reactions, 
@@ -77,6 +78,38 @@ namespace Infrastructure.Repositories
             }
 
             return dtos.ToList();
+        }
+
+        public static bool CheckUserCanEditIdeaObject(
+            string authorGuid,
+            string currentUserGuid,
+            ICollection<IdeaMember> members,
+            bool isInitObject)
+        {
+            if (isInitObject)
+                return false;
+
+            if ((authorGuid.Equals(currentUserGuid)))
+                return true;
+
+            IdeaMemberRoles? authorRole = members.FirstOrDefault(x => x.UserId
+                .Equals(authorGuid))?.Role;
+
+            IdeaMemberRoles? userRole = members.FirstOrDefault(x => x.UserId
+                .Equals(currentUserGuid))?.Role;
+
+            if ((userRole == null) || (authorRole == null))
+                return false;
+
+            if (userRole.Equals(IdeaMemberRoles.Author))
+                return true;
+
+            // модеры удаляют мемберов
+            // автор удаляет мемебров и модеров
+            if (userRole < authorRole)
+                return true;
+
+            return false;
         }
     }
 }

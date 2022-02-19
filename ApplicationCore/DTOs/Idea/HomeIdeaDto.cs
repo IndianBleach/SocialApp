@@ -20,11 +20,5 @@ namespace ApplicationCore.DTOs.Idea
         public bool IsLiked { get; set; }
         public bool IsReacted { get; set; }
         public ICollection<HomeIdeaReactionDto> Reactions { get; set; }
-    }
-
-    public class IdeaSmallDto
-    { 
-        public string Guid {  get; set; }
-        public string AvatarName { get; set; }
     }    
 }

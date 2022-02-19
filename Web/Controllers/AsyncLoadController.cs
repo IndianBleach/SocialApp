@@ -25,6 +25,36 @@ namespace WebUi.Controllers
         }
 
 
+        [HttpPost]
+        [Route("/asyncload/idea/topiccomment")]
+        public async Task<JsonResult> CreateTopicComment(string guid, string text)
+        {
+            string authorGuid = GetUserIdOrNull();
+            if (authorGuid != null)
+            {
+                var res = await _loadService.CreateTopicCommentAsync(authorGuid, guid, text);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+        [HttpGet]
+        [Route("/asyncload/idea/gettopic")]
+        public async Task<JsonResult> GetTopicDetail(string guid)
+        {
+            string curUserGuid = GetUserIdOrNull();
+
+            if (curUserGuid != null)
+            {
+                var res = await _loadService.GetTopicDetailOrNullAsync(curUserGuid, guid);
+
+                return Json(res);
+            }
+
+            return Json(null);
+        }
+
 
         [HttpPost]
         [Route("/asyncload/user/sendinvite")]

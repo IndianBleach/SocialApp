@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.DTOs.AsyncLoad;
 using ApplicationCore.DTOs.AsyncLoad.Chat;
+using ApplicationCore.DTOs.AsyncLoad.Idea;
 using ApplicationCore.Entities.Chat;
 using ApplicationCore.Entities.UserEntity;
 using System;
@@ -13,6 +14,9 @@ namespace ApplicationCore.Interfaces
     public interface IAsyncLoadService
     {
 
+        Task<OperationResultDto> CreateTopicCommentAsync(string authorGuid, string topicGuid, string text);
+        Task<TopicDetail?> GetTopicDetailOrNullAsync(string currentUserGuid, string topicGuid);
+        //
         Task<OperationResultDto> SendIdeaInviteAsync(string? currentUserGuid, string userGuid, string ideaGuid);
         IEnumerable<IdeaToInviteDto> GetUserIdeasToInvite(string userGuid);
         Task<OperationResultDto> RepostIdeaAsync(string userGuid, string ideaGuid, string currentUserGuid);

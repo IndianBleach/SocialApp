@@ -90,8 +90,8 @@ namespace Infrastructure.Repositories
                     .ThenInclude(x => x.Idea)
                     .ThenInclude(x => x.Tags)
                 .FirstOrDefault(x => x.Id.Equals(userGuid))
-                .Ideas.FirstOrDefault()
-                ?.Idea.Tags.FirstOrDefault();
+                ?.Ideas.FirstOrDefault()
+                ?.Idea?.Tags?.FirstOrDefault();
 
                 if (getFirstTag != null)
                 {

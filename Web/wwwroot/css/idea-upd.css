@@ -247,10 +247,6 @@
         font-size: 12px !important;
     }
 
-    .nav-link {
-        padding: 0.5rem 0.4rem !important;
-    }
-
     .idea_menu_link a {
         font-weight: 700 !important;
         color: gray !important;
@@ -300,6 +296,11 @@
     .idea_modders {
         justify-content: start !important;
     }
+
+    .idea_detail_fix {
+        width: 100% !important;
+    }
+
 }
 
 @media (min-width: 1200px) {

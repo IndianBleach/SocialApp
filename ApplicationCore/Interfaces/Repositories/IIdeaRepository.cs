@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 namespace ApplicationCore.Interfaces
 {
     public interface IIdeaRepository
-    {        
+    {
+        Task<IEnumerable<IdeaSmallDto>> GetSimilarOrTrendsIdeasAsync(string? ideaGuid);
+        IdeaTopicListDto GetIdeaTopicList(string ideaGuid, int? page);
+        Task<IdeaDetailDto?> GetIdeaDetailOrNullAsync(string currentUserGuid, string ideaGuid);
         Task<CreateOperationResult> CreateIdeaAsync(CreateIdeaDto model);
         Task<ICollection<HomeIdeaReactionDto>> GroupAllReactionsAsync();
         ICollection<IdeaSmallDto> GetRecommendIdeas(string? userGuid);

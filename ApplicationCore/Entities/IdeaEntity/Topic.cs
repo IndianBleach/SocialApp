@@ -35,6 +35,7 @@ namespace ApplicationCore.Entities.IdeaEntity
 
     public class IdeaTopic : BaseEntity
     {
+        public string IdeaId { get; set; }
         public Idea Idea { get; set; }
         public string AuthorId { get; set; }
         public ApplicationUser Author { get; set; }
@@ -44,10 +45,11 @@ namespace ApplicationCore.Entities.IdeaEntity
         public ICollection<IdeaTopicComment> Comments { get; set; }
         public bool IsDefault { get; set; }
         public bool OnlyForModders { get; set; }
+        public bool IsInit { get; set; }
 
         public IdeaTopic(
             string authorId, string name,
-            string description, bool isDefault, bool onlyForModders)
+            string description, bool isDefault, bool onlyForModders, bool isInit)
         {
             AuthorId = authorId;
             Name = name;

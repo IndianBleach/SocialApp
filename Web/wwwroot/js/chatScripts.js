@@ -52,6 +52,10 @@
                 sessionStorage.setItem("activeChat", null);
                 sessionStorage.setItem("chatWith", userGuid);
 
+                sessionStorage.setItem("inviteUser", userGuid);
+                $("#inviteWindowUsername").text(name);
+                $("#inviteWindowAvatar").attr("src", "../media/userAvatars/" + avatar);
+
                 $("#activeChatContainer").removeClass("d-none");
                 $("#activeChatUserAvatar").attr("src", "../media/userAvatars/" + avatar)
                 $("#activeChatUserName").text(name);

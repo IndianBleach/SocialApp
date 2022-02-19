@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.ChatHub;
 using ApplicationCore.DTOs.AsyncLoad;
 using ApplicationCore.DTOs.AsyncLoad.Chat;
+using ApplicationCore.DTOs.AsyncLoad.Idea;
 using ApplicationCore.Entities.Chat;
 using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
@@ -8,6 +9,7 @@ using ApplicationCore.Identity;
 using ApplicationCore.Interfaces;
 using AutoMapper;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -611,6 +613,75 @@ namespace Infrastructure.Services
                 }
             }
             return new(false, "При отправке запроса что-то пошло не так");
+        }
+
+        public async Task<TopicDetail> GetTopicDetailOrNullAsync(string currentUserGuid, string topicGuid)
+        {
+            if (!string.IsNullOrWhiteSpace(currentUserGuid) &&
+                !string.IsNullOrWhiteSpace(topicGuid))
+            {
+                var getTopic = await _dbContext.IdeaTopics
+                    .Include(x => x.Idea)
+                    .ThenInclude(x => x.Members)
+                    .Include(x => x.Author)
+                    .ThenInclude(x => x.Avatar)
+                    .Include(x => x.Comments)
+                    .ThenInclude(x => x.Author)
+                    .ThenInclude(x => x.Avatar)
+                    .OrderByDescending(x => x.IsDefault)
+                    .OrderByDescending(x => x.DateCreated)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(topicGuid));
+
+                getTopic.Comments = getTopic.Comments
+                    .OrderByDescending(x => x.DateCreated)
+                    .Take(30)
+                    .ToList();
+
+                var config = new MapperConfiguration(conf => conf.CreateMap<IdeaTopic, TopicDetail>()
+                    .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                    .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                    .ForMember("Description", opt => opt.MapFrom(x => x.Description))
+                    .ForMember("DatePublished", opt => opt.MapFrom(x =>
+                        IdeaHelper.NormalizeDate(x.DateCreated)))
+                    .ForMember("AuthorGuid", opt => opt.MapFrom(x => x.AuthorId))
+                    .ForMember("AuthorAvatar", opt => opt.MapFrom(x => x.Author.Avatar.Name))
+                    .ForMember("CanEdit", opt => opt.MapFrom(x =>
+                        IdeaHelper.CheckUserCanEditIdeaObject(x.AuthorId, currentUserGuid, x.Idea.Members, x.IsInit)))
+                    .ForMember("ByModder", opt => opt.MapFrom(x => x.IsDefault))
+                    .ForMember("Comments", opt => opt.MapFrom(x => getTopic.Comments
+                        .OrderByDescending(x => x.DateCreated)
+                        .Take(30)
+                        .Select(e => new TopicDetailCommentDto()
+                        { 
+                            AuthorAvatar = e.Author.Avatar.Name,
+                            AuthorGuid = e.AuthorId,
+                            AuthorName = e.Author.UserName,
+                            Comment = e.Message,
+                            DatePublished = IdeaHelper.NormalizeDate(e.DateCreated)
+                        }))));
+
+                var mapper = new Mapper(config);
+
+                TopicDetail dto = mapper.Map<TopicDetail>(getTopic);
+
+                return dto;
+            }
+
+            return null;
+        }
+
+        public async Task<OperationResultDto> CreateTopicCommentAsync(string authorGuid, string topicGuid, string text)
+        {
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                IdeaTopicComment createComment = new(topicGuid, authorGuid, text);
+                await _dbContext.IdeaTopicComments.AddAsync(createComment);
+                await _dbContext.SaveChangesAsync();
+
+                return new(true, "Op. Success");
+            }
+
+            return new(true, "Op. Failed");
         }
     }
 }

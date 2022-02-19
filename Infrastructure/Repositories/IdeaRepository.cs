@@ -22,11 +22,16 @@ namespace Infrastructure.Repositories
         //private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationContext _dbContext;
         private readonly ITagService _tagService;
+        private readonly IGlobalService<Idea> _globalService;
 
-        public IdeaRepository(ITagService tagService, ApplicationContext context)
+        public IdeaRepository(
+            ITagService tagService,
+            ApplicationContext context,
+            IGlobalService<Idea> globalService)
         {
             _dbContext = context;
             _tagService = tagService;
+            _globalService = globalService;
         }
 
         public async Task<CreateOperationResult> CreateIdeaAsync(CreateIdeaDto model)
@@ -48,7 +53,7 @@ namespace Infrastructure.Repositories
 
                 List<IdeaTopic> topics = new()
                 {
-                    new(model.AuthorGuid, "Об этой идее", model.Description, true, false)
+                    new(model.AuthorGuid, "Об этой идее", model.Description, true, false, true)
                 };
 
                 Idea createIdea = new(model.Name, model.IsPrivate,
@@ -240,6 +245,144 @@ namespace Infrastructure.Repositories
             }
 
             return new List<IdeaSmallDto>();
+        }
+
+        public IdeaTopicListDto GetIdeaTopicList(string ideaGuid, int? page)
+        {
+            int correctPage = page ?? 1;
+            int count = ConstantsHelper.CountIdeasPerPage;
+
+            if (!string.IsNullOrEmpty(ideaGuid))
+            {
+                IEnumerable<IdeaTopic> getTopics = _dbContext.IdeaTopics
+                    .Include(x => x.Comments)
+                    .Include(x => x.Author)
+                    .ThenInclude(x => x.Avatar)
+                    .Where(x => x.IdeaId.Equals(ideaGuid));
+
+                IEnumerable<IdeaTopic> getTopicsPerPage = getTopics
+                    .OrderByDescending(x => x.IsDefault)
+                    .OrderByDescending(x => x.DateCreated)
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);                
+
+                if (getTopics != null)
+                {
+                    var config = new MapperConfiguration(conf => conf.CreateMap<IdeaTopic, IdeaTopicDto>()
+                        .ForMember("ByModder", opt => opt.MapFrom(x => x.IsDefault))
+                        .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                        .ForMember("AuthorGuid", opt => opt.MapFrom(x => x.AuthorId))
+                        .ForMember("AuthorName", opt => opt.MapFrom(x => x.Author.UserName))
+                        .ForMember("AuthorAvatar", opt => opt.MapFrom(x => x.Author.Avatar.Name))
+                        .ForMember("DatePublished", opt => opt.MapFrom(x => IdeaHelper.NormalizeDate(x.DateCreated)))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.Description))
+                        .ForMember("CommentsCount", opt => opt.MapFrom(x => x.Comments.Count)));                        
+
+                    var mapper = new Mapper(config);
+
+                    ICollection<IdeaTopicDto> dtos = mapper.Map<ICollection<IdeaTopicDto>>(getTopicsPerPage);
+
+                    IdeaTopicListDto resDto = new()
+                    {
+                        Pages = _globalService.CreatePages(getTopics.Count(), page),
+                        Topics = dtos
+                    };
+
+                    return resDto;
+                }                
+            }
+
+            IdeaTopicListDto res = new()
+            {
+                Pages = new List<PageInfoDto>(),
+                Topics = new List<IdeaTopicDto>()
+            };
+
+            return res;
+        }
+
+        public async Task<IdeaDetailDto?> GetIdeaDetailOrNullAsync(string currentUserGuid, string ideaGuid)
+        {
+            if (!string.IsNullOrEmpty(currentUserGuid) &&
+                !string.IsNullOrEmpty(ideaGuid))
+            {
+                Idea? getIdea = await _dbContext.Ideas
+                    .Include(x => x.Invitations)
+                    .Include(x => x.Status)
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Members)
+                    .ThenInclude(x => x.User)
+                    .ThenInclude(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Include(x => x.Reactions)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+                if (getIdea != null)
+                {
+                    var reacts = await _dbContext.Reactions.ToListAsync();
+
+                    var getCurUser = await _dbContext.Users
+                        .FirstOrDefaultAsync(x => x.Id.Equals(currentUserGuid));
+
+                    var config = new MapperConfiguration(conf => conf.CreateMap<Idea, IdeaDetailDto>()
+                        .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                        .ForMember("AvatarName", opt => opt.MapFrom(x => x.Avatar.Name))
+                        .ForMember("Status", opt => opt.MapFrom(x => new IdeaStatusDto(x.Status.Type)))
+                        .ForMember("Tags", opt => opt.MapFrom(x => x.Tags.Select(x => x.Name)))
+                        .ForMember("IsSecret", opt => opt.MapFrom(x => x.IsPrivate))
+                        .ForMember("Modders", opt => opt.MapFrom(x => x.Members
+                            .Where(x => x.Role < IdeaMemberRoles.Member)
+                            .Select(u => new IdeaModderDto(u.UserId, u.User.Avatar.Name))))
+                        .ForMember("Reactions", opt => opt.MapFrom(x =>
+                            IdeaHelper.GroupIdeaReactions(reacts, x.Reactions, currentUserGuid)))
+                        .ForMember("IsLiked", opt => opt.MapFrom(x => 
+                            IdeaHelper.CheckIsLiked(x.Members, x.Invitations, currentUserGuid)))
+                        .ForMember("CurrentRole", opt => opt.MapFrom(x => 
+                            new CurrentUserRoleDto(x.Members.FirstOrDefault(x => 
+                                x.UserId.Equals(currentUserGuid))))));                                                      
+
+                    var mapper = new Mapper(config);
+
+                    IdeaDetailDto dto = mapper.Map<IdeaDetailDto>(getIdea);
+
+                    // Current User Can Wathing
+                    if ((dto.IsSecret) && (dto.CurrentRole.Role == CurrentUserRoleTypes.Viewer))
+                        dto.CanUserWathing = false;
+                    else dto.CanUserWathing = true;
+
+                    // Already Reacted
+                    dto.IsReacted = dto.Reactions.Any(x => x.IsActive);
+
+                    return dto;
+                }
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<IdeaSmallDto>> GetSimilarOrTrendsIdeasAsync(string? ideaGuid)
+        {
+            IQueryable<Idea> similar;
+            if (!string.IsNullOrEmpty(ideaGuid))
+            {
+                Idea getIdea = await _dbContext.Ideas
+                    .Include(x => x.Tags)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+                
+                if (getIdea != null)
+                    similar = _dbContext.Ideas
+                        .Include(x => x.Tags)
+                        .Where(x => x.Tags
+                        .Contains(getIdea.Tags.First()))
+                        .Take(5);
+            }
+            similar = _dbContext.Ideas
+                .Include(x => x.Reactions)
+                .OrderBy(x => x.Reactions.Count)
+                .Take(5);
+
+            return similar.Select(x => new IdeaSmallDto(x.Id, x.Avatar.Name));
         }
     }
 }
