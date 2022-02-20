@@ -683,5 +683,87 @@ namespace Infrastructure.Services
 
             return new(true, "Op. Failed");
         }
+
+        public async Task<OperationResultDto> CreateTopicAsync(string name, string content, string ideaGuid, string authorGuid)
+        {
+            if (!string.IsNullOrWhiteSpace(name) &&
+                !string.IsNullOrWhiteSpace(content) &&
+                !string.IsNullOrWhiteSpace(ideaGuid))
+            {
+                Idea idea = await _dbContext.Ideas
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+                if (idea != null)
+                {
+                    IdeaMemberRoles? getRole = idea.Members
+                        .FirstOrDefault(x => x.UserId.Equals(authorGuid))
+                        ?.Role;                    
+
+                    if (getRole != null)
+                    {
+                        bool isDed = getRole <= IdeaMemberRoles.Modder;
+                        IdeaTopic createTopic = new(idea, authorGuid, name, content, isDed, false);
+                        await _dbContext.IdeaTopics.AddAsync(createTopic);
+                        await _dbContext.SaveChangesAsync();
+
+                        return new(true, "Op. (Create) Success");
+                    }
+                }
+            }
+            return new(false, "Op. (Create) Failed");
+        }
+
+        public async Task<OperationResultDto> RemoveTopicCommentAsync(string commentGuid, string topicGuid, string currentUserGuid)
+        {
+            IdeaTopic getTopic = await _dbContext.IdeaTopics
+                .Include(x => x.Comments)
+                .Include(x => x.Idea)
+                .ThenInclude(x => x.Members)
+                .Include(x => x.Author)
+                .FirstOrDefaultAsync(x => x.Id.Equals(topicGuid));
+
+            IdeaTopicComment getComment = getTopic.Comments
+                .FirstOrDefault(x => x.Id.Equals(commentGuid));
+
+            if (getComment != null)
+            {
+                bool checkCanUserEdit = IdeaHelper.CheckUserCanEditIdeaObject(
+                getTopic.Author.Id, currentUserGuid, getTopic.Idea.Members, getTopic.IsInit);
+
+                if (checkCanUserEdit)
+                {
+                    _dbContext.IdeaTopics.Remove(getTopic);
+                    await _dbContext.SaveChangesAsync();
+
+                    return new(true, "Op. (Remove) Success");
+                }
+            }            
+
+            return new(false, "Op. (Remove) Failed");
+        }
+
+        public async Task<OperationResultDto> RemoveTopicAsync(string topicGuid, string currentUserGuid)
+        {
+            IdeaTopic getTopic = await _dbContext.IdeaTopics
+                .Include(x => x.Comments)
+                .Include(x => x.Idea)
+                .ThenInclude(x => x.Members)
+                .Include(x => x.Author)
+                .FirstOrDefaultAsync(x => x.Id.Equals(topicGuid));
+
+            bool checkCanUserEdit = IdeaHelper.CheckUserCanEditIdeaObject(
+                getTopic.Author.Id, currentUserGuid, getTopic.Idea.Members, getTopic.IsInit);
+
+            if (checkCanUserEdit)
+            {
+                _dbContext.IdeaTopics.Remove(getTopic);
+                await _dbContext.SaveChangesAsync();
+
+                return new(true, "Op. (Remove) Success");
+            }
+
+            return new(false, "Op. (Remove) Failed");
+        }
     }
 }

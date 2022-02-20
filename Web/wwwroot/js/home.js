@@ -39,6 +39,7 @@
             $("#newGoalWindow").addClass("d-none");
             $("#membersWindow").addClass("d-none");
             $(".topicMessage").remove();
+            $("#reactWindow").addClass("d-none");
 
             //profile
             $(".firendsWarning").remove();

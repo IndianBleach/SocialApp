@@ -51,6 +51,7 @@ namespace ApplicationCore.Entities.IdeaEntity
             string authorId, string name,
             string description, bool isDefault, bool onlyForModders, bool isInit)
         {
+            IsInit = isInit;
             AuthorId = authorId;
             Name = name;
             Description = description;

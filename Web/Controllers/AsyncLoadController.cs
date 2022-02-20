@@ -26,6 +26,52 @@ namespace WebUi.Controllers
 
 
         [HttpPost]
+        [Route("/asyncload/idea/createtopic")]
+        public async Task<JsonResult> CreateTopic(string name, string content, string ideaGuid)
+        {
+            string curUserGuid = GetUserIdOrNull();
+
+            if (curUserGuid != null)
+            {
+                var res = await _loadService.CreateTopicAsync(name, content, ideaGuid, curUserGuid);
+
+                return Json(res);
+            }
+
+            return Json(null);
+        }
+
+
+        [Route("/asyncload/idea/removetopiccomment")]
+        public async Task<JsonResult> RemoveTopicComment(string topicGuid, string commentGuid)
+        {
+            string curUserGuid = GetUserIdOrNull();
+            if (curUserGuid != null)
+            {
+                var res = await _loadService.RemoveTopicCommentAsync(commentGuid, topicGuid, curUserGuid);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+
+        [Route("/asyncload/idea/removetopic")]
+        public async Task<JsonResult> RemoveTopic(string topicGuid)
+        {
+            string curUserGuid = GetUserIdOrNull();
+            if (curUserGuid != null)
+            {
+                var res = await _loadService.RemoveTopicAsync(topicGuid, curUserGuid);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+
+
+        [HttpPost]
         [Route("/asyncload/idea/topiccomment")]
         public async Task<JsonResult> CreateTopicComment(string guid, string text)
         {

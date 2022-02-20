@@ -276,7 +276,7 @@ namespace Infrastructure.Repositories
                         .ForMember("AuthorAvatar", opt => opt.MapFrom(x => x.Author.Avatar.Name))
                         .ForMember("DatePublished", opt => opt.MapFrom(x => IdeaHelper.NormalizeDate(x.DateCreated)))
                         .ForMember("Name", opt => opt.MapFrom(x => x.Name))
-                        .ForMember("Name", opt => opt.MapFrom(x => x.Description))
+                        .ForMember("Description", opt => opt.MapFrom(x => x.Description))
                         .ForMember("CommentsCount", opt => opt.MapFrom(x => x.Comments.Count)));                        
 
                     var mapper = new Mapper(config);
