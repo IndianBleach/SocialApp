@@ -28,14 +28,28 @@
                 if (resp.canEdit == true) {
                     $("#topicDetailEdit").append(`<button data-guid="${resp.guid}" class="topicRemoveBtn t-xl t-med btn p-0 ps-2 bg-transparent text-danger">X</button>`);
                 }
+                else {
+                    $(".topicRemoveBtn").remove();
+                }
 
                 resp.comments.forEach(x => {
-                    if (x.canEdit == true) {
+                    if (resp.canEdit == true) {
+                        $("#topicWindowCommentsLoad").append(`<div class="topicMessage"><img src="../media/userAvatars/${x.authorAvatar}" /><div><a href="/user/${x.authorGuid}">${x.authorName}<span class="text-muted"> - ${x.datePublished}</span></a><button data-topic="${resp.guid}" data-comment="${x.guid}" class="ms-1 topicCommentRemoveBtn btn p-0 bg-transparent text-danger">X</button><br />${x.comment}</div></div>`);
+                    }
+                    else {
                         $("#topicWindowCommentsLoad").append(`<div class="topicMessage"><img src="../media/userAvatars/${x.authorAvatar}" /><div><a href="/user/${x.authorGuid}">${x.authorName}<span class="text-muted"> - ${x.datePublished}</span></a><br />${x.comment}</div></div>`);
                     }
-                    $("#topicWindowCommentsLoad").append(`<div class="topicMessage"><img src="../media/userAvatars/${x.authorAvatar}" /><div><a href="/user/${x.authorGuid}">${x.authorName}<span class="text-muted"> - ${x.datePublished}</span></a><br />${x.comment}</div></div>`);
                 })
 
+                // TOPIC - Remove Comment
+                $(".topicCommentRemoveBtn").on("click", (e) => {
+                    let topic = e.target.dataset.topic;
+                    let comment = e.target.dataset.comment;
+                    e.target.parentElement.parentElement.remove();
+                    $.post("/asyncload/idea/removetopiccomment", { topicGuid: topic, commentGuid: comment }, resp => {
+                        console.log(resp);
+                    })
+                })
 
                 // TOPIC - Remove
                 $(".topicRemoveBtn").on("click", (e) => {
@@ -43,7 +57,7 @@
                     $.post("/asyncload/idea/removetopic", { topicGuid }, resp => {
                         console.log(resp);
                     })
-                })
+                });
             }
         })
     });
@@ -104,32 +118,30 @@
         })
     })
 
+
+
     // REACTS
     $(".showReactWindowBtn").on("click", (e) => {
         $("#reactWindow").removeClass("d-none");
         $("#hideBackgroundWrapper").removeClass("d-none");
         $("body").addClass("overflow-hidden");
     });
-
     $(".closeReactWindowBtn").on("click", () => {
         $("#reactWindow").addClass("d-none");
         $("#hideBackgroundWrapper").addClass("d-none");
         $("body").removeClass("overflow-hidden");
     });
 
-
     // EMOJI
     $("#showMessageEmojiBtn").on("click", (e) => {
         e.preventDefault();
         $("#choiceEmojiWindow").removeClass("d-none");
     });
-
     $(".asyncSendEmojiBtn").on("click", (e) => {
         let messageNow = $("#topicCommentInput").val();
         let mess = `${messageNow + e.target.textContent.replace(/ /g, "")}`;
         $("#topicCommentInput").val(mess);
     });
-
     $("#closeEmojiWindowBtn").on("click", (e) => {
         $("#choiceEmojiWindow").addClass("d-none");
     });

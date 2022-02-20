@@ -13,6 +13,7 @@ namespace ApplicationCore.DTOs.AsyncLoad.Idea
         public string AuthorAvatar { get; set; }
         public string Comment { get; set; }
         public string DatePublished { get; set; }
+        public string Guid { get; set; }
     }
 
     public class TopicDetail

@@ -657,7 +657,8 @@ namespace Infrastructure.Services
                             AuthorGuid = e.AuthorId,
                             AuthorName = e.Author.UserName,
                             Comment = e.Message,
-                            DatePublished = IdeaHelper.NormalizeDate(e.DateCreated)
+                            DatePublished = IdeaHelper.NormalizeDate(e.DateCreated),
+                            Guid = e.Id
                         }))));
 
                 var mapper = new Mapper(config);
@@ -723,7 +724,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Author)
                 .FirstOrDefaultAsync(x => x.Id.Equals(topicGuid));
 
-            IdeaTopicComment getComment = getTopic.Comments
+            IdeaTopicComment getComment = getTopic?.Comments
                 .FirstOrDefault(x => x.Id.Equals(commentGuid));
 
             if (getComment != null)

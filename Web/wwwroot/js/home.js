@@ -40,6 +40,7 @@
             $("#membersWindow").addClass("d-none");
             $(".topicMessage").remove();
             $("#reactWindow").addClass("d-none");
+            $(".topicRemoveBtn").remove();
 
             //profile
             $(".firendsWarning").remove();

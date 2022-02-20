@@ -30,6 +30,16 @@ namespace Web.Controllers
         [Route("/idea/{guid}")]
         public async Task<IActionResult> Index(string? guid, int? page, string? section)
         {
+            string[] allSections = new string[]
+            {
+                "about",
+                "goals",
+            };
+
+            string validSection = allSections.Any(x => x.Equals(section)) == true 
+                ? section : "about";
+            
+
             IdeaAboutViewModel indexVm = new()
             {
                 Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
@@ -37,6 +47,7 @@ namespace Web.Controllers
                 RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
                 Tags = await _tagService.GetAllTagsAsync(),
             };
+
 
             return View(indexVm);
         }
