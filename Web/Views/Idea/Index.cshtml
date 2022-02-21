@@ -625,16 +625,208 @@
                         </div>
                         <div class="col-12 d-flex flex-wrap">
                             @foreach (var react in Model.Idea.Reactions)
-                            { 
-                            <div class="aside_reaction col-6">
-                                @react.Value
-                                <span>@react.Count</span>
-                            </div>
+                            {
+                                <div class="aside_reaction col-6">
+                                    @react.Value
+                                    <span>@react.Count</span>
+                                </div>
                             }
                         </div>
                     </div>
                 </div>
                 <!---->
+                <!--Members-->
+                <div id="membersWindow" class="d-none window_rounded_shadow">
+                    <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
+                        <span class="clr-white t-md">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="19"
+                                 height="19"
+                                 fill="currentColor"
+                                 class="me-1 bi bi-people"
+                                 viewBox="0 0 16 16">
+                                <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                            </svg>
+                            Участники идеи
+                        </span>
+                        <button class="closeMembersWindowBtn btn btn-sm bg-transparent clr-white">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 fill="currentColor"
+                                 class="bi bi-x"
+                                 viewBox="0 0 16 16">
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="col-12 p-4 pt-2">
+                        <div class="mt-1 d-flex justify-content-around">
+                            <button id="toMembersWindowBtn"
+                                    class="clr-mute btn-full-link btn-unfocus btn bg-transparent btn-link-active">
+                                Участники
+                            </button>
+                            @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Author)
+                            { 
+                            <button id="toMemberRequestsWindowBtn"
+                                    class="clr-mute btn-full-link btn-unfocus btn bg-transparent">
+                                Заявки
+                            </button>
+                            }                            
+                        </div>
+                        <div class="mt-2 col-12">
+                            <section>
+                                <div class="pt-1 custom-scroll" id="memberWindowLoad">
+                                    @if (Model.Idea.Members.Count <= 0)
+                                    {
+                                        <div class='h-100 d-flex justify-content-center align-items-center text-center'>
+                                            <p class='t-md t-med text-muted'>В идее нет участников. <br />Отправляйте приглашения, либо ждите заявки</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var member in Model.Idea.Members)
+                                        {
+                                            <div class="mb-2 repostToUser">
+                                                <a asp-action="@member.Guid" asp-controller="user">
+                                                    <img class="me-1" src="~/media/userAvatars/@member.Avatar" />
+                                                    @member.Name
+                                                </a>
+                                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Author)
+                                                {
+                                                    <button data-idea="@Model.Idea.Guid" data-user="@member.Guid" class="asyncRemoveMemberBtn btn clr-mute t-med">
+                                                        Выгнать
+                                                    </button>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </section>
+                            @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
+                            {
+                            <section>
+                                <div class="d-none pt-1 custom-scroll"
+                                     id="memberRequestsWindowLoad">
+                                    @if (Model.Idea.MemberRequests.Count <= 0)
+                                    {
+                                        <div class='h-100 d-flex justify-content-center align-items-center text-center'>
+                                            <p class='t-md t-med text-muted'>Запросов в идею нет. <br />Отправляйте приглашения, либо ждите заявки</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var member in Model.Idea.MemberRequests)
+                                        {
+                                <div class="mb-2 repostToUser">
+                                    <a asp-action="@member.Guid" asp-controller="user">
+                                        <img class="me-1" src="~/media/userAvatars/@member.Avatar" />
+                                        @member.Name
+                                    </a>
+                                    @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Author)
+                                    {
+                                        <button data-idea="@Model.Idea.Guid" data-user="@member.Guid" class="asyncAcceptMemberBtn btn clr-mute t-med">
+                                            Принять
+                                        </button>
+                                        <button data-idea="@Model.Idea.Guid" data-user="@member.Guid" class="ms-1 asyncRejectMemberBtn btn clr-mute t-med">
+                                            <svg data-idea="@Model.Idea.Guid" data-user="@member.Guid" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                            </svg>
+                                        </button>
+                                    }
+                                </div>
+                                        }
+                                    }
+                                </div>
+                            </section>
+                            }                            
+                        </div>
+                    </div>
+                </div>
+                <!---->
+
+                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
+                {
+                    <!--New Goal-->
+                    <div id="newGoalWindow" class="d-none window_rounded_shadow">
+                        <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
+                            <span class="clr-white t-md">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="19"
+                                     height="19"
+                                     fill="currentColor"
+                                     class="me-1 clr-mute bi bi-trophy"
+                                     viewBox="0 0 16 16">
+                                    <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935zM3.504 1c.007.517.026 1.006.056 1.469.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.501.501 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667.03-.463.049-.952.056-1.469H3.504z" />
+                                </svg>
+                                Новая цель
+                            </span>
+                            <button class="closeNewGoalWindowBtn btn btn-sm bg-transparent clr-white">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="24"
+                                     height="24"
+                                     fill="currentColor"
+                                     class="bi bi-x"
+                                     viewBox="0 0 16 16">
+                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="col-12 p-4">
+                            <div class="text-center pt-3 pb-4">
+                                <img src="~/media/userAvatars/@avatar"
+                                     height="44"
+                                     width="44"
+                                     class="b-all box-shadow rounded-circle" />
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="42"
+                                     height="42"
+                                     fill="currentColor"
+                                     class="ms-1 clr-white bi bi-trophy"
+                                     viewBox="0 0 16 16">
+                                    <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935zM3.504 1c.007.517.026 1.006.056 1.469.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.501.501 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667.03-.463.049-.952.056-1.469H3.504z" />
+                                </svg>
+                            </div>
+                            <div class="mt-2 col-12 d-flex justify-content-center">
+                                <form data-guid="@Model.Idea.Guid" id="newGoalForm" class="col-10">
+                                    <div class="col-12 mb-2">
+                                        <input type="text"
+                                               class="form-control"
+                                               id="floatingInput" />
+                                        <label class="pt-1 t-sm clr-mute" for="floatingInput">
+                                            Придумайте название
+                                        </label>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <textarea style="height: 116px; resize: none !important;"
+                                                  type="text"
+                                                  class="form-control"
+                                                  id="floatingInput"></textarea>
+                                        <label class="pt-1 t-sm clr-mute" for="floatingInput">
+                                            Опишите цель, другие участники могут добавлять задачи и
+                                            менять им статус.
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value=""
+                                               id="flexCheckChecked" />
+                                        <span class="g-status-text">🎯</span>
+                                        <label class="t-sm clr-mute form-check-label"
+                                               for="flexCheckChecked">
+                                            Добавить начальные задачи
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="mt-4 icon-link-btn">
+                                        Создать цель
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!---->
+                }
             </div>
         </div>
     </div>
@@ -879,7 +1071,6 @@
         </main>
     </div>
 }
-
 else
 {
     <div class="container-sm main_idea" style="margin-top: 140px;">
@@ -1014,7 +1205,7 @@ else
                     <div class="col-12 rad-md bg-darkn mt-3">
                         <ul class="nav d-flex col-12">
                             <li class="p-0 col text-center idea_menu_link active nav-item">
-                                <a class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                                <a disabled asp-action="@Model.Idea.Guid" asp-controller="idea" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -1027,7 +1218,7 @@ else
                                 </a>
                             </li>
                             <li class="p-0 col text-center idea_menu_link nav-item">
-                                <a class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                                <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="goals" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -1054,7 +1245,7 @@ else
                                 </a>
                             </li>
                             <li class="p-0 col text-center idea_menu_link nav-item">
-                                <a class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                                <a class="showMemberWindowBtn p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -1167,6 +1358,8 @@ else
                                         <p class="mb-0 t-sm t-smbold text-muted">@Model.Idea.CurrentRole.RoleName</p>
                                     </div>
                                 </div>
+                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
+                                {
                                 <div class="btn-back-hover aside_section_adaptive">
                                     <button class="p-3 showNewTopicWindowBtn col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
                                         Добавить топик
@@ -1180,19 +1373,46 @@ else
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="btn-back-hover aside_section_adaptive">
-                                    <button class="p-3 showNewGoallWindowBtn col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
-                                        Создать цель
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             width="19"
-                                             height="19"
-                                             fill="currentColor"
-                                             class="ms-1 bi bi-trophy"
-                                             viewBox="0 0 16 16">
-                                            <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935zM3.504 1c.007.517.026 1.006.056 1.469.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.501.501 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667.03-.463.049-.952.056-1.469H3.504z" />
-                                        </svg>
-                                    </button>
-                                </div>
+                                }                                
+                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
+                                {
+                                    <div class="btn-back-hover aside_section_adaptive">
+                                        <button class="p-3 showNewGoallWindowBtn col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
+                                            Создать цель
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 width="19"
+                                                 height="19"
+                                                 fill="currentColor"
+                                                 class="ms-1 bi bi-trophy"
+                                                 viewBox="0 0 16 16">
+                                                <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935zM3.504 1c.007.517.026 1.006.056 1.469.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.501.501 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667.03-.463.049-.952.056-1.469H3.504z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                }
+                                @if (Model.Idea.CurrentRole.Role.Equals(ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Viewer))
+                                {
+                                    <div class="p-2">
+                                        <label class="pb-1 clr-mute t-sm t-med">
+                                            <span class="pb-2 text-muted t-xbold t-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     width="16"
+                                                     height="16"
+                                                     fill="currentColor"
+                                                     class="t-warning bi bi-lamp"
+                                                     viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd"
+                                                          d="M5.04.303A.5.5 0 0 1 5.5 0h5c.2 0 .38.12.46.303l3 7a.5.5 0 0 1-.363.687h-.002c-.15.03-.3.056-.45.081a32.731 32.731 0 0 1-4.645.425V13.5a.5.5 0 1 1-1 0V8.495a32.753 32.753 0 0 1-4.645-.425c-.15-.025-.3-.05-.45-.08h-.003a.5.5 0 0 1-.362-.688l3-7ZM3.21 7.116A31.27 31.27 0 0 0 8 7.5a31.27 31.27 0 0 0 4.791-.384L10.171 1H5.83L3.209 7.116Z" />
+                                                    <path d="M6.493 12.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.052.075l-.001.004-.004.01V14l.002.008a.147.147 0 0 0 .016.033.62.62 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.62.62 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411Z" />
+                                                </svg>
+                                                RoundTip
+                                            </span>
+                                            <div class="pt-1">
+                                                Нажмите на сердечко, чтобы подать заявку в идею <br /> и создавать собственные топики и цели
+                                            </div>
+                                        </label>
+                                    </div>
+                                }
                             </div>
                         </section>
                         <section>

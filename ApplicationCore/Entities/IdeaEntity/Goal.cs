@@ -44,6 +44,7 @@ namespace ApplicationCore.Entities.IdeaEntity
 
     public class IdeaGoal : BaseEntity
     {
+        public string IdeaId { get; set; }
         public Idea Idea { get; set; }
         public string AuthorId { get; set; }
         public ApplicationUser Author { get; set; }
@@ -54,6 +55,20 @@ namespace ApplicationCore.Entities.IdeaEntity
         public bool IsDefault { get; set; }
         public bool IsPrivate { get; set; }
 
+
+        public IdeaGoal(Idea idea, ApplicationUser author, string name,
+            string description, bool isDefault, bool isPrivate)
+        {
+            IdeaId = idea.Id;
+            Idea = idea;
+            Author = author;
+            Name = name;
+            Description = description;
+            IsDefault = isDefault;
+            IsPrivate = isPrivate;
+            DateCreated = DateTime.Now;
+            Tasks = new List<IdeaGoalTask>();
+        }
 
         public IdeaGoal(string authorId, string name,
            string description, bool isDefault, bool isPrivate)

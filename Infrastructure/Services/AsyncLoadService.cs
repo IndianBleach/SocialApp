@@ -765,6 +765,140 @@ namespace Infrastructure.Services
             }
 
             return new(false, "Op. (Remove) Failed");
+        }        
+
+        public async Task<OperationResultDto> CreateGoalAsync(string name, string description, string ideaGuid, bool withTasks, string authorGuid)
+        {
+            if (!string.IsNullOrEmpty(ideaGuid) &&
+                !string.IsNullOrEmpty(authorGuid))
+            {
+                Idea getIdea = await _dbContext.Ideas
+                    .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+                ApplicationUser getUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(x => x.Id.Equals(authorGuid));
+
+                if ((getIdea != null) && (getUser != null))
+                {
+                    IdeaGoal create = new(getIdea, getUser, name, description, false, false);
+
+                    if (withTasks)
+                    {
+                        IdeaGoalTask task1 = new(getUser.Id, IdeaGoalTaskType.Waiting, "Создать 5 топиков");
+                        IdeaGoalTask task2 = new(getUser.Id, IdeaGoalTaskType.Waiting, "Добавьте 5 новых задач");
+                        create.Tasks.Add(task1);
+                        create.Tasks.Add(task2);
+                    }
+
+                    await _dbContext.IdeaGoals.AddAsync(create);
+                    await _dbContext.SaveChangesAsync();
+
+                    return new(true, "Op. (Create) Success");
+                }
+            }
+
+            return new(false, "Opt. (Create) Failed");
+        }
+              
+        public async Task<OperationResultDto> RemoveIdeaMemberAsync(string ideaGuid, string userGuid, string curUserGuid)
+        {
+            if (!string.IsNullOrWhiteSpace(ideaGuid) &&
+                !string.IsNullOrWhiteSpace(userGuid) &&
+                !string.IsNullOrWhiteSpace(curUserGuid))
+            {
+                Idea getIdea = await _dbContext.Ideas
+                    .Include(x => x.Invitations)
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+                bool isAuthor = getIdea != null ?
+                    IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Author) :
+                    false;
+
+                if (isAuthor)
+                {
+                    IdeaMember getMember = getIdea.Members
+                        .FirstOrDefault(x => x.UserId.Equals(userGuid));
+
+                    if (getMember != null)
+                    {
+                        _dbContext.IdeaMembers.Remove(getMember);
+                        await _dbContext.SaveChangesAsync();
+
+                        return new(true, "Op. Remove member (Success)");
+                    }
+                }
+            }
+
+            return new(false, "Op. Remove member (Failed)");
+        }
+
+        public async Task<OperationResultDto> RejectIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid)
+        {
+            Idea getIdea = await _dbContext.Ideas
+                    .Include(x => x.Invitations)
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+            bool isModderOrAuthor = getIdea != null ?
+                IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder) :
+                false;
+
+            if (isModderOrAuthor)
+            {
+                IdeaInvitation getRequest = getIdea.Invitations
+                    .FirstOrDefault(x => x.UserId.Equals(userGuid));
+
+                if (getRequest != null)
+                {
+                    _dbContext.IdeaInvitations.Remove(getRequest);
+                    await _dbContext.SaveChangesAsync();
+
+                    return new(true, "Op. Reject member req. (Success)");
+                }
+            }
+
+            return new(false, "Op. Reject member req. (Failed)");
+        }
+
+        public async Task<OperationResultDto> AcceptIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid)
+        {
+            Idea getIdea = await _dbContext.Ideas
+                    .Include(x => x.Invitations)
+                    .Include(x => x.Members)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+            bool isHaving = IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder);
+
+            bool isModderOrAuthor = getIdea != null ?
+                IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder) :
+                false;
+
+            if (isModderOrAuthor)
+            {
+                IdeaInvitation getRequest = getIdea.Invitations
+                    .FirstOrDefault(x => x.UserId.Equals(userGuid));
+
+                if (getRequest != null)
+                {
+                    IdeaMember createMember = new(userGuid, IdeaMemberRoles.Member);
+
+                    getIdea.Members.Add(createMember);
+
+                    _dbContext.Ideas.Update(getIdea);
+                    _dbContext.IdeaInvitations.Remove(getRequest);
+                    await _dbContext.SaveChangesAsync();
+
+                    return new(true, "Op. Accept member req. (Success)");
+                }
+            }
+
+            return new(false, "Op. Accept member req. (Failed)");
+        }
+
+        public Task<OperationResultDto> CreateGoalTaskAsync(string content, string goalGuid, string currentUserGuid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -38,7 +38,21 @@ namespace Web.Controllers
 
             string validSection = allSections.Any(x => x.Equals(section)) == true 
                 ? section : "about";
-            
+
+            if (validSection.Equals("goals"))
+            {
+                IdeaGoalsViewModel goalsVm = new()
+                {
+                    Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
+                    GoalList = _ideaRepository.GetIdeaGoalList(guid, page),
+                    RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
+                    Tags = await _tagService.GetAllTagsAsync(),
+                };
+
+                return View("Goals", goalsVm);
+            }
+
+
 
             IdeaAboutViewModel indexVm = new()
             {

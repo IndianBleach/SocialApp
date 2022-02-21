@@ -119,6 +119,105 @@
     })
 
 
+    // GOAL - New window
+    $(".showNewGoallWindowBtn").on("click", (e) => {
+        $("#newGoalWindow").removeClass("d-none");
+        $("#hideBackgroundWrapper").removeClass("d-none");
+        $("body").addClass("overflow-hidden");
+    });
+
+    $(".closeNewGoalWindowBtn").on("click", (e) => {
+        $("#newGoalWindow").addClass("d-none");
+        $("#hideBackgroundWrapper").addClass("d-none");
+        $("body").removeClass("overflow-hidden");
+    });
+
+    $("#newGoalForm").on("submit", (e) => {
+        e.preventDefault();
+        let idea = e.target.dataset.guid;
+        let name = e.target.getElementsByTagName("input")[0].value;
+        let desc = e.target.getElementsByTagName("textarea")[0].value;
+        let withTasks = e.target.getElementsByTagName("input")[1].checked;
+
+        console.log(idea);
+        console.log(name);
+        console.log(desc);
+        console.log(withTasks);
+
+        $.post("/asyncload/idea/creategoal", { idea, name, desc, withTasks }, resp => {
+            console.log(resp);
+        });
+    })
+
+
+    //asyncRejectMemberBtn
+    $(".asyncRejectMemberBtn").on("click", (e) => {
+        let user = e.target.dataset.user;
+        let idea = e.target.dataset.idea;
+        e.target.closest("div").getElementsByTagName("button")[0].setAttribute("disabled", true);
+        e.target.classList.add("clr-mute");
+        e.target.textContent = "Принят";
+        e.target.setAttribute("disabled", true);
+        $.post("/asyncload/idea/rejectmember", { idea, user }, resp => {
+            console.log(resp);
+        })
+    })
+
+    //asyncAcceptMemberBtn
+    $(".asyncAcceptMemberBtn").on("click", (e) => {
+        let user = e.target.dataset.user;
+        let idea = e.target.dataset.idea;
+        e.target.closest("div").getElementsByTagName("button")[1].setAttribute("disabled", true);
+        e.target.classList.add("clr-mute");
+        e.target.textContent = "Принят";
+        e.target.setAttribute("disabled", true);
+        $.post("/asyncload/idea/acceptmember", { idea, user }, resp => {
+            console.log(resp);
+        })
+    })
+
+    //asyncRemoveMemberBtn
+    $(".asyncRemoveMemberBtn").on("click", (e) => {
+        let user = e.target.dataset.user;
+        let idea = e.target.dataset.idea;
+        e.target.classList.add("clr-mute");
+        e.target.textContent = "Удалён";
+        e.target.setAttribute("disabled", true);
+        $.post("/asyncload/idea/removemember", { idea, user }, resp => {
+            console.log(resp);
+        })
+    })
+
+    // MEMBERS - Show
+    $(".showMemberWindowBtn").on("click", (e) => {
+        $("#membersWindow").removeClass("d-none");
+        $("#hideBackgroundWrapper").removeClass("d-none");
+        $("body").addClass("overflow-hidden");
+    });
+
+    // MEMBERS - to Requests
+    $("#toMemberRequestsWindowBtn").on("click", (e) => {
+        $("#toMembersWindowBtn").removeClass("btn-link-active");
+        e.target.classList.add("btn-link-active");
+        $("#memberWindowLoad").addClass("d-none");
+        $("#memberRequestsWindowLoad").removeClass("d-none");
+    });
+
+    // MEMBERS - to Members
+    $("#toMembersWindowBtn").on("click", (e) => {
+        $("#toMemberRequestsWindowBtn").removeClass("btn-link-active");
+        e.target.classList.add("btn-link-active");
+        $("#memberRequestsWindowLoad").addClass("d-none");
+        $("#memberWindowLoad").removeClass("d-none");
+    });
+
+    // MEMBERS - Close
+    $(".closeMembersWindowBtn").on("click", (e) => {
+        $("#membersWindow").addClass("d-none");
+        $("#hideBackgroundWrapper").addClass("d-none");
+        $("body").removeClass("overflow-hidden");
+    });
+
 
     // REACTS
     $(".showReactWindowBtn").on("click", (e) => {

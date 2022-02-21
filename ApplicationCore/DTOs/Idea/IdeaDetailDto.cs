@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities.IdeaEntity;
+﻿using ApplicationCore.DTOs.User;
+using ApplicationCore.Entities.IdeaEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,6 +66,8 @@ namespace ApplicationCore.DTOs.Idea
         public IEnumerable<string> Tags { get; set; }
         public IEnumerable<IdeaModderDto> Modders { get; set; }
         public ICollection<HomeIdeaReactionDto> Reactions { get; set; }
+        public ICollection<UserSmallDto> Members { get; set; }
+        public ICollection<UserSmallDto> MemberRequests { get; set; }
         public CurrentUserRoleDto CurrentRole { get; set; }
         public bool IsReacted { get; set; }        
         public bool IsLiked { get; set; }

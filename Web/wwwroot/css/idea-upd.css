@@ -45,6 +45,14 @@
     border: none !important;
 }
 
+
+#memberWindowLoad {
+    height: 372px!important;
+}
+#memberRequestsWindowLoad {
+    height: 372px!important;
+}
+
 .idea_menu_link {
     transition: all 0.3s ease;
 }

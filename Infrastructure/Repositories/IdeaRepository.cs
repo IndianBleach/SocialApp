@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.DTOs;
+using ApplicationCore.DTOs.AsyncLoad;
 using ApplicationCore.DTOs.Create;
 using ApplicationCore.DTOs.Idea;
+using ApplicationCore.DTOs.User;
 using ApplicationCore.Entities;
 using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Interfaces;
@@ -33,6 +35,8 @@ namespace Infrastructure.Repositories
             _tagService = tagService;
             _globalService = globalService;
         }
+
+
 
         public async Task<CreateOperationResult> CreateIdeaAsync(CreateIdeaDto model)
         {
@@ -309,6 +313,8 @@ namespace Infrastructure.Repositories
             {
                 Idea? getIdea = await _dbContext.Ideas
                     .Include(x => x.Invitations)
+                    .ThenInclude(x => x.User)
+                    .ThenInclude(x => x.Avatar)
                     .Include(x => x.Status)
                     .Include(x => x.Avatar)
                     .Include(x => x.Members)
@@ -341,7 +347,14 @@ namespace Infrastructure.Repositories
                             IdeaHelper.CheckIsLiked(x.Members, x.Invitations, currentUserGuid)))
                         .ForMember("CurrentRole", opt => opt.MapFrom(x => 
                             new CurrentUserRoleDto(x.Members.FirstOrDefault(x => 
-                                x.UserId.Equals(currentUserGuid))))));                                                      
+                                x.UserId.Equals(currentUserGuid)))))
+                        .ForMember("MemberRequests", opt => opt.MapFrom(x => x.Invitations
+                            .Where(e => e.Type.Equals(IdeaInvitationType.Join))
+                            .Take(20).Select(e => new UserSmallDto(e.UserId, e.User.UserName, e.User.Avatar.Name))))
+                        .ForMember("Members", opt => opt.MapFrom(x => x.Members
+                            .Where(x => !x.Role.Equals(IdeaMemberRoles.Author))
+                            .Take(20).Select(e => new UserSmallDto(e.UserId, e.User.UserName, e.User.Avatar.Name))))
+                        );                                                      
 
                     var mapper = new Mapper(config);
 
@@ -383,6 +396,62 @@ namespace Infrastructure.Repositories
                 .Take(5);
 
             return similar.Select(x => new IdeaSmallDto(x.Id, x.Avatar.Name));
+        }
+
+        public IdeaGoalsListDto GetIdeaGoalList(string ideaGuid, int? page)
+        {
+            int correctPage = page ?? 1;
+            int count = ConstantsHelper.CountIdeasPerPage;
+
+            if (!string.IsNullOrEmpty(ideaGuid))
+            {
+                IEnumerable<IdeaGoal> getGoals = _dbContext.IdeaGoals
+                    .Include(x => x.Tasks)
+                    .Include(x => x.Author)
+                    .ThenInclude(x => x.Avatar)
+                    .Where(x => x.IdeaId.Equals(ideaGuid));
+
+                IEnumerable<IdeaGoal> getGoalsPerPage = getGoals
+                    .OrderBy(x => x.DateCreated)
+                    .Skip((correctPage - 1) * count)
+                    .Take(count);
+
+                if (getGoals != null)
+                {
+                    var config = new MapperConfiguration(conf => conf.CreateMap<IdeaGoal, IdeaGoalDto>()
+                        .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                        .ForMember("AuthorGuid", opt => opt.MapFrom(x => x.AuthorId))
+                        .ForMember("AuthorName", opt => opt.MapFrom(x => x.Author.UserName))
+                        .ForMember("AuthorAvatar", opt => opt.MapFrom(x => x.Author.Avatar.Name))
+                        .ForMember("DatePublished", opt => opt.MapFrom(x => IdeaHelper.NormalizeDate(x.DateCreated)))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                        .ForMember("Description", opt => opt.MapFrom(x => x.Description))
+                        .ForMember("TotalTaskCount", opt => opt.MapFrom(x => x.Tasks.Count))
+                        .ForMember("CompleteTaskCount", opt => opt.MapFrom(x => x.Tasks
+                            .Where(x => x.Type.Equals(IdeaGoalTaskType.Complete)).Count()))
+                        .ForMember("WaitingTaskCount", opt => opt.MapFrom(x => x.Tasks
+                            .Where(x => x.Type.Equals(IdeaGoalTaskType.Waiting)).Count())));
+
+                    var mapper = new Mapper(config);
+
+                    ICollection<IdeaGoalDto> dtos = mapper.Map<ICollection<IdeaGoalDto>>(getGoalsPerPage);
+
+                    IdeaGoalsListDto resDto = new()
+                    {
+                        Pages = _globalService.CreatePages(getGoals.Count(), page),
+                        Goals = dtos
+                    };
+
+                    return resDto;
+                }
+            }
+
+            IdeaGoalsListDto res = new()
+            {
+                Pages = new List<PageInfoDto>(),
+            };
+
+            return res;
         }
     }
 }

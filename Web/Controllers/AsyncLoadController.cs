@@ -26,6 +26,65 @@ namespace WebUi.Controllers
 
 
         [HttpPost]
+        [Route("/asyncload/idea/rejectmember")]
+        public async Task<JsonResult> RejectIdeaMemberRequest(string idea, string user)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.RejectIdeaMemberRequestAsync(idea, user, curUserId);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+
+        [HttpPost]
+        [Route("/asyncload/idea/removemember")]
+        public async Task<JsonResult> RemoveIdeaMember(string idea, string user)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.RemoveIdeaMemberAsync(idea, user, curUserId);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+        [HttpPost]
+        [Route("/asyncload/idea/acceptmember")]
+        public async Task<JsonResult> AcceptIdeaMember(string idea, string user)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.AcceptIdeaMemberRequestAsync(idea, user, curUserId);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+
+        [HttpPost]
+        [Route("/asyncload/idea/creategoal")]
+        public async Task<JsonResult> CreateGoalAsync(string idea, string name, string desc, bool withTasks)
+        {
+            string curUserGuid = GetUserIdOrNull();
+            if (curUserGuid != null)
+            {
+                var res = await _loadService.CreateGoalAsync(name, desc, idea, withTasks, curUserGuid);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+
+        [HttpPost]
         [Route("/asyncload/idea/createtopic")]
         public async Task<JsonResult> CreateTopic(string name, string content, string ideaGuid)
         {

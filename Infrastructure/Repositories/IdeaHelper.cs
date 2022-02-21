@@ -112,6 +112,14 @@ namespace Infrastructure.Repositories
             return false;
         }
 
+        public static IdeaMemberRoles? GetIdeaMemberRoleOrNull(string userGuid, ICollection<IdeaMember> members)
+            => members.FirstOrDefault(x => x.UserId.Equals(userGuid))?.Role;
 
+        public static bool CheckUserIsHavingIdeaRole(ICollection<IdeaMember> members, string userGuid, IdeaMemberRoles role)
+        {
+            IdeaMemberRoles? getRole = GetIdeaMemberRoleOrNull(userGuid, members);
+
+            return getRole != null ? role >= getRole : false;
+        }
     }
 }

@@ -13,6 +13,13 @@ namespace ApplicationCore.Interfaces
 {
     public interface IAsyncLoadService
     {
+        Task<OperationResultDto> RemoveIdeaMemberAsync(string ideaGuid, string userGuid, string curUserGuid);
+        Task<OperationResultDto> RejectIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid);
+        Task<OperationResultDto> AcceptIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid);
+        Task<OperationResultDto> CreateGoalTaskAsync(string content, string goalGuid, string currentUserGuid);
+        //
+        Task<OperationResultDto> CreateGoalAsync(string name, string description, string ideaGuid, bool withTasks, string authorGuid);
+        //
         Task<OperationResultDto> CreateTopicAsync(string name, string content, string ideaGuid, string authorGuid);
         Task<OperationResultDto> RemoveTopicCommentAsync(string commentGuid, string topicGuid, string currentUserGuid);
         Task<OperationResultDto> RemoveTopicAsync(string topicGuid, string currentUserRole);
