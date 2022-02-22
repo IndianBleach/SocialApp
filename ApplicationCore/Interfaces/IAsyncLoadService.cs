@@ -2,6 +2,7 @@
 using ApplicationCore.DTOs.AsyncLoad.Chat;
 using ApplicationCore.DTOs.AsyncLoad.Idea;
 using ApplicationCore.Entities.Chat;
+using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,14 @@ namespace ApplicationCore.Interfaces
 {
     public interface IAsyncLoadService
     {
+        Task<OperationResultDto> ChangeGoalTaskStatusAsync(string currentUserGuid, string goalGuid, string taskGuid, IdeaGoalTaskType newStatus);
+        Task<GoalDetailDto?> GetGoalDetailOrNullAsync(string currentUserGuid, string goalGuid);
+        Task<OperationResultDto> CreateGoalAsync(string name, string description, string ideaGuid, bool withTasks, string authorGuid);
+        Task<OperationResultDto> CreateGoalTaskAsync(string content, string ideaGuid, string goalGuid, string currentUserGuid);
+        //
         Task<OperationResultDto> RemoveIdeaMemberAsync(string ideaGuid, string userGuid, string curUserGuid);
         Task<OperationResultDto> RejectIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid);
         Task<OperationResultDto> AcceptIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid);
-        Task<OperationResultDto> CreateGoalTaskAsync(string content, string goalGuid, string currentUserGuid);
-        //
-        Task<OperationResultDto> CreateGoalAsync(string name, string description, string ideaGuid, bool withTasks, string authorGuid);
-        //
         Task<OperationResultDto> CreateTopicAsync(string name, string content, string ideaGuid, string authorGuid);
         Task<OperationResultDto> RemoveTopicCommentAsync(string commentGuid, string topicGuid, string currentUserGuid);
         Task<OperationResultDto> RemoveTopicAsync(string topicGuid, string currentUserRole);

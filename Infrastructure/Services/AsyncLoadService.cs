@@ -628,8 +628,6 @@ namespace Infrastructure.Services
                     .Include(x => x.Comments)
                     .ThenInclude(x => x.Author)
                     .ThenInclude(x => x.Avatar)
-                    .OrderByDescending(x => x.IsDefault)
-                    .OrderByDescending(x => x.DateCreated)
                     .FirstOrDefaultAsync(x => x.Id.Equals(topicGuid));
 
                 getTopic.Comments = getTopic.Comments
@@ -896,9 +894,120 @@ namespace Infrastructure.Services
             return new(false, "Op. Accept member req. (Failed)");
         }
 
-        public Task<OperationResultDto> CreateGoalTaskAsync(string content, string goalGuid, string currentUserGuid)
+        public async Task<OperationResultDto> CreateGoalTaskAsync(string content, string ideaGuid, string goalGuid, string currentUserGuid)
         {
-            throw new NotImplementedException();
+            Idea getIdea = await _dbContext.Ideas
+                .Include(x => x.Goals)
+                .Include(x => x.Members)
+                .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+            if (getIdea != null)
+            {
+                bool isAuthorOrModder = IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getIdea.Members, currentUserGuid, IdeaMemberRoles.Modder);
+
+                if (isAuthorOrModder)
+                {
+                    IdeaGoal getGoal = getIdea.Goals
+                        .FirstOrDefault(x => x.Id.Equals(goalGuid));
+
+                    if (getGoal != null)
+                    {
+                        IdeaGoalTask createTask = new(currentUserGuid, IdeaGoalTaskType.Waiting, content);
+                        getGoal.Tasks.Add(createTask);
+                        _dbContext.IdeaGoals.Update(getGoal);
+                        await _dbContext.SaveChangesAsync();
+
+                        return new(true, "Op. create goal task (Success)");
+                    }
+                }
+            }
+
+            return new(false, "Op. create goal task (Failed)");
+        }        
+
+        public async Task<GoalDetailDto> GetGoalDetailOrNullAsync(string currentUserGuid, string goalGuid)
+        {
+            var getGoal = await _dbContext.IdeaGoals
+                    .Include(x => x.Idea)
+                    .ThenInclude(x => x.Members)
+                    .Include(x => x.Author)
+                    .ThenInclude(x => x.Avatar)
+                    .Include(x => x.Tasks)
+                    .ThenInclude(x => x.Author)
+                    .ThenInclude(x => x.Avatar)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(goalGuid));
+
+            if (getGoal != null)
+            {
+                getGoal.Tasks = getGoal.Tasks
+                .OrderByDescending(x => x.Type)
+                .Take(30)
+                .ToList();
+
+                var config = new MapperConfiguration(conf => conf.CreateMap<IdeaGoal, GoalDetailDto>()
+                    .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                    .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                    .ForMember("Description", opt => opt.MapFrom(x => x.Description))
+                    .ForMember("DatePublished", opt => opt.MapFrom(x =>
+                        IdeaHelper.NormalizeDate(x.DateCreated)))
+                    .ForMember("AuthorGuid", opt => opt.MapFrom(x => x.AuthorId))
+                    .ForMember("AuthorAvatar", opt => opt.MapFrom(x => x.Author.Avatar.Name))
+                    .ForMember("CanEdit", opt => opt.MapFrom(x =>
+                        IdeaHelper.CheckUserCanEditIdeaObject(x.AuthorId, currentUserGuid, x.Idea.Members, false)))
+                    .ForMember("Tasks", opt => opt.MapFrom(x => getGoal.Tasks
+                        .OrderByDescending(x => x.DateCreated)
+                        .Take(30)
+                        .Select(e => new GoalTaskDto()
+                        {
+                            AuthorAvatar = e.Author.Avatar.Name,
+                            AuthorGuid = e.AuthorId,
+                            AuthorName = e.Author.UserName,
+                            Description = e.Content,
+                            DatePublished = IdeaHelper.NormalizeDate(e.DateCreated),
+                            Guid = e.Id,
+                            Status = e.Type
+                        }))));
+
+                var mapper = new Mapper(config);
+
+                GoalDetailDto dto = mapper.Map<GoalDetailDto>(getGoal);
+
+                return dto;
+            }
+
+            return null;
+        }
+
+        public async Task<OperationResultDto> ChangeGoalTaskStatusAsync(string currentUserGuid, string goalGuid, string taskGuid, IdeaGoalTaskType newStatus)
+        {
+            IdeaGoal getGoal = await _dbContext.IdeaGoals
+                .Include(x => x.Idea)
+                .ThenInclude(x => x.Members)
+                .Include(x => x.Tasks)
+                .FirstOrDefaultAsync(x => x.Id.Equals(goalGuid));
+
+            if ((getGoal != null) && (getGoal.Idea.Members != null))
+            {
+                bool isUserCanEdit = IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getGoal.Idea?.Members, currentUserGuid, IdeaMemberRoles.Modder);
+
+                if (isUserCanEdit)
+                {
+                     IdeaGoalTask getTask = getGoal.Tasks
+                        .FirstOrDefault(x => x.Id.Equals(taskGuid));
+
+                    if (getTask != null)
+                    {
+                        getTask.Type = newStatus;
+                        _dbContext.IdeaGoalTasks.Update(getTask);
+                        await _dbContext.SaveChangesAsync();
+
+                        return new(true, "Update Task Type status (Success)");
+                    }
+                }
+            }
+            return new(false, "Update Task Type status (Failed)");
         }
     }
 }

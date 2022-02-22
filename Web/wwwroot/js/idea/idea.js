@@ -125,13 +125,11 @@
         $("#hideBackgroundWrapper").removeClass("d-none");
         $("body").addClass("overflow-hidden");
     });
-
     $(".closeNewGoalWindowBtn").on("click", (e) => {
         $("#newGoalWindow").addClass("d-none");
         $("#hideBackgroundWrapper").addClass("d-none");
         $("body").removeClass("overflow-hidden");
     });
-
     $("#newGoalForm").on("submit", (e) => {
         e.preventDefault();
         let idea = e.target.dataset.guid;
@@ -149,7 +147,78 @@
         });
     })
 
+    // GOAL - Show
+    $(".asyncShowGoalWindow").on("click", (e) => {
+        $("#hideBackgroundWrapper").removeClass("d-none");
+        $("body").addClass("overflow-hidden");
+        $("#goalWindowWrapper").removeClass("d-none");
 
+        let goal = e.target.closest("a").dataset.goal;
+        $.get("/asyncload/idea/getgoal", { goal }, resp => {
+            $("#goalDetailTitle").text(resp.name);
+            $("#goalDetailDesc").text(resp.description);
+            $("#goalDetailLink").attr("src", "/user/" + resp.authorGuid);
+            $("#goalDetailAuthorName").text(resp.datePublished);
+            $("#goalTaskForm").attr("data-goal", resp.guid);
+            console.log(resp.tasks);
+            if (resp.tasks.length > 0) {
+                resp.tasks.forEach(x => {
+                    let complete = true;
+                    let text = "🏆";
+                    if (x.status == 0) {
+                        complete = false;
+                        text = "🎯";
+                    }
+                    $("#goalWindowLoad").append(`<div class="goalMessage"><a href="/user/${x.authorGuid}" class="text-truncate idea_hide_text col-2"><img class="me-1" src="../media/userAvatars/${x.authorAvatar}" />${x.authorName}</a><p class="col-7">${x.description}</p><span class="col-1"><button data-task="${x.guid}" data-goal="${goal}" data-gcomplete="${complete}" class="asyncChangeStatusBtn g-status btn">${text}</button></span><span class="idea_hide_elems col-2">${x.datePublished}</span></div>`)
+                })
+
+                // TASK - Change
+                //IdeaGoalTaskType newStatus, string task, string goal
+                $(".asyncChangeStatusBtn").on("click", (e) => {
+                    e.target.setAttribute("disabled", true);
+                    let task = e.target.dataset.task;
+                    let goal = e.target.dataset.goal;
+                    if (e.target.dataset.gcomplete !== "true") {
+                        e.target.textContent = "🏆";
+                        e.target.dataset.gcomplete = "true";
+                        
+                        $.post("/asyncload/idea/changetask", { newStatus: 1, task, goal }, resp => {
+                            console.log(resp);
+                        })
+                    } else {
+                        e.target.textContent = "🎯";
+                        e.target.dataset.gcomplete = "false";
+                        $.post("/asyncload/idea/changetask", { newStatus: 0, task, goal }, resp => {
+                            console.log(resp);
+                        })
+                    }
+                });
+            }
+        })
+    });
+
+    // TASK - Create
+    $("#goalTaskForm").on("submit", (e) => {
+        e.preventDefault();
+        let goal = e.target.dataset.goal;
+        let idea = e.target.dataset.idea;
+        let content = e.target.getElementsByTagName("input")[0].value;
+        $("#goalTaskInput").val("");
+        $("#choiceEmojiWindow").addClass("d-none");
+        $.post("/asyncload/idea/createtask", { content, idea, goal }, resp => {
+            console.log(resp);
+        });
+    });    
+
+    // GOAL - Close
+    $(".closeGoalWindowBtn").on("click", (e) => {
+        $("#hideBackgroundWrapper").addClass("d-none");
+        $("body").removeClass("overflow-hidden");
+        $("#goalWindowWrapper").addClass("d-none");
+        $(".goalMessage").remove();
+    });
+
+    
     //asyncRejectMemberBtn
     $(".asyncRejectMemberBtn").on("click", (e) => {
         let user = e.target.dataset.user;
@@ -237,9 +306,17 @@
         $("#choiceEmojiWindow").removeClass("d-none");
     });
     $(".asyncSendEmojiBtn").on("click", (e) => {
-        let messageNow = $("#topicCommentInput").val();
-        let mess = `${messageNow + e.target.textContent.replace(/ /g, "")}`;
-        $("#topicCommentInput").val(mess);
+        let messageTopic = $("#topicCommentInput").val();
+        let messageTask = $("#goalTaskInput").val();
+
+        if (messageTopic != undefined) {
+            let mess = `${messageTopic + e.target.textContent.replace(/ /g, "")}`;
+            $("#topicCommentInput").val(mess);
+        }
+        else if (messageTask != undefined) {
+            let mess = `${messageTask + e.target.textContent.replace(/ /g, "")}`;
+            $("#goalTaskInput").val(mess);
+        };
     });
     $("#closeEmojiWindowBtn").on("click", (e) => {
         $("#choiceEmojiWindow").addClass("d-none");

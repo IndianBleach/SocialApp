@@ -83,10 +83,15 @@
     .topic_hide_elems {
         display: none !important;
     }
-
-    .settings_link_text {
-        max-width: 80px !important;
+    .idea_hide_text {
+        font-size:0px!important;
     }
+    .idea_hide_elems {
+        display:none;
+    }
+        .settings_link_text {
+            max-width: 80px !important;
+        }
 
     .idea_aside {
         display: flex !important;
@@ -200,12 +205,19 @@
 }
 
 @media (min-width: 432px) {
+    .idea_hide_text {
+        font-size: 13px !important;
+    }
     .settings_link_text {
         max-width: 100px !important;
     }
 }
 
 @media (min-width: 732px) {
+    .idea_hide_text {
+        font-size: unset;
+    }
+    
     .topic_hide_elems {
         display: unset !important;
     }
@@ -309,6 +321,12 @@
         width: 100% !important;
     }
 
+}
+
+@media (min-width: 932px) {
+    .idea_hide_elems {
+        display: unset;
+    }
 }
 
 @media (min-width: 1200px) {

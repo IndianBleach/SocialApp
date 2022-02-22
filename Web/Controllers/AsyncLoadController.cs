@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities.UserEntity;
+﻿using ApplicationCore.Entities.IdeaEntity;
+using ApplicationCore.Entities.UserEntity;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,50 @@ namespace WebUi.Controllers
 
             return true;
         }
+
+
+        [HttpPost]
+        [Route("/asyncload/idea/createtask")]
+        public async Task<JsonResult> CreateIdeaGoalTask(string content, string idea, string goal)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.CreateGoalTaskAsync(content, idea, goal, curUserId);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+        [HttpPost]
+        [Route("/asyncload/idea/changetask")]
+        public async Task<JsonResult> ChangeIdeaGoalTask(IdeaGoalTaskType newStatus, string task, string goal)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.ChangeGoalTaskStatusAsync(curUserId, goal, task, newStatus);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+        [HttpGet]
+        [Route("/asyncload/idea/getgoal")]
+        public async Task<JsonResult> GetIdeaGoalDetail(string goal)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.GetGoalDetailOrNullAsync(curUserId, goal);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
 
 
         [HttpPost]
