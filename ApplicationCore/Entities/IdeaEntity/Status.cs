@@ -13,16 +13,17 @@ namespace ApplicationCore.Entities.IdeaEntity
         Complete = 3
     }
 
+
     public class IdeaStatus : BaseEntity
     {
         public IdeaStatusType Type { get; set; }
-        public string NormalizedName { get; set; }
+        //public string NormalizedName { get; set; }
         public ICollection<Idea> Ideas { get; set; }
 
-        public IdeaStatus(IdeaStatusType type, string normalizedName)
+        public IdeaStatus(IdeaStatusType type)
         {
             Type = type;
-            NormalizedName = normalizedName;
+            //NormalizedName = normalizedName;
             Ideas = new List<Idea>();
         }
     }

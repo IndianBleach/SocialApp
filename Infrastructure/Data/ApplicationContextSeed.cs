@@ -36,12 +36,14 @@ namespace Infrastructure.Data
                 new Tag("ИИ"),
                 new Tag("Интернет"),
                 new Tag("Здоровье"),
+                new Tag("Юмор"),
             });
 
             dbContext.IdeaStatuses.AddRange(new IdeaStatus[]
             {
-                new IdeaStatus(IdeaStatusType.Complete, "🌌"),
-                new IdeaStatus(IdeaStatusType.FindMembers, "🔎"),
+                new IdeaStatus(IdeaStatusType.Complete),
+                new IdeaStatus(IdeaStatusType.FindMembers),
+                new IdeaStatus(IdeaStatusType.Development)
             });
 
             dbContext.Reactions.AddRange(new Reaction[]

@@ -2,6 +2,7 @@
 using ApplicationCore.DTOs.AsyncLoad;
 using ApplicationCore.DTOs.Create;
 using ApplicationCore.DTOs.Idea;
+using ApplicationCore.DTOs.Tag;
 using ApplicationCore.DTOs.User;
 using ApplicationCore.Entities;
 using ApplicationCore.Entities.IdeaEntity;
@@ -35,6 +36,7 @@ namespace Infrastructure.Repositories
             _tagService = tagService;
             _globalService = globalService;
         }
+
 
 
 
@@ -336,7 +338,12 @@ namespace Infrastructure.Repositories
                         .ForMember("Name", opt => opt.MapFrom(x => x.Name))
                         .ForMember("AvatarName", opt => opt.MapFrom(x => x.Avatar.Name))
                         .ForMember("Status", opt => opt.MapFrom(x => new IdeaStatusDto(x.Status.Type)))
-                        .ForMember("Tags", opt => opt.MapFrom(x => x.Tags.Select(x => x.Name)))
+                        .ForMember("Tags", opt => opt.MapFrom(x => x.Tags.Select(x => 
+                            new TagDto()
+                            {
+                                Guid = x.Id,
+                                Name = x.Name
+                            })))
                         .ForMember("IsSecret", opt => opt.MapFrom(x => x.IsPrivate))
                         .ForMember("Modders", opt => opt.MapFrom(x => x.Members
                             .Where(x => x.Role < IdeaMemberRoles.Member)
@@ -452,6 +459,27 @@ namespace Infrastructure.Repositories
             };
 
             return res;
+        }
+
+        public Task<List<IdeaStatusDto>> GetAllIdeaStatusesAsync()
+        {
+            return _dbContext.IdeaStatuses
+                .Select(x => new IdeaStatusDto(x.Type))
+                .ToListAsync();
+        }
+
+        public async Task<string> GetIdeaDescriptionAsync(string ideaGuid)
+        {
+            var getTopic = await _dbContext.IdeaTopics
+                .Where(x => x.IdeaId.Equals(ideaGuid))
+                .OrderByDescending(x => x.IsInit)
+                .OrderByDescending(x => x.DateCreated)
+                .FirstOrDefaultAsync();
+
+            if (getTopic != null)
+                return getTopic.Description;
+
+            else return "Без описания";
         }
     }
 }

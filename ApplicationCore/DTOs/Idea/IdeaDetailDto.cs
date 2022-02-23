@@ -1,4 +1,5 @@
-﻿using ApplicationCore.DTOs.User;
+﻿using ApplicationCore.DTOs.Tag;
+using ApplicationCore.DTOs.User;
 using ApplicationCore.Entities.IdeaEntity;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace ApplicationCore.DTOs.Idea
 
     public class IdeaStatusDto
     { 
+        public int TypeValue { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string EmojiValue { get; set; }
@@ -37,18 +39,21 @@ namespace ApplicationCore.DTOs.Idea
             switch (baseType)
             {
                 case IdeaStatusType.Complete:
+                    TypeValue = (int)baseType;
                     Name = "Выполнена";
                     Description = "Ждет улучшений и предложений";
                     EmojiValue = "🌌";
                     break;
 
                 case IdeaStatusType.FindMembers:
+                    TypeValue = (int)baseType;
                     Name = "Поиск участников";
                     Description = "Нужны новые люди в команду";
                     EmojiValue = "🧐";
                     break;
 
                 case IdeaStatusType.Development:
+                    TypeValue = (int)baseType;
                     Name = "В разработке";
                     Description = "Активно развивается";
                     EmojiValue = "🚀";
@@ -61,9 +66,9 @@ namespace ApplicationCore.DTOs.Idea
     {
         public string Guid { get; set; }
         public string Name { get; set; }
-        public string AvatarName { get; set; }        
+        public string AvatarName { get; set; }
         public IdeaStatusDto Status { get; set; }
-        public IEnumerable<string> Tags { get; set; }
+        public IEnumerable<TagDto> Tags { get; set; }
         public IEnumerable<IdeaModderDto> Modders { get; set; }
         public ICollection<HomeIdeaReactionDto> Reactions { get; set; }
         public ICollection<UserSmallDto> Members { get; set; }

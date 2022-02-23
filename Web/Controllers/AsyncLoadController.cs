@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities.IdeaEntity;
+﻿using ApplicationCore.DTOs.AsyncLoad.Idea;
+using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,23 @@ namespace WebUi.Controllers
             var res = await _loadService.SendFriendRequestAsync(u1, u2);
 
             return true;
+        }
+
+
+        [HttpPost]
+        [Route("/asyncload/idea/update")]
+        public async Task<JsonResult> UpdateIdea(UpdateIdeaModel model)
+        {
+            string curUserId = GetUserIdOrNull();
+
+            if ((curUserId != null) && ModelState.IsValid)
+            {
+                var res = await _loadService.UpdateIdeaAsync(model, curUserId);
+
+                return Json(res);
+            }
+
+            return Json(null);
         }
 
 

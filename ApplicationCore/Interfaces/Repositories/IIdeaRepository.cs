@@ -11,6 +11,8 @@ namespace ApplicationCore.Interfaces
 {
     public interface IIdeaRepository
     {
+        Task<string> GetIdeaDescriptionAsync(string ideaGuid);
+        Task<List<IdeaStatusDto>> GetAllIdeaStatusesAsync();
         IdeaGoalsListDto GetIdeaGoalList(string ideaGuid, int? page);
         Task<IEnumerable<IdeaSmallDto>> GetSimilarOrTrendsIdeasAsync(string? ideaGuid);
         IdeaTopicListDto GetIdeaTopicList(string ideaGuid, int? page);

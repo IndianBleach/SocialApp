@@ -1,4 +1,6 @@
-﻿using ApplicationCore.Entities.IdeaEntity;
+﻿using ApplicationCore.DTOs.Idea;
+using ApplicationCore.DTOs.Tag;
+using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -34,6 +36,7 @@ namespace Web.Controllers
             {
                 "about",
                 "goals",
+                "editGeneral"
             };
 
             string validSection = allSections.Any(x => x.Equals(section)) == true 
@@ -50,6 +53,22 @@ namespace Web.Controllers
                 };
 
                 return View("Goals", goalsVm);
+            }
+            else if (validSection.Equals("editGeneral"))
+            {
+                IdeaDetailDto idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid);
+                List<TagDto> allTags = await _tagService.GetAllTagsAsync();
+                IdeaEditGeneralViewModel editVm = new()
+                {
+                    Idea = idea,
+                    RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
+                    Tags = allTags,
+                    EditTags = _tagService.GroupSelfAndOtherTags(allTags, idea.Tags.ToList()),
+                    EditStatuses = await _ideaRepository.GetAllIdeaStatusesAsync(),
+                    EditDescription = await _ideaRepository.GetIdeaDescriptionAsync(guid)
+                };
+
+                return View("EditGeneral", editVm);
             }
 
 

@@ -14,6 +14,9 @@ namespace ApplicationCore.Interfaces
 {
     public interface IAsyncLoadService
     {
+
+        Task<OperationResultDto> UpdateIdeaAsync(UpdateIdeaModel model, string currentUserGuid);
+        //
         Task<OperationResultDto> ChangeGoalTaskStatusAsync(string currentUserGuid, string goalGuid, string taskGuid, IdeaGoalTaskType newStatus);
         Task<GoalDetailDto?> GetGoalDetailOrNullAsync(string currentUserGuid, string goalGuid);
         Task<OperationResultDto> CreateGoalAsync(string name, string description, string ideaGuid, bool withTasks, string authorGuid);

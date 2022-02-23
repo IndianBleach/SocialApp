@@ -311,27 +311,6 @@
                                 <span class="idea_hide_elems col-2 t-med text-muted t-sm">Дата</span>
                             </div>
                             <div id="goalWindowLoad" class="custom-scroll pt-2 col-12">
-                                <div class="goalMessage">
-                                    <a class="text-truncate idea_hide_text col-2 overflow-hidden">
-                                        <img class="pe-1" src="#" />
-                                        Bxxbebran
-                                    </a>
-                                    <p class="col-7">
-                                        Описание цели для задачи описание цОписание цели для
-                                        задачи описание ц Описание цели для задачи описание ц
-                                        Описание цели для задачи описание цОписание цели для
-                                        задачи описание ц
-                                    </p>
-                                    <span class="col-1">
-                                        <button data-gcomplete="false"
-                                                class="asyncChangeStatusBtn g-status btn">
-                                            🎯
-                                        </button>
-                                    </span>
-                                    <span class="idea_hide_elems col-2">
-                                        2 дня назад
-                                    </span>
-                                </div>
                             </div>
                         </div>
                         <section>
@@ -1441,8 +1420,8 @@ else
                             <div class="col-12 d-flex flex-wrap tag-adaptive">
                                 @foreach (var tag in Model.Idea.Tags)
                                 {
-                                    <button class="btn-tag">
-                                        @tag
+                                    <button disabled class="btn-tag">
+                                        @tag.Name
                                     </button>
                                 }
                             </div>

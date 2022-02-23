@@ -322,4 +322,50 @@
         $("#choiceEmojiWindow").addClass("d-none");
     });
 
+    // SETTINGS - Update
+    $("#ideaUpdateForm").on("submit", (e) => {
+        e.preventDefault();
+
+        let tags = [];
+        $("#updatedTagsContainer button").each((x, e) => {
+            tags.push(e.dataset.tag);
+        })
+
+        let model = {
+            avatar: e.target.getElementsByTagName("input")[1].value,
+            description: e.target.getElementsByTagName("textarea")[0].value,
+            status: e.target.getElementsByTagName("select")[0].value,
+            private: e.target.getElementsByTagName("input")[2].checked,
+            idea: e.target.getElementsByTagName("input")[0].value,
+            tags: tags
+        };
+
+        $.post("/asyncload/idea/update", { model }, resp => {
+            console.log(resp);
+        });         
+    })
+
+    // TAGS - Switcher
+    sessionStorage.setItem("etc", $("#selectTagsContainer button").length + 1);
+    $(".asyncSelectBtnTag").on("click", (e) => {
+        e.preventDefault();
+        if (e.target.classList.contains("updatedTag")) {
+            e.target.classList.remove("updatedTag");
+            $("#updatedTagsContainer").remove(e.target);
+            $("#selectTagsContainer").append(e.target);
+            let newEtc = Number(sessionStorage.getItem("etc")) - 1;
+            sessionStorage.setItem("etc", newEtc);
+        } else {
+            let currentVal = Number(sessionStorage.getItem("etc"));
+            if (currentVal <= 5) {
+                e.target.classList.add("updatedTag");
+                $("#updatedTagsContainer").append(e.target);
+                $("#selectTagsContainer").remove(e.target);
+                let newEtc = currentVal + 1;
+                sessionStorage.setItem("etc", newEtc);
+            }
+           
+        }
+    });
+
 })

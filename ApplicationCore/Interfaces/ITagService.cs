@@ -1,4 +1,5 @@
-﻿using ApplicationCore.DTOs.Tag;
+﻿using ApplicationCore.DTOs.AsyncLoad.Idea;
+using ApplicationCore.DTOs.Tag;
 using ApplicationCore.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface ITagService
     {
+        IEnumerable<EditTagDto> GroupSelfAndOtherTags(ICollection<TagDto> allTags, ICollection<TagDto> sourceTags);
         List<Tag> CreateTagList(ICollection<string> tags);
         Task<List<Tag>> CreateTagListAsync(ICollection<string> tags);
         Task<List<TagDto>> GetAllTagsAsync();        

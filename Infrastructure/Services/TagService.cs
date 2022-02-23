@@ -1,4 +1,5 @@
-﻿using ApplicationCore.DTOs.Tag;
+﻿using ApplicationCore.DTOs.AsyncLoad.Idea;
+using ApplicationCore.DTOs.Tag;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using AutoMapper;
@@ -65,6 +66,17 @@ namespace Infrastructure.Services
             List<TagDto> dtos = mapper.Map<List<TagDto>>(tags);
 
             return dtos;
+        }
+
+        public IEnumerable<EditTagDto> GroupSelfAndOtherTags(ICollection<TagDto> allTags, ICollection<TagDto> sourceTags)
+        {
+            return allTags.Select(x =>
+            new EditTagDto()
+            {
+                Guid = x.Guid,
+                Name = x.Name,
+                Selected = sourceTags.Any(e => e.Guid.Equals(x.Guid))
+            });            
         }
     }
 }

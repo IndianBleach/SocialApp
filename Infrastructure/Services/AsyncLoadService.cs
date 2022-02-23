@@ -2,18 +2,21 @@
 using ApplicationCore.DTOs.AsyncLoad;
 using ApplicationCore.DTOs.AsyncLoad.Chat;
 using ApplicationCore.DTOs.AsyncLoad.Idea;
+using ApplicationCore.Entities;
 using ApplicationCore.Entities.Chat;
 using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
 using ApplicationCore.Identity;
 using ApplicationCore.Interfaces;
 using AutoMapper;
+using Infrastructure.Constants;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -1008,6 +1011,80 @@ namespace Infrastructure.Services
                 }
             }
             return new(false, "Update Task Type status (Failed)");
+        }
+
+        public async Task<OperationResultDto> UpdateIdeaAsync(UpdateIdeaModel model, string currentUserGuid)
+        {
+            Idea getIdea = await _dbContext.Ideas
+                .Include(x => x.Tags)
+                .Include(x => x.Status)
+                .Include(x => x.Avatar)
+                .Include(x => x.Topics)
+                .Include(x => x.Members)
+                .FirstOrDefaultAsync(x => x.Id.Equals(model.Idea));
+
+            if (getIdea != null)
+            {
+                bool canUserEdit = IdeaHelper.CheckUserIsHavingIdeaRole(
+                  getIdea.Members, currentUserGuid, IdeaMemberRoles.Author);
+
+                if (canUserEdit)
+                {
+                    if (!string.IsNullOrWhiteSpace(model.Description))
+                    {
+                        var getTopic = getIdea.Topics
+                            .OrderByDescending(x => x.IsInit)
+                            .OrderByDescending(x => x.DateCreated)
+                            .FirstOrDefault();
+                        getTopic.Description = model.Description;
+                    }
+
+                    if ((model.Avatar != null) && 
+                        (model.Avatar.FileName != AvatarInformation.IdeaDefaultAvatarName))
+                    {
+                        using (FileStream str = new($"wwwroot/media/ideaAvatars/" + model.Avatar.FileName, FileMode.Create))
+                        {
+                            await model.Avatar.CopyToAsync(str);
+                            str.Close();
+                        }
+
+                        if ((getIdea.Avatar.Name != AvatarInformation.IdeaDefaultAvatarName) &&
+                            !getIdea.Avatar.IsDefault)
+                            File.Delete($"wwwroot/media/ideaAvatars/{getIdea.Avatar.Name}");
+
+                        getIdea.Avatar = new IdeaAvatar(false, model.Avatar.FileName);
+                    }
+
+                    if (model.Tags.Count > 0)
+                    {
+                        List<Tag> updatedTags = new();
+                        foreach (var tag in model.Tags)
+                        {
+                            Tag? getTag = await _dbContext.Tags
+                                .FirstOrDefaultAsync(x => x.Id.Equals(tag));
+
+                            if (getTag != null)
+                                updatedTags.Add(getTag);                           
+                        }
+
+                        getIdea.Tags = updatedTags;
+                    }
+
+                    IdeaStatus updatedStatus = await _dbContext.IdeaStatuses
+                        .FirstOrDefaultAsync(x => x.Type.Equals(model.Status));
+
+                    if (updatedStatus != null)
+                        getIdea.Status = updatedStatus;
+
+                    getIdea.IsPrivate = model.Private;
+
+                    _dbContext.Ideas.Update(getIdea);
+                    await _dbContext.SaveChangesAsync();
+
+                    return new(true, "Update Idea (Success)");
+                }
+            }
+            return new(false, "Update Idea (Failed)");
         }
     }
 }
