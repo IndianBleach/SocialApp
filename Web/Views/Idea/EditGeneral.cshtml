@@ -874,8 +874,8 @@ else
                     </div>
                     <div class="col-12 rad-md bg-darkn mt-3">
                         <ul class="nav d-flex col-12">
-                            <li class="p-0 col text-center idea_menu_link active nav-item">
-                                <a disabled asp-action="@Model.Idea.Guid" asp-controller="idea" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                            <li class="p-0 col text-center idea_menu_link nav-item">
+                                <a asp-action="@Model.Idea.Guid" asp-controller="idea" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -927,8 +927,8 @@ else
                                     Участники
                                 </a>
                             </li>
-                            <li class="p-0 col text-center idea_menu_link nav-item">
-                                <a class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                            <li class="p-0 col text-center idea_menu_link  active nav-item">
+                                <a disabled asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editGeneral" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -945,23 +945,23 @@ else
                         <section>
                             <div class="col-12 d-flex">
                                 <div class="col-3 b-right">
-                                    <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
-                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editgeneral" disabled class="text-truncate settings_link_text text-start col-12 hover-white btn clr-white t-bold t-md bg-transparent">
+                                    <div style="background-color: #080808 !important;" class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
+                                        <span class="text-truncate settings_link_text text-start btn-unfocus col-12 hover-white btn clr-white t-bold t-md bg-transparent">
                                             Основные
-                                        </a>
+                                        </span>
                                     </div>
                                     <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
-                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmodders" class="text-truncate settings_link_text text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
+                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmodders" class="text-truncate settings_link_text text-start btn-unfocus col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
                                             Модераторы
                                         </a>
                                     </div>
                                     <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
-                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmembers" class="text-truncate settings_link_text text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
+                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmembers" class="text-truncate settings_link_text text-start btn-unfocus col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
                                             Участники
                                         </a>
                                     </div>
                                     <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
-                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editremove" class="text-truncate settings_link_text text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
+                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editremove" class="text-truncate settings_link_text text-start btn-unfocus col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
                                             Удалить идею
                                         </a>
                                     </div>

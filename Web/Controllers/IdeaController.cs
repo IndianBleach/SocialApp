@@ -36,11 +36,13 @@ namespace Web.Controllers
             {
                 "about",
                 "goals",
-                "editGeneral"
+                "editgeneral",
+                "editmodders",
+                "editmembers"
             };
 
-            string validSection = allSections.Any(x => x.Equals(section)) == true 
-                ? section : "about";
+            string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true 
+                ? section?.ToLower() : "about";
 
             if (validSection.Equals("goals"))
             {
@@ -54,7 +56,7 @@ namespace Web.Controllers
 
                 return View("Goals", goalsVm);
             }
-            else if (validSection.Equals("editGeneral"))
+            else if (validSection.Equals("editgeneral"))
             {
                 IdeaDetailDto idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid);
                 List<TagDto> allTags = await _tagService.GetAllTagsAsync();
@@ -70,7 +72,30 @@ namespace Web.Controllers
 
                 return View("EditGeneral", editVm);
             }
+            else if (validSection.Equals("editmodders"))
+            {
+                IdeaEditMembersViewModel editVm = new()
+                {
+                    Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
+                    RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
+                    Tags = await _tagService.GetAllTagsAsync(),
+                    MemberList = await _ideaRepository.GetIdeaMemberListByRoleOrNull(guid, IdeaMemberRoles.Modder, page)
+                };
 
+                return View("EditModders", editVm);
+            }
+            else if (validSection.Equals("editmembers"))
+            {
+                IdeaEditMembersViewModel editVm = new()
+                {
+                    Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
+                    RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
+                    Tags = await _tagService.GetAllTagsAsync(),
+                    MemberList = await _ideaRepository.GetIdeaMemberListByRoleOrNull(guid, IdeaMemberRoles.Member, page)
+                };
+
+                return View("EditMembers", editVm);
+            }
 
 
             IdeaAboutViewModel indexVm = new()

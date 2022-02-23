@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Entities.IdeaEntity
 {
+    public enum IdeaRolesToUpdate
+    {
+        Modder = 1,
+        Member = 0
+    }
+
     public enum IdeaMemberRoles
     {
         Author = 1,

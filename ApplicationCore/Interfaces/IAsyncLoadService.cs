@@ -14,7 +14,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IAsyncLoadService
     {
-
+        Task<OperationResultDto> SetIdeaMemberRoleAsync(string ideaGuid, string userGuid, string currentUserGuid, IdeaRolesToUpdate newRole);
         Task<OperationResultDto> UpdateIdeaAsync(UpdateIdeaModel model, string currentUserGuid);
         //
         Task<OperationResultDto> ChangeGoalTaskStatusAsync(string currentUserGuid, string goalGuid, string taskGuid, IdeaGoalTaskType newStatus);

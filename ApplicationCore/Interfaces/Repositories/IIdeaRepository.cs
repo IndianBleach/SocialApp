@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.DTOs;
 using ApplicationCore.DTOs.Create;
 using ApplicationCore.DTOs.Idea;
+using ApplicationCore.DTOs.User;
+using ApplicationCore.Entities.IdeaEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IIdeaRepository
     {
+        Task<IdeaMemberListDto?> GetIdeaMemberListByRoleOrNull(string ideaGuid, IdeaMemberRoles byRole, int? page);
         Task<string> GetIdeaDescriptionAsync(string ideaGuid);
         Task<List<IdeaStatusDto>> GetAllIdeaStatusesAsync();
         IdeaGoalsListDto GetIdeaGoalList(string ideaGuid, int? page);

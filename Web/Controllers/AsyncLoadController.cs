@@ -26,6 +26,22 @@ namespace WebUi.Controllers
             return true;
         }
 
+        [HttpPost]
+        [Route("/asyncload/idea/updaterole")]
+        public async Task<JsonResult> IdeaRoleToDefault(string idea, string user, IdeaRolesToUpdate role)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.SetIdeaMemberRoleAsync(idea, user, curUserId, role);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+
+
 
         [HttpPost]
         [Route("/asyncload/idea/update")]

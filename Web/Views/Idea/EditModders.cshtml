@@ -1,6 +1,6 @@
 ﻿@using ApplicationCore.DTOs;
 @using Web.Models.IdeaViewModel;
-@model IdeaGoalsViewModel;
+@model IdeaEditMembersViewModel;
 
 
 @{
@@ -260,338 +260,6 @@
                                 </button>
                             </form>
                         </div>
-                    </div>
-                </div>
-                <!---->
-                <!--Goal detail-->
-                <div id="goalWindowWrapper"
-                     class="d-none col-12 d-flex justify-content-center">
-                    <div id="goalWindow" class="col-12 p-2 ps-3 window_rounded_shadow">
-                        <div class="d-flex col-12 align-items-center justify-content-between">
-                            <div class="position-relative col">
-                                <div class="position-absolute z-10 p-3 ps-4 d-flex align-items-center">
-                                    <h5 id="goalDetailTitle" class="z-1 t-window-title t-shadow">                                        
-                                    </h5>
-                                    <a id="goalDetailLink" class="idea_hide_elems ms-2 t-med t-sm text-muted">
-                                        <img src="#"
-                                             height="24"
-                                             width="24"
-                                             class="rounded-circle" />
-                                        <span id="goalDetailAuthorName"></span>
-                                    </a>
-                                </div>
-                                <div style="
-                        background: linear-gradient(
-                            0deg,
-                            rgba(0, 0, 0, 0.24),
-                            rgba(0, 0, 0, 0.24)
-                          ),
-                          url(../media/ideaAvatars/@Model.Idea.AvatarName);
-                      "
-                                     class="windowIdeaBackAvatar"></div>
-                            </div>
-                            <button class="closeGoalWindowBtn btn btn-sm bg-transparent clr-white">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     width="24"
-                                     height="24"
-                                     fill="currentColor"
-                                     class="bi bi-x"
-                                     viewBox="0 0 16 16">
-                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                </svg>
-                            </button>
-                        </div>
-                        <p id="goalDetailDesc" class="ps-4 pe-4 t-med t-md">                           
-                        </p>
-                        <div class="ps-3 pe-3 b-top">
-                            <div style="max-width: 802px;" class="pt-2 col-12 d-flex">
-                                <span class="col-2 t-med text-muted t-sm">Автор</span>
-                                <span class="col-7 t-med text-muted t-sm">Описание</span>
-                                <span class="col-1 t-med text-muted t-sm">Статус</span>
-                                <span class="idea_hide_elems col-2 t-med text-muted t-sm">Дата</span>
-                            </div>
-                            <div id="goalWindowLoad" class="custom-scroll pt-2 col-12">
-                            </div>
-                        </div>
-                        <section>
-                            <div class="col-12 b-top d-flex align-items-center p-2">
-                                <img src="~/media/userAvatars/@avatar"
-                                     height="44"
-                                     width="44"
-                                     class="topic_hide_elems rounded-circle" />
-                                <div class="ms-1 position-relative">
-                                    <div id="choiceEmojiWindow"
-                                         class="d-none position-absolute bg-primary">
-                                        <div class="b-bottom col-12 d-flex justify-content-between align-items-center">
-                                            <span class="p-2 t-med t-sm clr-mute">Выберите из списка</span>
-                                            <button class="pe-1 btn btn-unfocus bg-transparent"
-                                                    id="closeEmojiWindowBtn">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                     width="22"
-                                                     height="22"
-                                                     fill="currentColor"
-                                                     class="clr-white bi bi-x"
-                                                     viewBox="0 0 16 16">
-                                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div style="height: 280px; overflow-y: scroll;"
-                                             class="custom-scroll p-2">
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😄
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😁
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😅
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😂
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😇
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🙂
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😉
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😍
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😘
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😋
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤪
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤓
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🧐
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😎
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🥳
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😏
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😔
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🥺
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😭
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😤
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😡
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤬
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤯
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🥵
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🥶
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😱
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤗
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤭
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤥
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😵
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😴
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🥴
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤢
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤮
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤑
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😈
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤡
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💩
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😼
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🙀
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                😾
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🙏
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🤝
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                ☝️
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💪
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                👀
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                👅
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                👄
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💋
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                👨‍🎓
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                👨‍🦰
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                👨‍💻
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🧛‍♀️
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💅
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                👨‍🦽
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🎓
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🐧
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                ❤️
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💜
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🖤
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💕
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                ‼️
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💯
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                ♻️
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💤
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💲
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💸
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🚽
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🧻
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💉
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                📌
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                💣
-                                            </button>
-                                            <button class="asyncSendEmojiBtn p-0 btn bg-transparent">
-                                                🚀
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <button id="showMessageEmojiBtn"
-                                            class="btn bg-transparent clr-mute hover-white pe-1 ps-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             width="36"
-                                             height="36"
-                                             fill="currentColor"
-                                             class="bi bi-emoji-heart-eyes"
-                                             viewBox="0 0 16 16">
-                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                            <path d="M11.315 10.014a.5.5 0 0 1 .548.736A4.498 4.498 0 0 1 7.965 13a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .548-.736h.005l.017.005.067.015.252.055c.215.046.515.108.857.169.693.124 1.522.242 2.152.242.63 0 1.46-.118 2.152-.242a26.58 26.58 0 0 0 1.109-.224l.067-.015.017-.004.005-.002zM4.756 4.566c.763-1.424 4.02-.12.952 3.434-4.496-1.596-2.35-4.298-.952-3.434zm6.488 0c1.398-.864 3.544 1.838-.952 3.434-3.067-3.554.19-4.858.952-3.434z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <form data-idea="@Model.Idea.Guid" id="goalTaskForm"
-                                      style="height:50px!important"
-                                      class="rad-md col ms-2 flex-form-dark">
-                                    <input id="goalTaskInput"
-                                           class="form-control"
-                                           placeholder="Новая задача" />
-                                    <button type="submit" class="btn bg-transparent">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             width="27"
-                                             height="27"
-                                             fill="currentColor"
-                                             class="clr-white bi bi-send"
-                                             viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                  d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
-                        </section>
                     </div>
                 </div>
                 <!---->
@@ -1219,8 +887,8 @@ else
                                     Главная
                                 </a>
                             </li>
-                            <li class="p-0 col text-center idea_menu_link active nav-item">
-                                <a disabled asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="goals" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                            <li class="p-0 col text-center idea_menu_link nav-item">
+                                <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="goals" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -1259,8 +927,8 @@ else
                                     Участники
                                 </a>
                             </li>
-                            <li class="p-0 col text-center idea_menu_link nav-item">
-                                <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editGeneral" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                            <li class="p-0 col text-center idea_menu_link  active nav-item">
+                                <a disabled asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editGeneral" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -1275,61 +943,89 @@ else
                             </li>
                         </ul>
                         <section>
-                            <div class="col-12 ps-2 pb-3">
-                                @foreach (var goal in Model.GoalList.Goals)
-                                {
-                                <div class="col-12 idea_content_section pb-1">
-                                    <a asp-action="@goal.AuthorGuid" asp-controller="user" class="pt-1 pt-lg-2">
-                                        <img height="33" width="33" src="~/media/userAvatars/@goal.AuthorAvatar" />
-                                    </a>
-                                    <div class="ps-2">
-                                        <a asp-action="@goal.AuthorGuid" asp-controller="user" class="t-sm clr-white">
-                                            @goal.AuthorName
-                                            <span class="ps-1 t-med t-micro text-muted">@goal.DatePublished</span>
-                                            <span class="ps-1 t-med t-micro text-muted">@goal.TotalTaskCount задачи</span>
+                            <div class="col-12 d-flex">
+                                <div class="col-3 b-right">
+                                    <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
+                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editgeneral" class="text-truncate settings_link_text btn-unfocus text-start col-12 clr-mute btn clr-mute t-bold t-md bg-transparent">
+                                            Основные
                                         </a>
-                                        <br />
-                                        <a data-goal="@goal.Guid" class="cursor-point asyncShowGoalWindow pt-2 pb-2 t-xl t-bold clr-white">
-                                            @goal.Name
-                                            <br />
-                                            <p class="mb-0 idea_section_description t-md t-med clr-mute text-truncate">
-                                                <span>
-                                                    @goal.Description
-                                                </span>
-                                            </p>
-                                            <div class="mt-1">
-                                                <button class="me-2 g-status-text btn">
-                                                    🎯 <span class="t-md clr-white">@goal.WaitingTaskCount</span>
-                                                </button>
-                                                <button class="me-2 g-status-text btn">
-                                                    🏆 <span class="t-md clr-white">@goal.CompleteTaskCount</span>
-                                                </button>
-                                            </div>
+                                    </div>
+                                    <div style="background-color: #080808 !important;" class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
+                                        <span class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white clr-white btn t-bold t-md bg-transparent">
+                                            Модераторы
+                                        </span>
+                                    </div>
+                                    <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
+                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmembers" class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
+                                            Участники
+                                        </a>
+                                    </div>
+                                    <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
+                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editremove" class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
+                                            Удалить идею
                                         </a>
                                     </div>
                                 </div>
-                                }
+                                <div class="col d-flex justify-content-center">
+                                    <div id="settings-main-adaptive" class="col p-3">
+                                        <span class="clr-mute t-smbold t-md">
+                                            Список модераторов идеи
+                                        </span>
+                                        <br />
+                                        <span class="t-med t-sm text-muted">
+                                            С помощью кнопок справа меняйте роли участников в идее
+                                        </span>
+                                        <!---->
+                                        <div style="min-height: 520px;"
+                                             class="mt-2 custom-scroll">
+                                            @if (Model.MemberList != null)
+                                            {
+                                                foreach (var member in Model.MemberList.Members)
+                                                {
+                                                    <div data-user="@member.Guid" data-idea="@Model.Idea.Guid" class="mb-2 repostToUser pe-1 pe-md-2 pe-lg-4">
+                                                        <a>
+                                                            <img class="me-1" src="~/media/userAvatars/@member.Avatar" />
+                                                            @member.Name
+                                                        </a>
+                                                        <button class="asyncSetDefaultRoleBtn btn clr-white pe-1 me-3">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                 width="24"
+                                                                 height="24"
+                                                                 fill="currentColor"
+                                                                 class="bi bi-person"
+                                                                 viewBox="0 0 16 16">
+                                                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
+                                                            </svg>
+                                                            Участник
+                                                        </button>
+                                                    </div>
+                                                }
+                                                <div class="p-2 b-top d-flex">
+                                                    @foreach (var pageInfo in Model.MemberList.Pages)
+                                                    {
+                                                        <div class="me-1">
+                                                            @if (pageInfo.IsActive)
+                                                            {
+                                                                <a disabled asp-action="@Model.Idea.Guid" asp-route-section="editmodders" asp-route-page="@pageInfo.NumberValue" class="disabled me-1 btn btn-page btn-page-active">
+                                                                    @pageInfo.NumberValue
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a asp-action="@Model.Idea.Guid" asp-route-section="editmodders" asp-route-page="@pageInfo.NumberValue" class="me-1 btn btn-page">
+                                                                    @pageInfo.NumberValue
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                        <!---->
+                                    </div>
+                                </div>
                             </div>
                         </section>
-                        <div class="p-2 b-top d-flex">
-                            @foreach (var pageInfo in Model.GoalList.Pages)
-                            {
-                                <div class="me-1">
-                                    @if (pageInfo.IsActive)
-                                    {
-                                        <a disabled asp-action="@Model.Idea.Guid" asp-route-section="goals" asp-route-page="@pageInfo.NumberValue" class="disabled me-1 btn btn-page btn-page-active">
-                                            @pageInfo.NumberValue
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a asp-action="@Model.Idea.Guid" asp-route-section="goals" asp-route-page="@pageInfo.NumberValue" class="me-1 btn btn-page">
-                                            @pageInfo.NumberValue
-                                        </a>
-                                    }
-                                </div>
-                            }
-                        </div>
                     </div>
                 </div>
             </div>

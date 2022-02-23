@@ -481,5 +481,36 @@ namespace Infrastructure.Repositories
 
             else return "Без описания";
         }
+
+        public async Task<IdeaMemberListDto?> GetIdeaMemberListByRoleOrNull(string ideaGuid, IdeaMemberRoles byRole, int? page)
+        {
+            int normalizePage = page ?? 1;
+
+            Idea getIdea = await _dbContext.Ideas
+                .Include(x => x.Members)
+                .ThenInclude(x => x.User)
+                .ThenInclude(x => x.Avatar)
+                .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+            if (getIdea != null)
+            {
+                var res = getIdea.Members
+                    .Where(x => x.Role.Equals(byRole))
+                    .Skip(10 * (normalizePage - 1))
+                    .Take(10)
+                    .Select(x => new UserSmallDto(
+                        x.UserId, x.User.UserName, x.User.Avatar.Name));
+
+                IdeaMemberListDto dto = new()
+                {
+                    Pages = _globalService.CreatePages(res.Count(), normalizePage),
+                    Members = res
+                };
+
+                return dto;
+            }
+
+            return null;
+        }
     }
 }

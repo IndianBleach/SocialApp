@@ -368,4 +368,50 @@
         }
     });
 
+
+    // SETTINGS - Modders & Members
+    $(".asyncSetDefaultRoleBtn").on("click", (e) => {
+        let idea = e.target.dataset.idea;
+        let user = e.target.dataset.user;
+        $.post("/asyncload/idea/updaterole", { idea, user, role: 0 }, resp => {
+            console.log(resp);
+        });
+    });
+
+    $(".asyncSetModderRoleBtn").on("click", (e) => {
+        let idea = e.target.closest("div").dataset.idea;
+        let user = e.target.closest("div").dataset.user;
+
+        let btn1 = e.target.closest("div").getElementsByTagName("button")[0];
+        btn1.classList.add("clr-mute");
+        btn1.setAttribute("disabled", true);
+        let btn2 = e.target.closest("div").getElementsByTagName("button")[1];
+        btn2.classList.add("clr-mute");
+        btn2.setAttribute("disabled", true);
+        e.target.textContent = "Повышен";
+
+        $.post("/asyncload/idea/updaterole", { idea, user, role: 1 }, resp => {
+            console.log(resp);
+        });
+    });
+
+    // ROLES - Remove
+    $(".asyncRemoveRoleBtn").on("click", (e) => {
+        let idea = e.target.closest("div").dataset.idea;
+        let user = e.target.closest("div").dataset.user;
+
+        let btn1 = e.target.closest("div").getElementsByTagName("button")[0];
+        btn1.classList.add("clr-mute");
+        btn1.setAttribute("disabled", true);
+        let btn2 = e.target.closest("div").getElementsByTagName("button")[1];
+        btn2.classList.add("clr-mute");
+        btn2.setAttribute("disabled", true);
+        e.target.textContent = "Удалён";
+
+        $.post("/asyncload/idea/removemember", { idea, user }, resp => {
+            console.log(resp);
+        })
+    });
+    
+
 })

@@ -1086,5 +1086,41 @@ namespace Infrastructure.Services
             }
             return new(false, "Update Idea (Failed)");
         }
+
+        public async Task<OperationResultDto> SetIdeaMemberRoleAsync(string ideaGuid, string userGuid, string currentUserGuid, IdeaRolesToUpdate newRole)
+        {
+            Idea getIdea = await _dbContext.Ideas
+                .Include(x => x.Members)
+                .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+            if (getIdea != null)
+            {
+                bool isCanEdit = IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getIdea.Members, currentUserGuid, IdeaMemberRoles.Author);
+
+                if (isCanEdit)
+                {
+                    IdeaMember getMember = getIdea.Members
+                        .FirstOrDefault(x => x.UserId.Equals(userGuid));
+
+                    if (getMember != null)
+                    {
+                        IdeaMemberRoles normalizeRole = IdeaMemberRoles.Member;
+                        if (newRole == IdeaRolesToUpdate.Modder)
+                            normalizeRole = IdeaMemberRoles.Modder;
+                        if (newRole == IdeaRolesToUpdate.Member)
+                            normalizeRole = IdeaMemberRoles.Member;
+
+                        getMember.Role = normalizeRole;
+                        _dbContext.IdeaMembers.Update(getMember);
+                        await _dbContext.SaveChangesAsync();
+
+                        return new(true, "Op. Update Role (Success)");
+                    }
+                }
+            }
+
+            return new(false, "Op. Update Role (Failed)");
+        }
     }
 }
