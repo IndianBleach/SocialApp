@@ -1,6 +1,6 @@
 ﻿@using ApplicationCore.DTOs;
 @using Web.Models.IdeaViewModel;
-@model IdeaEditMembersViewModel;
+@model IdeaEditRemoveViewModel;
 
 
 @{
@@ -955,86 +955,39 @@ else
                                             Модераторы
                                         </a>
                                     </div>
+                                    <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
+                                        <a  asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmembers" class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
+                                            Участники
+                                        </a>
+                                    </div>
                                     <div style="background-color: #080808 !important;" class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
                                         <span class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white btn clr-white t-bold t-md bg-transparent">
-                                            Участники
-                                        </span>
-                                    </div>
-                                    <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
-                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editremove" class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
                                             Удалить идею
-                                        </a>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col d-flex justify-content-center">
-                                    <div id="settings-main-adaptive" class="col p-3">
-                                        <span class="clr-mute t-smbold t-md">
-                                            Список участников идеи
-                                        </span>
-                                        <br />
-                                        <span class="t-med t-sm text-muted">
-                                            С помощью кнопок справа меняйте роли участников в идее
+                                    <div class="col p-3">
+                                        <span class="pt-1 clr-mute t-smbold t-md">
+                                            Удаление идеи и всего прогресса
                                         </span>
                                         <!---->
-                                        <div style="min-height: 520px;"
-                                             class="mt-2 custom-scroll">
-                                            @if (Model.MemberList != null)
-                                            {
-                                                foreach (var member in Model.MemberList.Members)
-                                                {
-                                            <div data-user="@member.Guid" data-idea="@Model.Idea.Guid" class="mb-2 repostToUser pe-1 pe-md-2 pe-lg-4">
-                                                <a>
-                                                    <img class="me-1" src="~/media/userAvatars/@member.Avatar" />
-                                                    @member.Name
-                                                </a>
-                                                <button class="asyncSetModderRoleBtn btn clr-white pe-1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                         width="24"
-                                                         height="24"
-                                                         fill="currentColor"
-                                                         class="clr-mute hover-white bi bi-mortarboard"
-                                                         viewBox="0 0 16 16">
-                                                        <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917l-7.5-3.5ZM8 8.46 1.758 5.965 8 3.052l6.242 2.913L8 8.46Z" />
-                                                        <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466 4.176 9.032Zm-.068 1.873.22-.748 3.496 1.311a.5.5 0 0 0 .352 0l3.496-1.311.22.748L8 12.46l-3.892-1.556Z" />
-                                                    </svg>
-                                                    Модератор
-                                                </button>
-                                                <button class="asyncRemoveRoleBtn clr-white btn ps-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                         width="24"
-                                                         height="24"
-                                                         fill="currentColor"
-                                                         class="clr-mute hover-white bi bi-person-x"
-                                                         viewBox="0 0 16 16">
-                                                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
-                                                        <path fill-rule="evenodd"
-                                                              d="M12.146 5.146a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z" />
-                                                    </svg>
-                                                    Выгнать
-                                                </button>
+                                        <form id="removeIdeaForm">
+                                            <div class="col-10 mt-2 form-floating">
+                                                <input type="password"
+                                                       class="need-next-input form-control"
+                                                       id="floatingPassword"
+                                                       placeholder="Пароль" />
+                                                <label class="text-dark" for="floatingPassword">Пароль</label>
                                             </div>
-                                                }
-                                                <div class="p-2 b-top d-flex">
-                                                    @foreach (var pageInfo in Model.MemberList.Pages)
-                                                    {
-                                                        <div class="me-1">
-                                                            @if (pageInfo.IsActive)
-                                                            {
-                                                                <a disabled asp-action="@Model.Idea.Guid" asp-route-section="editmodders" asp-route-page="@pageInfo.NumberValue" class="disabled me-1 btn btn-page btn-page-active">
-                                                                    @pageInfo.NumberValue
-                                                                </a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <a asp-action="@Model.Idea.Guid" asp-route-section="editmodders" asp-route-page="@pageInfo.NumberValue" class="me-1 btn btn-page">
-                                                                    @pageInfo.NumberValue
-                                                                </a>
-                                                            }
-                                                        </div>
-                                                    }
-                                                </div>
-                                            }
-                                        </div>
+                                            <span class="pt-1 t-med t-sm text-muted">
+                                                Введите пароль от аккаунта чтобы подтвердить операцию
+                                            </span>
+                                            <br />
+                                            <button type="submit" class="ps-0 btn-unfocus btn text-danger t-smbold t-md">
+                                                Удалить
+                                            </button>
+                                        </form>
                                         <!---->
                                     </div>
                                 </div>

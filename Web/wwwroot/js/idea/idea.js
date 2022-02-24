@@ -369,15 +369,20 @@
     });
 
 
-    // SETTINGS - Modders & Members
+    // SETTINGS - Member
     $(".asyncSetDefaultRoleBtn").on("click", (e) => {
-        let idea = e.target.dataset.idea;
-        let user = e.target.dataset.user;
+        let idea = e.target.closest("div").dataset.idea;
+        let user = e.target.closest("div").dataset.user;
+        e.target.classList.add("clr-mute");
+        e.target.setAttribute("disabled", true);
+        e.target.textContent = "Понижен";
+
         $.post("/asyncload/idea/updaterole", { idea, user, role: 0 }, resp => {
             console.log(resp);
         });
     });
 
+    // ROLES - Modder
     $(".asyncSetModderRoleBtn").on("click", (e) => {
         let idea = e.target.closest("div").dataset.idea;
         let user = e.target.closest("div").dataset.user;
@@ -412,6 +417,15 @@
             console.log(resp);
         })
     });
-    
+
+    // SETTINGS - Remove
+    $("#removeIdeaForm").on("submit", (e) => {
+        e.preventDefault();
+        let idea = e.target.dataset.idea;
+        let password = e.target.getElementsByTagName("input")[0].value;
+        $.post("/asyncload/idea/remove", { idea, password }, resp => {
+            console.log(resp);
+        });
+    });
 
 })

@@ -2,6 +2,7 @@
 using ApplicationCore.DTOs.Tag;
 using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace Web.Controllers
 
         [HttpGet]
         [Route("/idea/{guid}")]
+        [Authorize(Roles = "user,admin")]
         public async Task<IActionResult> Index(string? guid, int? page, string? section)
         {
             string[] allSections = new string[]
@@ -44,22 +46,25 @@ namespace Web.Controllers
             string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true 
                 ? section?.ToLower() : "about";
 
+            IdeaDetailDto idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid);
+            List<TagDto> allTags = await _tagService.GetAllTagsAsync();
+
+            bool isAuthor = idea.CurrentRole.Role.Equals(CurrentUserRoleTypes.Author);
+
             if (validSection.Equals("goals"))
             {
                 IdeaGoalsViewModel goalsVm = new()
                 {
-                    Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
+                    Idea = idea,
                     GoalList = _ideaRepository.GetIdeaGoalList(guid, page),
                     RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
-                    Tags = await _tagService.GetAllTagsAsync(),
+                    Tags = allTags,
                 };
 
                 return View("Goals", goalsVm);
             }
-            else if (validSection.Equals("editgeneral"))
+            else if (validSection.Equals("editgeneral") && isAuthor)
             {
-                IdeaDetailDto idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid);
-                List<TagDto> allTags = await _tagService.GetAllTagsAsync();
                 IdeaEditGeneralViewModel editVm = new()
                 {
                     Idea = idea,
@@ -69,45 +74,54 @@ namespace Web.Controllers
                     EditStatuses = await _ideaRepository.GetAllIdeaStatusesAsync(),
                     EditDescription = await _ideaRepository.GetIdeaDescriptionAsync(guid)
                 };
-
                 return View("EditGeneral", editVm);
             }
-            else if (validSection.Equals("editmodders"))
+            else if (validSection.Equals("editmodders") && isAuthor)
             {
                 IdeaEditMembersViewModel editVm = new()
                 {
-                    Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
+                    Idea = idea,
                     RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
-                    Tags = await _tagService.GetAllTagsAsync(),
+                    Tags = allTags,
                     MemberList = await _ideaRepository.GetIdeaMemberListByRoleOrNull(guid, IdeaMemberRoles.Modder, page)
                 };
 
                 return View("EditModders", editVm);
             }
-            else if (validSection.Equals("editmembers"))
+            else if (validSection.Equals("editmembers") && isAuthor)
             {
                 IdeaEditMembersViewModel editVm = new()
                 {
-                    Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
+                    Idea = idea,
                     RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
-                    Tags = await _tagService.GetAllTagsAsync(),
+                    Tags = allTags,
                     MemberList = await _ideaRepository.GetIdeaMemberListByRoleOrNull(guid, IdeaMemberRoles.Member, page)
                 };
 
                 return View("EditMembers", editVm);
             }
-
-
-            IdeaAboutViewModel indexVm = new()
+            else if (validSection.Equals("editremove") && isAuthor)
             {
-                Idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid),
-                TopicList = _ideaRepository.GetIdeaTopicList(guid, page),
-                RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
-                Tags = await _tagService.GetAllTagsAsync(),
-            };
+                IdeaEditRemoveViewModel editVm = new()
+                {
+                    Idea = idea,
+                    RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
+                    Tags = allTags,
+                };
 
-
-            return View(indexVm);
+                return View("EditRemove", editVm);
+            }
+            else
+            {
+                IdeaAboutViewModel indexVm = new()
+                {
+                    Idea = idea,
+                    TopicList = _ideaRepository.GetIdeaTopicList(guid, page),
+                    RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
+                    Tags = allTags,
+                };
+                return View(indexVm);
+            }                        
         }
     }
 }

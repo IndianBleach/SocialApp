@@ -26,6 +26,22 @@ namespace WebUi.Controllers
             return true;
         }
 
+
+        [HttpPost]
+        [Route("/asyncload/idea/remove")]
+        public async Task<JsonResult> RemoveIdea(string idea, string password)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _loadService.RemoveIdeaAsync(idea, curUserId, password);
+
+                return Json(res);
+            }
+            return Json(null);
+        }
+
+
         [HttpPost]
         [Route("/asyncload/idea/updaterole")]
         public async Task<JsonResult> IdeaRoleToDefault(string idea, string user, IdeaRolesToUpdate role)

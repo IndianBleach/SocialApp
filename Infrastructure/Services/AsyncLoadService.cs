@@ -12,6 +12,7 @@ using AutoMapper;
 using Infrastructure.Constants;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,11 +28,16 @@ namespace Infrastructure.Services
     {
         private readonly ApplicationContext _dbContext;
         private IHubContext<ChatHub> _chatContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AsyncLoadService(ApplicationContext context, IHubContext<ChatHub> chatContext)
+        public AsyncLoadService(
+            ApplicationContext context,
+            IHubContext<ChatHub> chatContext,
+            UserManager<ApplicationUser> userManager)
         {
             _dbContext = context;
             _chatContext = chatContext;
+            _userManager = userManager;
         }
 
         //fix
@@ -1121,6 +1127,55 @@ namespace Infrastructure.Services
             }
 
             return new(false, "Op. Update Role (Failed)");
+        }
+
+        public async Task<OperationResultDto> RemoveIdeaAsync(string ideaGuid, string userGuid, string userPassword)
+        {
+            Idea getIdea = await _dbContext.Ideas
+                .Include(x => x.Members)
+                .ThenInclude(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+            if (getIdea != null)
+            {
+                bool isAuthor = IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getIdea.Members, userGuid, IdeaMemberRoles.Author);
+
+                if (isAuthor)
+                {
+                    ApplicationUser getAuthor = getIdea.Members
+                        .FirstOrDefault(x => x.UserId.Equals(userGuid))
+                        .User;
+
+                    bool isValidPassword = await _userManager.CheckPasswordAsync(getAuthor, userPassword);
+
+                    if (isValidPassword)
+                    {
+                        Idea loadFullIdea = await _dbContext.Ideas
+                            .Include(x => x.Reactions)
+                            .Include(x => x.Members)
+                            .Include(x => x.Invitations)
+                            .Include(x => x.Reposts)
+                            .Include(x => x.Topics)
+                            .ThenInclude(x => x.Comments)
+                            .Include(x => x.Goals)
+                            .ThenInclude(x => x.Tasks)
+                            .Include(x => x.Avatar)
+                            .Include(x => x.Contact)
+                            .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
+
+                        _dbContext.Ideas.Remove(loadFullIdea);
+                        await _dbContext.SaveChangesAsync();
+
+                        if (loadFullIdea.Avatar.Name != AvatarInformation.IdeaDefaultAvatarName)
+                            File.Delete("wwwroot/media/ideaAvatars/" + loadFullIdea.Avatar.Name);
+
+                        return new(true, "Op. Remove idea (Success)");
+                    }
+                }
+            }
+
+            return new(false, "Op. Remove idea (Failed)");
         }
     }
 }

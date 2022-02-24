@@ -4,6 +4,9 @@ using ApplicationCore.Interfaces;
 using AutoMapper;
 using Infrastructure.Constants;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -54,7 +57,7 @@ namespace Infrastructure.Services
         public async Task UserSignOutAsync()
             => await _signInManager.SignOutAsync();
 
-        public async Task<AuthorizationResultDto> UserSignUpAsync(UserSignUpDto model)
+        public async Task<AuthorizationResultDto> UserSignUpAsync(UserSignUpDto model, HttpContext context)
         {
             var config = new MapperConfiguration(conf => conf.CreateMap<UserSignUpDto, ApplicationUser>()
             .ForMember("UserName", opt => opt.MapFrom(x => x.Username))
@@ -68,8 +71,14 @@ namespace Infrastructure.Services
 
             var result = await _userManager.CreateAsync(createUser, model.Password);
 
-            Claim avatarClaim = new Claim("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
-            Claim guidClaim = new Claim("UserId", createUser.Id);
+            Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
+            Claim guidClaim = new("UserId", createUser.Id);
+
+            ClaimsIdentity id = new(
+                new List<Claim>() { avatarClaim, guidClaim },
+                "ApplicationCookie",
+                ClaimsIdentity.DefaultNameClaimType,
+                ClaimsIdentity.DefaultRoleClaimType);            
 
             if (result.Succeeded)
             {
@@ -77,6 +86,7 @@ namespace Infrastructure.Services
                 await _userManager.AddClaimAsync(createUser, avatarClaim);
                 await _userManager.AddToRoleAsync(createUser, "user");
                 await _signInManager.SignInAsync(createUser, false);
+                await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
                 return CreateResult(true, "Регистрация прошла успешно!");
             }
