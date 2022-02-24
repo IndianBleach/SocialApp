@@ -47,6 +47,11 @@ namespace Infrastructure.Services
 
             if (isValidPassword)
             {
+                Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
+                Claim guidClaim = new("UserId", findUser.Id);
+
+                await _userManager.AddClaimAsync(findUser, guidClaim);
+                await _userManager.AddClaimAsync(findUser, avatarClaim);
                 await _signInManager.SignInAsync(findUser, false);
 
                 return CreateResult(true, "Вход в аккаунт выполнен");
@@ -57,7 +62,7 @@ namespace Infrastructure.Services
         public async Task UserSignOutAsync()
             => await _signInManager.SignOutAsync();
 
-        public async Task<AuthorizationResultDto> UserSignUpAsync(UserSignUpDto model, HttpContext context)
+        public async Task<AuthorizationResultDto> UserSignUpAsync(UserSignUpDto model)
         {
             var config = new MapperConfiguration(conf => conf.CreateMap<UserSignUpDto, ApplicationUser>()
             .ForMember("UserName", opt => opt.MapFrom(x => x.Username))
@@ -72,13 +77,7 @@ namespace Infrastructure.Services
             var result = await _userManager.CreateAsync(createUser, model.Password);
 
             Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
-            Claim guidClaim = new("UserId", createUser.Id);
-
-            ClaimsIdentity id = new(
-                new List<Claim>() { avatarClaim, guidClaim },
-                "ApplicationCookie",
-                ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType);            
+            Claim guidClaim = new("UserId", createUser.Id);   
 
             if (result.Succeeded)
             {
@@ -86,7 +85,6 @@ namespace Infrastructure.Services
                 await _userManager.AddClaimAsync(createUser, avatarClaim);
                 await _userManager.AddToRoleAsync(createUser, "user");
                 await _signInManager.SignInAsync(createUser, false);
-                await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
                 return CreateResult(true, "Регистрация прошла успешно!");
             }

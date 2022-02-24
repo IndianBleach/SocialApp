@@ -7,6 +7,7 @@ using WebUi.Controllers.Extensions;
 
 namespace WebUi.Controllers
 {
+    [Authorize]
     public class CreateController : ExtendedController
     {
         private readonly IIdeaRepository _ideaRepository;

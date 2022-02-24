@@ -9,6 +9,7 @@ using WebUi.Models.ChatViewModel;
 
 namespace WebUi.Controllers
 {
+    [Authorize]
     public class ChatController : ExtendedController
     {
 

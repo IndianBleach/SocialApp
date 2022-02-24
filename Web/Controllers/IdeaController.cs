@@ -13,6 +13,7 @@ using WebUi.Controllers.Extensions;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class IdeaController : ExtendedController
     {
         private readonly IIdeaRepository _ideaRepository;
@@ -31,7 +32,6 @@ namespace Web.Controllers
 
         [HttpGet]
         [Route("/idea/{guid}")]
-        [Authorize(Roles = "user,admin")]
         public async Task<IActionResult> Index(string? guid, int? page, string? section)
         {
             string[] allSections = new string[]

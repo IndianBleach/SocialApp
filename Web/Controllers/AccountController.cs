@@ -20,20 +20,6 @@ namespace WebUi.Controllers
             _tagService = tagService;
         }
 
-        private async Task<bool> TestFunc(UserSignUpDto model)
-        {
-            var result = await _authorizationService.UserSignUpAsync(model);
-
-            return result.IsSuccess;
-        }
-
-        public IActionResult Test()
-        {
-            var res = _authorizationService.CreateResult(false, "Введены некорректные данные");
-
-            return View("Login");
-        }
-
         [HttpGet]
         public async Task<IActionResult> Login()
         {
@@ -56,14 +42,13 @@ namespace WebUi.Controllers
             return RedirectToAction("login", "account");
         }
 
-
         [HttpPost]
         [Route("account/signup")]
         public async Task<JsonResult> SignUp(UserSignUpDto model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _authorizationService.UserSignUpAsync(model);
+                var result = await _authorizationService.UserSignUpAsync(model, HttpContext);
 
                 if (result.IsSuccess)
                 {
@@ -85,7 +70,7 @@ namespace WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _authorizationService.UserSignInAsync(model);
+                var result = await _authorizationService.UserSignInAsync(model, HttpContext);
 
                 if (result.IsSuccess)
                 {
