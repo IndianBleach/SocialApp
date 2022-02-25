@@ -3,7 +3,9 @@ using ApplicationCore.Entities.UserEntity;
 using ApplicationCore.Identity;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
+using Web.Models.UserViewModel;
 using WebUi.Controllers.Extensions;
 using WebUi.Models.UserViewModel;
 
@@ -28,32 +30,82 @@ namespace WebUi.Controllers
             _userRepository = userRepository;
         }
 
+
+        [HttpGet]
+        [Route("/user/im")]
+        public async Task<IActionResult> SelfProfile()
+        { 
+            return View();
+        }
+
+
+        public async Task<IActionResult> Test(string userGuid, int? page, string? section)
+        {
+            string? currentUserGuid = GetUserIdOrNull();
+
+            string[] allSections = new string[]
+            {
+                "selfideas",
+                "participation",
+                "about",
+                "edit",
+            };
+
+            string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true
+                ? section?.ToLower() : "participation";
+
+            if (userGuid == null)
+                return RedirectToAction("login", "account");
+
+
+            /*
+            ProfileIdeasViewModel indexVm = new()
+            {
+                IdeaList = await _userRepository.GetUserParticipationIdeaListAsync(userGuid, currentUserGuid, page),
+                UserDetail = await _userRepository.GetUserDetailOrNullAsync
+            };
+            */
+
+            return View();
+        }
+
+
+        [HttpGet]
         [Route("user/{userGuid}")]
         public async Task<IActionResult> Index(string userGuid, int? page, string? section)
         {
-
             string? currentUserGuid = GetUserIdOrNull();
 
             if (userGuid == null)
                 return RedirectToAction("login", "account");
 
-            ProfileIndexViewModel indexVm = new()
+            string[] allSections = new string[]
             {
-                Ideas = _userRepository.GetUserIdeasPerPage(page, userGuid),
-                IsAuthorized = IsUserAuthenticated(),
-                Tags = await _tagService.GetAllTagsAsync(),
-                User = await _userRepository.GetUserDetailOrNullAsync(userGuid),
-                Pages = _globalService.CreatePages(
-                    _userRepository.GetUserIdeasCountByRole(userGuid, IdeaMemberRoles.Author)),
-                FriendType = currentUserGuid != null ? 
-                    await _userRepository.CheckFriendsAsync(currentUserGuid, userGuid) :
-                    ProfileFriendshipType.NotFriends,
-                IsSelfProfile = currentUserGuid != null ?
-                    _userRepository.CheckIsSelfProfile(currentUserGuid, userGuid) :
-                    false
+                "authored",
+                "participation",
+                "about",
+                "edit",
             };
 
-            return View(indexVm);
+            string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true
+                ? section?.ToLower() : "participation";
+
+            ProfileIdeasViewModel indexVm = new()
+            {
+                AuthoredIdeas = validSection.Equals("authored"),
+                Section = validSection,
+                UserDetail = await _userRepository.GetUserDetailOrNullAsync(userGuid),
+                FriendType = currentUserGuid != null ?
+                    await _userRepository.CheckFriendsAsync(currentUserGuid, userGuid) :
+                    ProfileFriendshipType.NotFriends,
+                AllTags = await _tagService.GetAllTagsAsync(),
+                IdeaList = await _userRepository.GetUserParticipationIdeaListAsync(
+                    userGuid, currentUserGuid, validSection.Equals("authored"), page),
+                IsAuthorized = IsUserAuthenticated(),
+                IsSelfProfile = currentUserGuid != null && _userRepository.CheckIsSelfProfile(currentUserGuid, userGuid)
+            };
+
+            return View("Index2", indexVm);
         }
 
 

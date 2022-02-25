@@ -23,11 +23,16 @@ namespace Infrastructure.Repositories
     {
         private readonly ApplicationContext _dbContext;
         private readonly ITagService _tagService;
+        private readonly IGlobalService<Idea> _globalService;
 
-        public UserRepository(ITagService tagService, ApplicationContext context)
+        public UserRepository(
+            ITagService tagService,
+            ApplicationContext context,
+            IGlobalService<Idea> globalService)
         {
             _dbContext = context;
             _tagService = tagService;
+            _globalService = globalService;
         }        
 
         public async Task<ICollection<ChatUserDto>> GetUserChatsAsync(string userGuid)
@@ -321,14 +326,14 @@ namespace Infrastructure.Repositories
                 if (getIdeas != null)
                 {
                     var config = new MapperConfiguration(conf => conf.CreateMap<Idea, HomeIdeaDto>()
-                    .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
-                    .ForMember("Name", opt => opt.MapFrom(x => x.Name))
-                    .ForMember("Description", opt => opt.MapFrom(x => x.Topics
-                        .First().Description))
-                    .ForMember("AvatarName", opt => opt.MapFrom(x => x.Avatar.Name))
-                    .ForMember("Reactions", opt => opt.MapFrom(x => IdeaHelper.GroupIdeaReactions(allBaseReacts, x.Reactions, userGuid)))
-                    .ForMember("CountGoals", opt => opt.MapFrom(x => x.Goals.Count))
-                    .ForMember("CountTopics", opt => opt.MapFrom(x => x.Topics.Count)));
+                        .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                        .ForMember("Description", opt => opt.MapFrom(x => x.Topics
+                            .First().Description))
+                        .ForMember("AvatarName", opt => opt.MapFrom(x => x.Avatar.Name))
+                        .ForMember("Reactions", opt => opt.MapFrom(x => IdeaHelper.GroupIdeaReactions(allBaseReacts, x.Reactions, userGuid)))
+                        .ForMember("CountGoals", opt => opt.MapFrom(x => x.Goals.Count))
+                        .ForMember("CountTopics", opt => opt.MapFrom(x => x.Topics.Count)));
 
                     var mapper = new Mapper(config);
 
@@ -414,6 +419,69 @@ namespace Infrastructure.Repositories
             }
 
             return null;
+        }
+
+        public async Task<UserProfileIdeaList> GetUserParticipationIdeaListAsync(string userId, string currentUserId, bool onlyAuthorIdeas, int? page)
+        {
+            ICollection<Idea> getIdeas;
+            int ideasCount = 0;
+            int normalizePage = page ?? 1;
+
+            if (onlyAuthorIdeas)
+            {
+                ideasCount = _dbContext.Ideas
+                    .Where(x => x.Members.Any(x => x.UserId.Equals(userId) &&
+                        x.Role.Equals(IdeaMemberRoles.Author)))
+                    .Count();
+
+                getIdeas = await _dbContext.Ideas
+                    .Include(x => x.Status)
+                    .Include(x => x.Members)
+                    .Include(x => x.Invitations)
+                    .Include(x => x.Avatar)
+                    .Where(x => x.Members.Any(x => x.UserId.Equals(userId) && 
+                        x.Role.Equals(IdeaMemberRoles.Author)))
+                    .Skip((ConstantsHelper.CountIdeasPerPage * (normalizePage - 1)))
+                    .Take(10)
+                    .ToListAsync();
+            }
+            else
+            {
+                ideasCount = _dbContext.Ideas
+                    .Where(x => x.Members.Any(x => x.UserId.Equals(userId)))
+                    .Count();
+
+                getIdeas = await _dbContext.Ideas
+                    .Include(x => x.Status)
+                    .Include(x => x.Members)
+                    .Include(x => x.Invitations)
+                    .Include(x => x.Avatar)
+                    .Where(x => x.Members.Any(x => x.UserId.Equals(userId)))
+                    .Skip((ConstantsHelper.CountIdeasPerPage * (normalizePage - 1)))
+                    .Take(10)
+                    .ToListAsync();
+            }
+
+            var config = new MapperConfiguration(conf => conf.CreateMap<Idea, ProfileIdeaDto>()
+                    .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                    .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                    .ForMember("Avatar", opt => opt.MapFrom(x => x.Avatar.Name))
+                    .ForMember("IsLiked", opt => opt.MapFrom(x => 
+                        IdeaHelper.CheckIsLiked(x.Members, x.Invitations, currentUserId)))
+                    .ForMember("Status", opt => opt.MapFrom(x => 
+                        new IdeaStatusDto(x.Status.Type))));
+
+            var mapper = new Mapper(config);
+
+            ICollection<ProfileIdeaDto> ideas = mapper.Map<ICollection<ProfileIdeaDto>>(getIdeas);
+
+            UserProfileIdeaList res = new()
+            {
+                Ideas = ideas,
+                Pages = _globalService.CreatePages(ideasCount, page),
+            };
+
+            return res;
         }
     }
 }

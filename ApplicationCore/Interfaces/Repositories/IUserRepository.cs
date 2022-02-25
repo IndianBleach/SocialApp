@@ -12,6 +12,8 @@ namespace ApplicationCore.Interfaces
 {
     public interface IUserRepository
     {
+        Task<UserProfileIdeaList> GetUserParticipationIdeaListAsync(string userId, string currentUserId, bool onlyAuthorIdeas, int? page);
+        //
         Task<ActiveChatUserDto> GetChatUserOrNullAsync(string? userGuid, string currentUserGuid);
         Task<ICollection<ChatUserDto>> GetUserChatsAsync(string userGuid);
         Task<ProfileFriendshipType> CheckFriendsAsync(string currentUserGuid, string userProfileGuid);
