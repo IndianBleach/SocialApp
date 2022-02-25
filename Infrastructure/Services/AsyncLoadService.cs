@@ -51,7 +51,24 @@ namespace Infrastructure.Services
                 .Include(x => x.Friends)
                 .FirstOrDefaultAsync(x => x.Id.Equals(friendGuid));
 
-            if ((getUser != null) || (getUserSec != null))
+            var getAlreadyReq = await _dbContext.FriendshipRequests
+                .FirstOrDefaultAsync(x => x.AuthorId.Equals(friendGuid) &&
+                    x.RequestToUserId.Equals(userGuid));
+
+            if ((getAlreadyReq != null) && (getUser != null) && (getUserSec != null))
+            {
+                Friendship createFriendship = new(FriendshipType.Accepted, new List<ApplicationUser>()
+                {
+                    getUser,
+                    getUserSec
+                });
+
+                await _dbContext.Friendships.AddAsync(createFriendship);
+                _dbContext.FriendshipRequests.Remove(getAlreadyReq);
+                await _dbContext.SaveChangesAsync();
+                return new OperationResultDto(true, "Запрос отправлен");
+            }
+            if ((getUser != null) && (getUserSec != null))
             {
                 FriendshipRequest createReq = new(getUser, getUserSec);
 

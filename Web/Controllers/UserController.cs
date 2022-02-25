@@ -90,6 +90,11 @@ namespace WebUi.Controllers
             string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true
                 ? section?.ToLower() : "participation";
 
+            if (validSection.Equals("about"))
+            { 
+            
+            }
+
             ProfileIdeasViewModel indexVm = new()
             {
                 AuthoredIdeas = validSection.Equals("authored"),

@@ -370,7 +370,7 @@ namespace Infrastructure.Repositories
             if ((getFirst != null) && (getSec != null))
             {
                 var res = await _dbContext.Friendships
-                .FirstOrDefaultAsync(x => x.Users.Contains(getFirst) && x.Users.Contains(getSec));
+                    .FirstOrDefaultAsync(x => x.Users.Contains(getFirst) && x.Users.Contains(getSec));
 
                 if (res != null)
                 {
@@ -379,11 +379,17 @@ namespace Infrastructure.Repositories
                         FriendshipType.Accepted
                             => ProfileFriendshipType.Accept,
 
-                        FriendshipType.Request
-                            => ProfileFriendshipType.Request,
-
                         _ => ProfileFriendshipType.NotFriends
                     };
+                }
+                else
+                {
+                    var req = await _dbContext.FriendshipRequests
+                        .FirstOrDefaultAsync(x => x.AuthorId.Equals(currentUserGuid) &&
+                            x.RequestToUserId.Equals(userProfileGuid));
+
+                    if (req != null)
+                        return ProfileFriendshipType.Request;
                 }
             }
 
