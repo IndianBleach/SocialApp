@@ -157,7 +157,8 @@
         $.get("/asyncload/idea/getgoal", { goal }, resp => {
             $("#goalDetailTitle").text(resp.name);
             $("#goalDetailDesc").text(resp.description);
-            $("#goalDetailLink").attr("src", "/user/" + resp.authorGuid);
+            $("#goalDetailLink").attr("href", "/user/" + resp.authorGuid);
+            $("#goalDetailLink img").attr("src", "../media/userAvatars/" + resp.authorAvatar)
             $("#goalDetailAuthorName").text(resp.datePublished);
             $("#goalTaskForm").attr("data-goal", resp.guid);
             console.log(resp.tasks);
@@ -169,11 +170,10 @@
                         complete = false;
                         text = "🎯";
                     }
-                    $("#goalWindowLoad").append(`<div class="goalMessage"><a href="/user/${x.authorGuid}" class="text-truncate idea_hide_text col-2"><img class="me-1" src="../media/userAvatars/${x.authorAvatar}" />${x.authorName}</a><p class="col-7">${x.description}</p><span class="col-1"><button data-task="${x.guid}" data-goal="${goal}" data-gcomplete="${complete}" class="asyncChangeStatusBtn g-status btn">${text}</button></span><span class="idea_hide_elems col-2">${x.datePublished}</span></div>`)
+                    $("#goalWindowLoad").append(`<div class="goalMessage"><a href="/user/${x.authorGuid}" class="text-truncate idea_hide_text col-2"><img class="me-1" src="../media/userAvatars/${x.authorAvatar}" />${x.authorName}</a><p class="col-7">${x.description}</p><span class="col-1"><button data-task="${x.guid}" data-goal="${goal}" data-gcomplete="${complete}" class="asyncChangeStatusBtn g-status btn">${text}</button></span><span class="idea_hide_elems col-2">${x.datePublished}</span></div>`);
                 })
 
                 // TASK - Change
-                //IdeaGoalTaskType newStatus, string task, string goal
                 $(".asyncChangeStatusBtn").on("click", (e) => {
                     e.target.setAttribute("disabled", true);
                     let task = e.target.dataset.task;
@@ -197,14 +197,17 @@
         })
     });
 
+    let curUserAvatar = $("#goalDetailCurAvatar").attr("src");
+
     // TASK - Create
     $("#goalTaskForm").on("submit", (e) => {
         e.preventDefault();
         let goal = e.target.dataset.goal;
         let idea = e.target.dataset.idea;
-        let content = e.target.getElementsByTagName("input")[0].value;
+        let content = e.target.getElementsByTagName("input")[0].value;        
         $("#goalTaskInput").val("");
         $("#choiceEmojiWindow").addClass("d-none");
+        $("#goalWindowLoad").append(`<div class="goalMessage"><a href="/user/im" class="text-truncate idea_hide_text col-2"><img class="me-1" src="${curUserAvatar}" />Вы</a><p class="col-7">${content}</p><span class="col-1"><button disabled data-gcomplete="false" class="asyncChangeStatusBtn g-status btn">🎯</button></span><span class="idea_hide_elems col-2">сейчас</span></div>`);
         $.post("/asyncload/idea/createtask", { content, idea, goal }, resp => {
             console.log(resp);
         });
@@ -322,6 +325,16 @@
         $("#choiceEmojiWindow").addClass("d-none");
     });
 
+    // SETTINGS - Remove
+    $("#removeIdeaForm").on("submit", (e) => {
+        e.preventDefault();
+        let idea = e.target.dataset.guid;
+        let password = e.target.getElementsByTagName("input")[0].value;
+        $.post("/asyncload/idea/remove", { idea, password }, resp => {
+            console.log(resp);
+        });
+    });
+
     // SETTINGS - Update
     $("#ideaUpdateForm").on("submit", (e) => {
         e.preventDefault();
@@ -346,7 +359,7 @@
     })
 
     // TAGS - Switcher
-    sessionStorage.setItem("etc", $("#selectTagsContainer button").length + 1);
+    sessionStorage.setItem("etc", $("#selectTagsContainer button").length);
     $(".asyncSelectBtnTag").on("click", (e) => {
         e.preventDefault();
         if (e.target.classList.contains("updatedTag")) {
@@ -417,15 +430,5 @@
             console.log(resp);
         })
     });
-
-    // SETTINGS - Remove
-    $("#removeIdeaForm").on("submit", (e) => {
-        e.preventDefault();
-        let idea = e.target.dataset.idea;
-        let password = e.target.getElementsByTagName("input")[0].value;
-        $.post("/asyncload/idea/remove", { idea, password }, resp => {
-            console.log(resp);
-        });
-    });
-
+    
 })

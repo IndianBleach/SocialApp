@@ -504,12 +504,12 @@
                                     </button>
                                 </div>
                                 <form id="topicWindowForm"
-                                      style="height:50px!important"
-                                      class="rad-md col ms-2 flex-form-dark">
+                                      style="height:50px!important"                                      
+                                      class="form-upd rad-md col ms-2 flex-form-dark">
                                     <input id="topicCommentInput"
-                                           class="form-control"
+                                           class="form-upd form-control"
                                            placeholder="Комментарий" />
-                                    <button class="btn bg-transparent">
+                                    <button style="background: #141414 !important;" class="form-upd btn bg-transparent">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="27"
                                              height="27"
@@ -1014,8 +1014,8 @@
                             <div class="col-12 d-flex align-items-end">
                                 <div class="ms-auto pb-2 d-flex">
                                     <div class="position-relative me-5">
-                                        <button class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                        <button data-idea="@Model.Idea.Guid" class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
+                                            <svg data-idea="@Model.Idea.Guid" xmlns="http://www.w3.org/2000/svg"
                                                  width="33"
                                                  height="33"
                                                  fill="currentColor"
@@ -1097,7 +1097,7 @@ else
                                     <img src="~/media/userAvatars/@modder.UserAvatar"
                                          height="33"
                                          width="33"
-                                         class="rounded-circle" />
+                                         class="rounded-circle b-all" />
                                 </a>
                                 }
                             </div>
@@ -1361,7 +1361,7 @@ else
                                         <p class="mb-0 t-sm t-smbold text-muted">@Model.Idea.CurrentRole.RoleName</p>
                                     </div>
                                 </div>
-                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
+                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Member)
                                 {
                                 <div class="btn-back-hover aside_section_adaptive">
                                     <button class="p-3 showNewTopicWindowBtn col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">

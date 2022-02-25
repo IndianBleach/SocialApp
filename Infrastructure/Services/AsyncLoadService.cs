@@ -1156,7 +1156,7 @@ namespace Infrastructure.Services
                             .Include(x => x.Members)
                             .Include(x => x.Invitations)
                             .Include(x => x.Reposts)
-                            .Include(x => x.Topics)
+                            .Include(x => x.Topics)                           
                             .ThenInclude(x => x.Comments)
                             .Include(x => x.Goals)
                             .ThenInclude(x => x.Tasks)
@@ -1164,7 +1164,7 @@ namespace Infrastructure.Services
                             .Include(x => x.Contact)
                             .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
 
-                        _dbContext.Ideas.Remove(loadFullIdea);
+                        _dbContext.Ideas.Remove(loadFullIdea);                    
                         await _dbContext.SaveChangesAsync();
 
                         if (loadFullIdea.Avatar.Name != AvatarInformation.IdeaDefaultAvatarName)

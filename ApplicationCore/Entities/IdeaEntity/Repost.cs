@@ -14,7 +14,7 @@ namespace ApplicationCore.Entities.IdeaEntity
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
         public string IdeaId { get; set; }
-        public Idea Idea { get; set; }
+        public Idea? Idea { get; set; }
         public DateTime DateCreated { get; set; }
 
         public IdeaRepost(string chatId, string userId, string ideaId)
@@ -29,6 +29,7 @@ namespace ApplicationCore.Entities.IdeaEntity
         {
             Chat = chat;
             UserId = userId;
+            IdeaId = Idea.Id;
             Idea = idea;
             DateCreated = DateTime.Now;
         }

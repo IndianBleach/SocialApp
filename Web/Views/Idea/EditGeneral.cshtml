@@ -684,8 +684,8 @@
                             <div class="col-12 d-flex align-items-end">
                                 <div class="ms-auto pb-2 d-flex">
                                     <div class="position-relative me-5">
-                                        <button class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                        <button data-idea="@Model.Idea.Guid" class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
+                                            <svg data-idea="@Model.Idea.Guid" xmlns="http://www.w3.org/2000/svg"
                                                  width="33"
                                                  height="33"
                                                  fill="currentColor"
@@ -767,7 +767,7 @@ else
                                         <img src="~/media/userAvatars/@modder.UserAvatar"
                                              height="33"
                                              width="33"
-                                             class="rounded-circle" />
+                                             class="rounded-circle b-all" />
                                     </a>
                                 }
                             </div>
@@ -928,7 +928,7 @@ else
                                 </a>
                             </li>
                             <li class="p-0 col text-center idea_menu_link active nav-item">
-                                <span asp-route-section="editGeneral" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                                <span asp-route-section="editGeneral" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link clr-white hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -969,7 +969,7 @@ else
                                 <div class="col d-flex justify-content-center">
                                     <div class="col-9 col-md-10 p-3">
                                         <form id="ideaUpdateForm">
-                                            <input hidden value="@Model.Idea.Guid" name="idea"/>
+                                            <input hidden value="@Model.Idea.Guid" name="idea" />
                                             <div class="mb-3 d-flex align-items-center p-2 rad-md">
                                                 <input name="newAvatar"
                                                        style="background-image: url(../media/ideaAvatars/@Model.Idea.AvatarName);"
@@ -1022,11 +1022,11 @@ else
                                                          class="pt-1 d-flex flex-wrap">
                                                         @foreach (var tag in Model.EditTags)
                                                         {
-                                                            if (tag.Selected) 
+                                                            if (tag.Selected)
                                                             {
-                                                        <button data-tag="@tag.Guid" class="asyncSelectBtnTag updatedTag me-1 mb-1 btn-tag">
-                                                            @tag.Name
-                                                        </button>
+                                                                <button data-tag="@tag.Guid" class="asyncSelectBtnTag updatedTag me-1 mb-1 btn-tag">
+                                                                    @tag.Name
+                                                                </button>
                                                             }
                                                         }
 
@@ -1042,11 +1042,11 @@ else
                                                         {
                                                             if (status.TypeValue == Model.Idea.Status.TypeValue)
                                                             {
-                                                            <option selected value="@status.TypeValue" class="p-1 clr-mute">@status.Name - @status.EmojiValue</option>
+                                                                <option selected value="@status.TypeValue" class="p-1 clr-mute">@status.Name - @status.EmojiValue</option>
                                                             }
                                                             else
-                                                            { 
-                                                            <option value="@status.TypeValue" class="p-1 clr-mute">@status.Name - @status.EmojiValue</option>
+                                                            {
+                                                                <option value="@status.TypeValue" class="p-1 clr-mute">@status.Name - @status.EmojiValue</option>
                                                             }
                                                         }
                                                     }
@@ -1059,20 +1059,20 @@ else
                                                 <div class="pt-2">
                                                     @if (Model.Idea.IsSecret)
                                                     {
-                                                    <input style="width: 19px; height: 19px;"
-                                                           class="pe-1 form-check-input"
-                                                           type="checkbox"
-                                                           value=""
-                                                           checked
-                                                           id="flexCheckChecked" />
+                                                        <input style="width: 19px; height: 19px;"
+                                                               class="pe-1 form-check-input"
+                                                               type="checkbox"
+                                                               value=""
+                                                               checked
+                                                               id="flexCheckChecked" />
                                                     }
                                                     else
-                                                    { 
-                                                    <input style="width: 19px; height: 19px;"
-                                                       class="pe-1 form-check-input"
-                                                       type="checkbox"
-                                                       value=""                                                       
-                                                       id="flexCheckChecked" />
+                                                    {
+                                                        <input style="width: 19px; height: 19px;"
+                                                               class="pe-1 form-check-input"
+                                                               type="checkbox"
+                                                               value=""
+                                                               id="flexCheckChecked" />
                                                     }
                                                 </div>
                                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -1131,7 +1131,7 @@ else
                                         <p class="mb-0 t-sm t-smbold text-muted">@Model.Idea.CurrentRole.RoleName</p>
                                     </div>
                                 </div>
-                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
+                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Member)
                                 {
                                     <div class="btn-back-hover aside_section_adaptive">
                                         <button class="p-3 showNewTopicWindowBtn col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">

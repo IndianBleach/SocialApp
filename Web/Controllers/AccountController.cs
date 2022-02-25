@@ -48,7 +48,7 @@ namespace WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _authorizationService.UserSignUpAsync(model, HttpContext);
+                var result = await _authorizationService.UserSignUpAsync(model);
 
                 if (result.IsSuccess)
                 {
@@ -70,7 +70,7 @@ namespace WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _authorizationService.UserSignInAsync(model, HttpContext);
+                var result = await _authorizationService.UserSignInAsync(model);
 
                 if (result.IsSuccess)
                 {

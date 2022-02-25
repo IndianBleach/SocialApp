@@ -50,6 +50,8 @@ namespace Infrastructure.Repositories
         {
             var allTypes = reactions.Select(x => x.Reaction.Id);
 
+            allTypes = allTypes.Distinct();
+
             var allReactsByType = allTypes.Select(react => reactions.Where(x => x.Reaction.Id
                     .Equals(react)));
 

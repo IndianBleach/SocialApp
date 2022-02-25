@@ -19,7 +19,7 @@ namespace Infrastructure.Data
         public DbSet<IdeaInvitation> IdeaInvitations { get; set; }
         public DbSet<IdeaMember> IdeaMembers { get; set; }
         public DbSet<IdeaReaction> IdeaReactions { get; set; }
-        public DbSet<IdeaRepost> IdeaReposts { get; set; }
+        //public DbSet<IdeaRepost> IdeaReposts { get; set; }
         public DbSet<IdeaStatus> IdeaStatuses { get; set; }
         public DbSet<IdeaTopic> IdeaTopics { get; set; }
         public DbSet<IdeaTopicComment> IdeaTopicComments { get; set; }

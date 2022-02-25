@@ -684,8 +684,8 @@
                             <div class="col-12 d-flex align-items-end">
                                 <div class="ms-auto pb-2 d-flex">
                                     <div class="position-relative me-5">
-                                        <button class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                        <button data-idea="@Model.Idea.Guid" class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
+                                            <svg data-idea="@Model.Idea.Guid" xmlns="http://www.w3.org/2000/svg"
                                                  width="33"
                                                  height="33"
                                                  fill="currentColor"
@@ -767,7 +767,7 @@ else
                                         <img src="~/media/userAvatars/@modder.UserAvatar"
                                              height="33"
                                              width="33"
-                                             class="rounded-circle" />
+                                             class="rounded-circle b-all" />
                                     </a>
                                 }
                             </div>
@@ -928,7 +928,7 @@ else
                                 </a>
                             </li>
                             <li class="p-0 col text-center idea_menu_link active nav-item">
-                                <span asp-route-section="editGeneral" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                                <span asp-route-section="editGeneral" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link clr-white hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -956,7 +956,7 @@ else
                                         </a>
                                     </div>
                                     <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
-                                        <a  asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmembers" class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
+                                        <a asp-action="@Model.Idea.Guid" asp-controller="idea" asp-route-section="editmembers" class="text-truncate settings_link_text btn-unfocus text-start col-12 hover-white btn clr-mute t-bold t-md bg-transparent">
                                             Участники
                                         </a>
                                     </div>
@@ -966,16 +966,16 @@ else
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col d-flex justify-content-center">
+                                <div style="min-height: 320px;" class="col d-flex justify-content-center">
                                     <div class="col p-3">
                                         <span class="pt-1 clr-mute t-smbold t-md">
                                             Удаление идеи и всего прогресса
                                         </span>
                                         <!---->
-                                        <form id="removeIdeaForm">
+                                        <form data-guid="@Model.Idea.Guid" id="removeIdeaForm">
                                             <div class="col-10 mt-2 form-floating">
                                                 <input type="password"
-                                                       class="need-next-input form-control"
+                                                       class="form-upd need-next-input form-control"
                                                        id="floatingPassword"
                                                        placeholder="Пароль" />
                                                 <label class="text-dark" for="floatingPassword">Пароль</label>
@@ -1022,7 +1022,7 @@ else
                                         <p class="mb-0 t-sm t-smbold text-muted">@Model.Idea.CurrentRole.RoleName</p>
                                     </div>
                                 </div>
-                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
+                                @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Member)
                                 {
                                     <div class="btn-back-hover aside_section_adaptive">
                                         <button class="p-3 showNewTopicWindowBtn col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">

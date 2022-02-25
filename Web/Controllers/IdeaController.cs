@@ -40,7 +40,8 @@ namespace Web.Controllers
                 "goals",
                 "editgeneral",
                 "editmodders",
-                "editmembers"
+                "editmembers",
+                "editremove"
             };
 
             string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true 

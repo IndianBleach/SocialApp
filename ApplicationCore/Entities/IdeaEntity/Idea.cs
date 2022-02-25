@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities.Chat;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace ApplicationCore.Entities.IdeaEntity
         public ICollection<IdeaReaction> Reactions { get; set; }
         public int AvatarId { get; set; }
         public IdeaAvatar Avatar { get; set; }
-        public ICollection<IdeaRepost> Reposts { get; set; }
+        public ICollection<ChatMessage> Reposts { get; set; }
         public ICollection<IdeaInvitation> Invitations { get; set; }
         public ICollection<IdeaTopic> Topics { get; set; }
         public ICollection<IdeaGoal> Goals { get; set; }
@@ -29,7 +30,7 @@ namespace ApplicationCore.Entities.IdeaEntity
         {
             Members = new List<IdeaMember>();
             Reactions = new List<IdeaReaction>();
-            Reposts = new List<IdeaRepost>();
+            Reposts = new List<ChatMessage>();
             Invitations = new List<IdeaInvitation>();
             Topics = new List<IdeaTopic>();
             Goals = new List<IdeaGoal>();
@@ -50,7 +51,7 @@ namespace ApplicationCore.Entities.IdeaEntity
             Contact = null;
             Members = members;
             Reactions = new List<IdeaReaction>();
-            Reposts = new List<IdeaRepost>();
+            Reposts = new List<ChatMessage>();
             Invitations = new List<IdeaInvitation>();
             Topics = topics;
             Goals = new List<IdeaGoal>();

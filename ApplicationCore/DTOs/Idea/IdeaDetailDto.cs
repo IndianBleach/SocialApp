@@ -17,7 +17,7 @@ namespace ApplicationCore.DTOs.Idea
         public IdeaModderDto(string userGuid, string userAvatar)
         {
             UserAvatar = userAvatar;
-            UserAvatar = userAvatar; 
+            UserGuid = userGuid; 
         }
     }
 

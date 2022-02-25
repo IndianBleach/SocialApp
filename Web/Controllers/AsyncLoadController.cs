@@ -19,9 +19,9 @@ namespace WebUi.Controllers
         }
 
 
-        public async Task<bool> Test(string u1, string u2)
+        public async Task<bool> Test(string u1, string u2, string u3)
         {
-            var res = await _loadService.SendFriendRequestAsync(u1, u2);
+            var res = await _loadService.RemoveIdeaAsync(u1, u2, u3);
 
             return true;
         }

@@ -6,7 +6,7 @@
 
 #goalWindow {
     background-color: black;
-    min-height: 600px;
+    min-height: 300px;
     border: 1px solid #242424;
 }
 
@@ -64,11 +64,10 @@
     overflow-x: hidden;
     height: 398px;
 }
-
 #goalWindowLoad {
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 374px;
+    height: 398px;
 }
 
 .goalMessage {
@@ -253,6 +252,9 @@
     #topicWindowCommentsLoad {
         height: 278px;
     }
+    #goalWindowLoad {
+        height: 278px;
+    }
 
     .content-center-adaptive {
         text-align: center !important;
@@ -308,6 +310,9 @@
 
 @media (min-width: 768px) {
     #topicWindowCommentsLoad {
+        height: 276px;
+    }
+    #goalWindowLoad {
         height: 276px;
     }
     .window_resize {
@@ -398,6 +403,9 @@
     #topicWindowCommentsLoad {
         height: 374px;
     }
+    #goalWindowLoad {
+        height: 374px;
+    }
     .window_resize {
         width: 1000px !important;
     }
@@ -454,5 +462,8 @@
 @media (min-width: 1600px) {
     #topicWindowCommentsLoad {
         height: 424px;
+    }
+    #goalWindowLoad {
+        height:424px;
     }
 }

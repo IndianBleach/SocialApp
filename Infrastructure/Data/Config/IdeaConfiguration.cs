@@ -9,6 +9,31 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Config
 {
+    public class IdeaConfiguration : IEntityTypeConfiguration<Idea>
+    {
+        public void Configure(EntityTypeBuilder<Idea> builder)
+        {
+            builder.HasMany(x => x.Topics).WithOne(x => x.Idea)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Reactions).WithOne(x => x.Idea)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Goals).WithOne(x => x.Idea)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Invitations).WithOne(x => x.Idea)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Members).WithOne(x => x.Idea)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Reposts).WithOne(x => x.Idea)
+               .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+
     public class IdeaTopicCommentConfiguration : IEntityTypeConfiguration<IdeaTopicComment>
     {
         public void Configure(EntityTypeBuilder<IdeaTopicComment> builder)

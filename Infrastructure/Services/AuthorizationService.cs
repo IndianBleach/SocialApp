@@ -46,12 +46,7 @@ namespace Infrastructure.Services
             var isValidPassword = await _userManager.CheckPasswordAsync(findUser, model.Password);
 
             if (isValidPassword)
-            {
-                Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
-                Claim guidClaim = new("UserId", findUser.Id);
-
-                await _userManager.AddClaimAsync(findUser, guidClaim);
-                await _userManager.AddClaimAsync(findUser, avatarClaim);
+            {                
                 await _signInManager.SignInAsync(findUser, false);
 
                 return CreateResult(true, "Вход в аккаунт выполнен");
