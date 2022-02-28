@@ -1,4 +1,5 @@
-﻿using ApplicationCore.DTOs.Idea;
+﻿using ApplicationCore.DTOs.AsyncLoad;
+using ApplicationCore.DTOs.Idea;
 using ApplicationCore.DTOs.Tag;
 using ApplicationCore.DTOs.User;
 using ApplicationCore.Entities;
@@ -10,10 +11,13 @@ using ApplicationCore.Interfaces;
 using AutoMapper;
 using Infrastructure.Constants;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,15 +28,21 @@ namespace Infrastructure.Repositories
         private readonly ApplicationContext _dbContext;
         private readonly ITagService _tagService;
         private readonly IGlobalService<Idea> _globalService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public UserRepository(
             ITagService tagService,
             ApplicationContext context,
-            IGlobalService<Idea> globalService)
+            IGlobalService<Idea> globalService,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _dbContext = context;
             _tagService = tagService;
             _globalService = globalService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }        
 
         public async Task<ICollection<ChatUserDto>> GetUserChatsAsync(string userGuid)
@@ -488,6 +498,235 @@ namespace Infrastructure.Repositories
             };
 
             return res;
+        }
+
+        private string NormazileUserAddress(string? country, string? city)
+        {
+            if (!string.IsNullOrEmpty(country) &&
+                !string.IsNullOrEmpty(city))
+                return $"{country} - {city}";
+            if (!string.IsNullOrEmpty(country))
+                return $"{country}";
+            else if (!string.IsNullOrEmpty(city))
+                return $"{city}";
+            else 
+                return "";
+        }
+
+        public async Task<UserAboutInfoDto> GetUserAboutInfoAsync(string userId)
+        {
+            if (userId != null)
+            {
+                ApplicationUser getUser = await _dbContext.Users
+                .Include(x => x.Avatar)
+                .Include(x => x.Contacts)
+                .Include(x => x.Tags)
+                .FirstOrDefaultAsync(x => x.Id.Equals(userId));
+
+                if (getUser != null)
+                {
+                    var config = new MapperConfiguration(conf => conf.CreateMap<ApplicationUser, UserAboutInfoDto>()
+                        .ForMember("UserId", opt => opt.MapFrom(x => x.Id))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.UserName))
+                        .ForMember("Description", opt => opt.MapFrom(x => x.Description))
+                        .ForMember("AvatarImageName", opt => opt.MapFrom(x => x.Avatar.Name))
+                        .ForMember("Tags", opt => opt.MapFrom(x => x.Tags.Select(x => x.Name)))
+                        .ForMember("Address", opt => opt.MapFrom(x => 
+                            NormazileUserAddress(x.AddressCountry, x.AddressCity)))
+                        .ForMember("Contact", opt => opt.MapFrom(x => 
+                            new UserContactDto()
+                            { 
+                                Name = x.Contacts.FirstOrDefault() != null ?
+                                    x.Contacts.FirstOrDefault().Name : null,
+                                Url = x.Contacts.FirstOrDefault() != null ?
+                                    x.Contacts.FirstOrDefault().Url : null,
+                            })));
+
+                    var mapper = new Mapper(config);
+
+                    UserAboutInfoDto dto = mapper.Map<UserAboutInfoDto>(getUser);
+
+                    return dto;
+                }
+            }
+            return null;
+        }
+
+        public async Task<UserEditAccountDto> GetEditAccountUserAsync(string userId)
+        {
+            if (userId != null)
+            {
+                ApplicationUser getUser = await _dbContext.Users
+                .Include(x => x.Avatar)
+                .Include(x => x.Tags)
+                .FirstOrDefaultAsync(x => x.Id.Equals(userId));
+
+                if (getUser != null)
+                {
+                    var allTags = _dbContext.Tags.ToList();
+
+                    var config = new MapperConfiguration(conf => conf.CreateMap<ApplicationUser, UserEditAccountDto>()
+                        .ForMember("UserId", opt => opt.MapFrom(x => x.Id))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.UserName))
+                        .ForMember("Description", opt => opt.MapFrom(x => x.Description))
+                        .ForMember("AvatarImageName", opt => opt.MapFrom(x => x.Avatar.Name))
+                        .ForMember("Tags", opt => opt.MapFrom(x => allTags.Select(e => new TagEditDto()
+                        { 
+                            Guid = e.Id,
+                            Name = e.Name,
+                            Selected = x.Tags.Any(r => r.Id.Equals(e.Id))
+                        }))));
+
+                    var mapper = new Mapper(config);
+
+                    UserEditAccountDto dto = mapper.Map<UserEditAccountDto>(getUser);
+
+                    return dto;
+                }
+            }
+            return null;
+        }
+
+        public async Task<UserEditGeneralDto> GetEditGeneralUserAsync(string userId)
+        {
+            if (userId != null)
+            {
+                ApplicationUser getUser = await _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Tags)
+                    .Include(x => x.Contacts)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(userId));
+
+                if (getUser != null)
+                {
+                    var allTags = _dbContext.Tags.ToList();
+
+                    var config = new MapperConfiguration(conf => conf.CreateMap<ApplicationUser, UserEditGeneralDto>()
+                        .ForMember("UserId", opt => opt.MapFrom(x => x.Id))
+                        .ForMember("Name", opt => opt.MapFrom(x => x.UserName))
+                        .ForMember("Description", opt => opt.MapFrom(x => x.Description))
+                        .ForMember("AvatarImageName", opt => opt.MapFrom(x => x.Avatar.Name))
+                        .ForMember("Tags", opt => opt.MapFrom(x => x.Tags.Select(e => e.Name)))
+                        .ForMember("ContactName", opt => opt.MapFrom(x => x.Contacts.FirstOrDefault() != null ? x.Contacts.FirstOrDefault().Name : null))
+                        .ForMember("ContactUrl", opt => opt.MapFrom(x => x.Contacts.FirstOrDefault() != null ? x.Contacts.FirstOrDefault().Url : null)));
+
+                    var mapper = new Mapper(config);
+
+                    UserEditGeneralDto dto = mapper.Map<UserEditGeneralDto>(getUser);
+
+                    return dto;
+                }
+            }
+            return null;
+        }
+
+        public async Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model)
+        {
+            ApplicationUser getUser = await _dbContext.Users
+                .Include(x => x.Tags)
+                .FirstOrDefaultAsync(x => x.Id.Equals(userId));
+
+            if (getUser != null)
+            {
+                if (!string.IsNullOrEmpty(model.Username))
+                    getUser.UserName = model.Username;
+
+                if (!string.IsNullOrEmpty(model.NewPassword) &&
+                    !string.IsNullOrEmpty(model.NewPasswordConfirm))
+                {
+                    bool canEdit = model.NewPassword.Equals(model.NewPasswordConfirm) ?
+                        await _userManager.CheckPasswordAsync(getUser, model.OldPassword) :
+                        false;
+
+                    if (canEdit)
+                        getUser.UserName = model.Username;
+                }
+
+                if (model.Tags.Count > 0)
+                {
+                    List<Tag> updatedTags = new();
+                    foreach (var tag in model.Tags)
+                    {
+                        Tag getTag = await _dbContext.Tags
+                            .FirstOrDefaultAsync(x => x.Id.Equals(tag));
+
+                        if (getTag != null)
+                            updatedTags.Add(getTag);
+
+                        getUser.Tags = updatedTags;
+                    }
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return new(true, "Op. Update User (Success)");
+            }
+
+            return new(false, "Op. Update User (Failed)");
+        }
+
+        public async Task<OperationResultDto> UpdateGeneralSettingsAsync(string userId, UpdateGeneralSettingsDto model, IEnumerable<ClaimsIdentity> identities)
+        {
+            ApplicationUser getUser = await _dbContext.Users
+                .Include(x => x.Contacts)
+                .Include(x => x.Avatar)
+                .FirstOrDefaultAsync(x => x.Id.Equals(userId));
+
+            if (getUser != null)
+            {
+                if (model.Avatar != null)
+                    if (model.Avatar.FileName != AvatarInformation.UserDefaultAvatarName)
+                    {
+                        using (FileStream str = new($"wwwroot/media/userAvatars/" + model.Avatar.FileName, FileMode.Create))
+                        {
+                            await model.Avatar.CopyToAsync(str);
+                            str.Close();
+                        }
+
+                        if ((getUser.Avatar.Name != AvatarInformation.UserDefaultAvatarName) &&
+                            !getUser.Avatar.IsDefault)
+                            File.Delete($"wwwroot/media/userAvatars/{getUser.Avatar.Name}");
+
+                        getUser.Avatar = new(false, model.Avatar.FileName);
+
+                        var userIdentity = identities.FirstOrDefault(x => x.Name == getUser.UserName);
+                        if (userIdentity != null)
+                        {
+                            var getClaim = userIdentity.FindFirst("UserAvatarName");
+                            Claim newClaim = new("UserAvatarName", getUser.Avatar.Name);
+
+                            await _userManager.ReplaceClaimAsync(getUser, getClaim, newClaim);
+                        }
+                    }
+
+                if (!string.IsNullOrWhiteSpace(model.Description))
+                    getUser.Description = model.Description;
+
+                if (!string.IsNullOrWhiteSpace(model.AddressCity))
+                    getUser.AddressCity = model.AddressCity;
+
+                if (!string.IsNullOrWhiteSpace(model.AddressCountry))
+                    getUser.AddressCountry = model.AddressCountry;
+
+                if (!string.IsNullOrWhiteSpace(model.ContactName) &&
+                    !string.IsNullOrWhiteSpace(model.ContactUrl))
+                {
+                    _dbContext.UserContacts.RemoveRange(getUser.Contacts);
+                    getUser.Contacts = new List<UserContact>()
+                    {
+                        new(model.ContactUrl, model.ContactName)
+                    };
+                }
+
+                IdentityResult res = await _userManager.UpdateAsync(getUser);                
+
+                if (res.Succeeded)
+                {
+                    await _signInManager.SignInAsync(getUser, false);
+                    return new(true, "Op. Update User (Success)");
+                }                
+            }
+
+            return new(false, "Op. Update User (Failed)");
         }
     }
 }

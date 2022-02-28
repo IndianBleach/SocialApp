@@ -6,7 +6,6 @@
         return str.replace(/^(\s|\.|\,|\;|\:|\?|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\~|\`|\'|\\|\-|\/|\+)*?$/, '');
     }
 
-
     // TOPIC - Show
     $(".asyncShowTopicWindow").on("click", (e) => {
         $("#hideBackgroundWrapper").removeClass("d-none");
@@ -118,7 +117,6 @@
         })
     })
 
-
     // GOAL - New window
     $(".showNewGoallWindowBtn").on("click", (e) => {
         $("#newGoalWindow").removeClass("d-none");
@@ -220,7 +218,6 @@
         $("#goalWindowWrapper").addClass("d-none");
         $(".goalMessage").remove();
     });
-
     
     //asyncRejectMemberBtn
     $(".asyncRejectMemberBtn").on("click", (e) => {
@@ -290,7 +287,6 @@
         $("body").removeClass("overflow-hidden");
     });
 
-
     // REACTS
     $(".showReactWindowBtn").on("click", (e) => {
         $("#reactWindow").removeClass("d-none");
@@ -359,7 +355,7 @@
     })
 
     // TAGS - Switcher
-    sessionStorage.setItem("etc", $("#selectTagsContainer button").length);
+    sessionStorage.setItem("etc", $("#updatedTagsContainer button").length);
     $(".asyncSelectBtnTag").on("click", (e) => {
         e.preventDefault();
         if (e.target.classList.contains("updatedTag")) {
@@ -370,7 +366,7 @@
             sessionStorage.setItem("etc", newEtc);
         } else {
             let currentVal = Number(sessionStorage.getItem("etc"));
-            if (currentVal <= 5) {
+            if (currentVal < 5) {
                 e.target.classList.add("updatedTag");
                 $("#updatedTagsContainer").append(e.target);
                 $("#selectTagsContainer").remove(e.target);
@@ -380,7 +376,6 @@
            
         }
     });
-
 
     // SETTINGS - Member
     $(".asyncSetDefaultRoleBtn").on("click", (e) => {
@@ -429,6 +424,5 @@
         $.post("/asyncload/idea/removemember", { idea, user }, resp => {
             console.log(resp);
         })
-    });
-    
+    });    
 })

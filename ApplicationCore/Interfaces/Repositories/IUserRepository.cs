@@ -1,10 +1,12 @@
-﻿using ApplicationCore.DTOs.Idea;
+﻿using ApplicationCore.DTOs.AsyncLoad;
+using ApplicationCore.DTOs.Idea;
 using ApplicationCore.DTOs.User;
 using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +14,12 @@ namespace ApplicationCore.Interfaces
 {
     public interface IUserRepository
     {
+        Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model);
+        Task<OperationResultDto> UpdateGeneralSettingsAsync(string userId, UpdateGeneralSettingsDto model, IEnumerable<ClaimsIdentity> identities);
+        Task<UserEditAccountDto> GetEditAccountUserAsync(string userId);
+        Task<UserEditGeneralDto> GetEditGeneralUserAsync(string userId);
+        //
+        Task<UserAboutInfoDto> GetUserAboutInfoAsync(string userId);
         Task<UserProfileIdeaList> GetUserParticipationIdeaListAsync(string userId, string currentUserId, bool onlyAuthorIdeas, int? page);
         //
         Task<ActiveChatUserDto> GetChatUserOrNullAsync(string? userGuid, string currentUserGuid);

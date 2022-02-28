@@ -86,6 +86,50 @@
         });
     };
 
+    // INVITE - Show
+    $(".showInviteWindowBtn").on("click", (e) => {
+        $(".inviteWarning").remove();
+        $("#inviteWindow").removeClass("d-none");
+        $("#hideBackgroundWrapper").removeClass("d-none");
+        $("body").addClass("overflow-hidden");
+
+        $("#inviteWindowLoadPrev").removeClass("d-none");
+
+        $.get("/asyncload/user/getinvite", {}, resp => {
+            if (resp.length > 0) {
+                $("#inviteWindowLoadPrev").addClass("d-none");
+                resp.forEach(x => {
+                    $("#inviteWindowLoad").append(`<div class="mb-2 repostToUser"><a class="inviteIdeaLink text-truncate" href="/idea/${x.ideaGuid}"><span class="ideaInviteLink hover-white">${x.ideaName}</span></a><button data-idea="${x.ideaGuid}" class="asyncInviteBtn btn">Отправить</button></div>`)
+                });
+
+                // INVITE - Send
+                $(".asyncInviteBtn").on("click", (e) => {
+                    e.preventDefault();
+                    e.target.classList.add("clr-mute");
+                    e.target.textContent = "Отправлено";
+                    e.target.setAttribute("disabled", true);
+
+                    let user = sessionStorage.getItem("inviteUser");
+                    let idea = e.target.dataset.idea;
+                    $.post("/asyncload/user/sendinvite", { user, idea }, resp => {
+                        console.log(resp);
+                    });
+                });
+            }
+            else if (resp.length == 0) {
+                $("#inviteWindowLoadPrev").addClass("d-none");
+                $("#inviteWindowLoad").append("<div class='inviteWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Список идей пуст</p></div>");
+            }
+        })
+    });
+
+    $(".closeInviteWindowBtn").on("click", (e) => {
+        e.preventDefault();
+        $("#hideBackgroundWrapper").addClass("d-none");
+        $("body").removeClass("overflow-hidden");
+        $("#inviteWindow").addClass("d-none");
+    });
+
     // FRIEND - Send
     $(".asyncSendFriendBtn").on("click", (e) => {
         e.preventDefault();

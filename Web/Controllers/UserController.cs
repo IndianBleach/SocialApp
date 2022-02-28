@@ -1,7 +1,9 @@
-﻿using ApplicationCore.Entities.IdeaEntity;
+﻿using ApplicationCore.DTOs.User;
+using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
 using ApplicationCore.Identity;
 using ApplicationCore.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ using WebUi.Models.UserViewModel;
 
 namespace WebUi.Controllers
 {
+    [Authorize]
     public class UserController : ExtendedController
     {
         private readonly ITagService _tagService;
@@ -31,11 +34,105 @@ namespace WebUi.Controllers
         }
 
 
+
+
+
+        [HttpPost]
+        [Route("/user/im/general")]
+        [ActionName("UpdateGeneral")]
+        public async Task<IActionResult> UpdateGeneral(UpdateGeneralSettingsDto model)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                 await _userRepository.UpdateGeneralSettingsAsync(curUserId, model, User.Identities);
+            }
+
+            return RedirectToAction("Im", "User", new { section = "editgeneral"});
+        }
+
+        [HttpPost]
+        [Route("/user/im/account")]
+        public async Task<JsonResult> UpdateAccount(UpdateAccountSettingsDto model)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _userRepository.UpdateAccountSettingsAsync(curUserId, model);
+
+                return Json(res);
+            }
+
+            return Json(null);
+        }
+
+        [HttpPost]
+        [Route("/user/im/remove")]
+        public async Task<JsonResult> RemoveAccount()
+        {
+            return Json(null);
+        }
+
+
+
         [HttpGet]
         [Route("/user/im")]
-        public async Task<IActionResult> SelfProfile()
-        { 
-            return View();
+        public async Task<IActionResult> SelfProfile(string? section)
+        {
+            string? currentUserGuid = GetUserIdOrNull();
+
+            if (currentUserGuid == null)
+                return RedirectToAction("login", "account");
+
+            string[] allSections = new string[]
+            {
+                "editgeneral",
+                "editaccount",
+                "editremove",
+            };
+
+            string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true
+                ? section?.ToLower() : "";
+
+            if (validSection.Equals("editgeneral"))
+            {
+                ProfileEditGeneralViewModel editVm = new()
+                {
+                    AllTags = await _tagService.GetAllTagsAsync(),
+                    UserDetail = await _userRepository.GetEditGeneralUserAsync(currentUserGuid),
+                };
+
+                return View("EditGeneral", editVm);
+            }
+            else if (validSection.Equals("editaccount"))
+            {
+                ProfileEditAccountViewModel editVm = new()
+                {
+                    AllTags = await _tagService.GetAllTagsAsync(),
+                    UserDetail = await _userRepository.GetEditAccountUserAsync(currentUserGuid),
+                };
+
+                return View("EditAccount", editVm);
+            }
+            else
+            {
+                ProfileIdeasViewModel indexVm = new()
+                {
+                    AuthoredIdeas = validSection.Equals("authored"),
+                    Section = validSection,
+                    UserDetail = await _userRepository.GetUserDetailOrNullAsync(currentUserGuid),
+                    FriendType = currentUserGuid != null ?
+                        await _userRepository.CheckFriendsAsync(currentUserGuid, currentUserGuid) :
+                        ProfileFriendshipType.NotFriends,
+                    AllTags = await _tagService.GetAllTagsAsync(),
+                    IdeaList = await _userRepository.GetUserParticipationIdeaListAsync(
+                        currentUserGuid, currentUserGuid, validSection.Equals("authored"), null),
+                    IsAuthorized = IsUserAuthenticated(),
+                    IsSelfProfile = currentUserGuid != null && _userRepository.CheckIsSelfProfile(currentUserGuid, currentUserGuid)
+                };
+
+                return View("Index2", indexVm);
+            }            
         }
 
 
@@ -76,7 +173,7 @@ namespace WebUi.Controllers
         {
             string? currentUserGuid = GetUserIdOrNull();
 
-            if (userGuid == null)
+            if ((userGuid == null) || (currentUserGuid == null))
                 return RedirectToAction("login", "account");
 
             string[] allSections = new string[]
@@ -84,35 +181,46 @@ namespace WebUi.Controllers
                 "authored",
                 "participation",
                 "about",
-                "edit",
             };
 
             string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true
                 ? section?.ToLower() : "participation";
 
             if (validSection.Equals("about"))
-            { 
-            
-            }
-
-            ProfileIdeasViewModel indexVm = new()
             {
-                AuthoredIdeas = validSection.Equals("authored"),
-                Section = validSection,
-                UserDetail = await _userRepository.GetUserDetailOrNullAsync(userGuid),
-                FriendType = currentUserGuid != null ?
+                ProfileAboutViewModel aboutVm = new()
+                {
+                    UserInfoDetail = await _userRepository.GetUserAboutInfoAsync(userGuid),
+                    Section = validSection,
+                    AllTags = await _tagService.GetAllTagsAsync(),
+                    IsAuthorized = IsUserAuthenticated(),
+                    IsSelfProfile = currentUserGuid != null && _userRepository.CheckIsSelfProfile(currentUserGuid, userGuid),
+                    FriendType = currentUserGuid != null ?
                     await _userRepository.CheckFriendsAsync(currentUserGuid, userGuid) :
                     ProfileFriendshipType.NotFriends,
-                AllTags = await _tagService.GetAllTagsAsync(),
-                IdeaList = await _userRepository.GetUserParticipationIdeaListAsync(
+                };
+
+                return View("About", aboutVm);
+            }
+            else
+            {
+                ProfileIdeasViewModel indexVm = new()
+                {
+                    AuthoredIdeas = validSection.Equals("authored"),
+                    Section = validSection,
+                    UserDetail = await _userRepository.GetUserDetailOrNullAsync(userGuid),
+                    FriendType = currentUserGuid != null ?
+                    await _userRepository.CheckFriendsAsync(currentUserGuid, userGuid) :
+                    ProfileFriendshipType.NotFriends,
+                    AllTags = await _tagService.GetAllTagsAsync(),
+                    IdeaList = await _userRepository.GetUserParticipationIdeaListAsync(
                     userGuid, currentUserGuid, validSection.Equals("authored"), page),
-                IsAuthorized = IsUserAuthenticated(),
-                IsSelfProfile = currentUserGuid != null && _userRepository.CheckIsSelfProfile(currentUserGuid, userGuid)
-            };
+                    IsAuthorized = IsUserAuthenticated(),
+                    IsSelfProfile = currentUserGuid != null && _userRepository.CheckIsSelfProfile(currentUserGuid, userGuid)
+                };
 
-            return View("Index2", indexVm);
+                return View("Index2", indexVm);
+            }            
         }
-
-
     }
 }

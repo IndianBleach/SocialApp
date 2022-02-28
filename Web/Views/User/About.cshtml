@@ -1,10 +1,10 @@
 ﻿@using Web.Models.UserViewModel;
 @using ApplicationCore.DTOs;
 @using ApplicationCore.Entities.UserEntity;
-@model ProfileIdeasViewModel;
+@model ProfileAboutViewModel;
 
 @{
-    ViewData["Title"] = $"{Model.UserDetail.Name}";
+    ViewData["Title"] = $"{Model.UserInfoDetail.Name}";
 }
 
 @{
@@ -316,11 +316,11 @@
                                 <img height="33"
                                      width="33"
                                      class="rounded-circle me-1"
-                                     src="~/media/userAvatars/@Model.UserDetail.AvatarImageName" />
+                                     src="~/media/userAvatars/@Model.UserInfoDetail.AvatarImageName" />
                                 <div class="ps-1">
                                     <span class="t-sm clr-mute">Пригласить</span>
                                     <br />
-                                    <span>@Model.UserDetail.Name</span>
+                                    <span>@Model.UserInfoDetail.Name</span>
                                 </div>
                             </div>
                         </div>
@@ -531,7 +531,7 @@ else
 }
 
 <div class="container-sm p-0 main_idea" style="margin-top: 140px;">
-    @if (Model.UserDetail != null)
+    @if (Model.UserInfoDetail != null)
     {
         <div class="mt-3 mt-md-0 idea_aside position-relative">
             <aside>
@@ -540,18 +540,18 @@ else
                         <section>
                             <div class="profile_aside mt-3 col-12 bg-darkn rad-lg">
                                 <div class="col-12 d-flex justify-content-center">
-                                    <img src="~/media/userAvatars/@Model.UserDetail.AvatarImageName"
+                                    <img src="~/media/userAvatars/@Model.UserInfoDetail.AvatarImageName"
                                          height="192"
                                          width="192"
                                          class="b-all rounded-circle" />
                                 </div>
                                 <div class="b-bottom pt-5 pb-5 text-center">
-                                    <label class="t-md t-med clr-white">@Model.UserDetail.Name</label>
+                                    <label class="t-md t-med clr-white">@Model.UserInfoDetail.Name</label>
                                 </div>
                                 @if (!Model.IsSelfProfile)
                                 {
                                     <div class="btn-back-hover aside_section_adaptive">
-                                        <a asp-controller="chat" asp-route-user="@Model.UserDetail.UserId" class="p-3 col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
+                                        <a asp-controller="chat" asp-route-user="@Model.UserInfoDetail.UserId" class="p-3 col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
                                             Написать
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="19"
@@ -582,7 +582,7 @@ else
                                                 </button>
                                                 break;
                                             case ProfileFriendshipType.NotFriends:
-                                                <button data-guid="@Model.UserDetail.UserId" class="asyncSendFriendBtn p-3 col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
+                                                <button data-guid="@Model.UserInfoDetail.UserId" class="asyncSendFriendBtn p-3 col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
                                                     Добавить
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                          width="19"
@@ -642,7 +642,7 @@ else
                         </section>
                         <section>
                             <div class="col-12 d-flex flex-wrap tag-adaptive">
-                                @foreach (var tag in Model.UserDetail.Tags)
+                                @foreach (var tag in Model.UserInfoDetail.Tags)
                                 {
                                     <button class="btn-tag">
                                         @tag
@@ -659,8 +659,8 @@ else
                 <div class="profile_inside idea_inside">
                     <div class="col-12 rad-md bg-darkn mt-3">
                         <ul class="nav d-flex col-12">
-                            <li class="p-0 text-center idea_menu_link active nav-item">
-                                <a disabled asp-action="@Model.UserDetail.UserId" asp-controller="user" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                            <li class="p-0 text-center idea_menu_link nav-item">
+                                <a asp-action="@Model.UserInfoDetail.UserId" asp-controller="user" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -672,8 +672,8 @@ else
                                     Идеи
                                 </a>
                             </li>
-                            <li class="p-0 text-center idea_menu_link nav-item">
-                                <a asp-route-section="about" asp-action="@Model.UserDetail.UserId" asp-controller="user" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                            <li class="p-0 text-center idea_menu_link active nav-item">
+                                <a asp-route-section="about" asp-action="@Model.UserInfoDetail.UserId" asp-controller="user" class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -688,7 +688,7 @@ else
                                 </a>
                             </li>
                             <li class="p-0 text-center idea_menu_link nav-item">
-                                <a data-guid="@Model.UserDetail.UserId" class="showFriendsWindowBtn p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                                <a data-guid="@Model.UserInfoDetail.UserId" class="showFriendsWindowBtn p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -719,127 +719,61 @@ else
                             }
                             <li disabled class="disabled col b-bottom"></li>
                         </ul>
-                        <section style="min-height: 470px;">
-                            <div class="d-flex p-2 pt-3 ps-3">
-                                @if (Model.AuthoredIdeas)
-                                {
-                                    <a asp-action="@Model.UserDetail.UserId" asp-controller="user" class="clr-mute t-med t-md hover-white me-2">Участвует</a>
-                                    <span class="clr-white t-med t-md hover-white">От автора</span>
-                                }
-                                else
-                                {
-                                    <span class="clr-white t-med t-md hover-white me-2">Участвует</span>
-                                    <a asp-route-section="authored" asp-action="@Model.UserDetail.UserId" asp-controller="user" class="clr-mute t-med t-md hover-white">От автора</a>
-                                }
-                            </div>
-                            <div class="p-1 col-12 d-flex flex-wrap">
-                                @if (Model.IdeaList.Ideas.Count > 0)
-                                {
-                                    @foreach (var idea in Model.IdeaList.Ideas)
-                                    {
-                                        <div class="col-12 col-lg-6 p-2">
-                                            <div class="b-all p-2 p-md-0 idea_profile_size idea-img-slide d-flex align-items-end"
-                                                 style="
-                                            background: linear-gradient(
-                                                0deg,
-                                                rgba(0, 0, 0, 0.61),
-                                                rgba(0, 0, 0, 0.61)
-                                              ),
-                                              url(../media/ideaAvatars/@idea.Avatar);
-                                          ">
-                                                <div class="p-sm-2 p-md-3 text-start col-12">
-                                                    <a asp-action="@idea.Guid" asp-controller="idea">
-                                                        <h3 style="line-height: 23px!important;" class="mb-4 t-idea-slide-md">
-                                                            @idea.Name
-                                                        </h3>
-                                                    </a>
-                                                    <div class="col-12 d-flex align-items-end">
-                                                        <div>
-                                                            <label data-toggle="tooltip" data-placement="top" title="@idea.Status.Name" style="font-size: 24px">@idea.Status.EmojiValue</label>
-                                                        </div>
-                                                        <div class="ms-auto d-flex">
-                                                            <div class="position-relative me-5">
-                                                                @if (idea.IsLiked)
-                                                                {
-                                                                    <button disabled class="btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                             width="26"
-                                                                             height="26"
-                                                                             fill="currentColor"
-                                                                             class="pe-1 clr-blue bi bi-heart"
-                                                                             viewBox="0 0 16 16">
-                                                                            <path class="like-transition"
-                                                                                  d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button data-idea="@idea.Guid" class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
-                                                                        <svg data-idea="@idea.Guid" xmlns="http://www.w3.org/2000/svg"
-                                                                             width="26"
-                                                                             height="26"
-                                                                             fill="currentColor"
-                                                                             class="pe-1 clr-mute bi bi-heart"
-                                                                             viewBox="0 0 16 16">
-                                                                            <path class="like-transition"
-                                                                                  d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                            </div>
-                                                            <div class="position-relative">
-                                                                <button data-idea="@idea.Guid" class="showRepostWindowBtn btn bg-transparent clr-mute">
-                                                                    <svg data-idea="@idea.Guid" xmlns="http://www.w3.org/2000/svg"
-                                                                         width="28"
-                                                                         height="28"
-                                                                         fill="currentColor"
-                                                                         class="ps-1 bi bi-reply"
-                                                                         viewBox="0 0 16 16">
-                                                                        <path d="M6.598 5.013a.144.144 0 0 1 .202.134V6.3a.5.5 0 0 0 .5.5c.667 0 2.013.005 3.3.822.984.624 1.99 1.76 2.595 3.876-1.02-.983-2.185-1.516-3.205-1.799a8.74 8.74 0 0 0-1.921-.306 7.404 7.404 0 0 0-.798.008h-.013l-.005.001h-.001L7.3 9.9l-.05-.498a.5.5 0 0 0-.45.498v1.153c0 .108-.11.176-.202.134L2.614 8.254a.503.503 0 0 0-.042-.028.147.147 0 0 1 0-.252.499.499 0 0 0 .042-.028l3.984-2.933zM7.8 10.386c.068 0 .143.003.223.006.434.02 1.034.086 1.7.271 1.326.368 2.896 1.202 3.94 3.08a.5.5 0 0 0 .933-.305c-.464-3.71-1.886-5.662-3.46-6.66-1.245-.79-2.527-.942-3.336-.971v-.66a1.144 1.144 0 0 0-1.767-.96l-3.994 2.94a1.147 1.147 0 0 0 0 1.946l3.994 2.94a1.144 1.144 0 0 0 1.767-.96v-.667z" />
-                                                                    </svg>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div style="min-height: 470px;" class="h-100 d-flex justify-content-center align-items-center col-12">
-                                        <div class="text-center pb-5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" class="text-muted bi bi-lightbulb-off" viewBox="0 0 16 16">
-                                                <path fill-rule="evenodd" d="M2.23 4.35A6.004 6.004 0 0 0 2 6c0 1.691.7 3.22 1.826 4.31.203.196.359.4.453.619l.762 1.769A.5.5 0 0 0 5.5 13a.5.5 0 0 0 0 1 .5.5 0 0 0 0 1l.224.447a1 1 0 0 0 .894.553h2.764a1 1 0 0 0 .894-.553L10.5 15a.5.5 0 0 0 0-1 .5.5 0 0 0 0-1 .5.5 0 0 0 .288-.091L9.878 12H5.83l-.632-1.467a2.954 2.954 0 0 0-.676-.941 4.984 4.984 0 0 1-1.455-4.405l-.837-.836zm1.588-2.653.708.707a5 5 0 0 1 7.07 7.07l.707.707a6 6 0 0 0-8.484-8.484zm-2.172-.051a.5.5 0 0 1 .708 0l12 12a.5.5 0 0 1-.708.708l-12-12a.5.5 0 0 1 0-.708z" />
-                                            </svg>
-                                            <br />
-                                            <label class="t-med t-lg clr-mute pt-3">Активных идей не найдено</label>
+                        <section>
+                            <div class="p-1 col-12 d-flex justify-content-center">
+                                <div class="pt-3 pb-5 col-11 col-md-10 col-lg-8">
+                                    <div>
+                                        <div class="pt-3 pb-4 d-flex justify-content-center flex-wrap align-items-center">
+                                            <img src="~/media/userAvatars/@Model.UserInfoDetail.AvatarImageName"
+                                                 height="33"
+                                                 width="33"
+                                                 class="rounded-circle" />
+                                            <span class="ps-2 clr-white t-med t-md">
+                                                @Model.UserInfoDetail.Name
+                                            </span>
                                         </div>
                                     </div>
-                                }
-                            </div>
-                        </section>
-                        <div class="m-2 b-top d-flex">
-                            @foreach (var pageInfo in Model.IdeaList.Pages)
-                            {
-                                <div class="me-1">
-                                    @if (pageInfo.IsActive)
+                                    <h4 class="clr-white t-med t-sm">О себе</h4>
+                                    @if (string.IsNullOrWhiteSpace(Model.UserInfoDetail.Description))
                                     {
-                                        <a disabled asp-action="@Model.UserDetail.UserId" asp-route-page="@pageInfo.NumberValue" class="disabled me-1 btn btn-page btn-page-active">
-                                            @pageInfo.NumberValue
-                                        </a>
+                                    <p class="clr-mute t-med t-sm">
+                                        Информация отсутствует
+                                    </p>
                                     }
                                     else
+                                    { 
+                                    <p class="clr-mute t-med t-sm">
+                                        @Model.UserInfoDetail.Description
+                                    </p> 
+                                    }
+                                    <h4 class="clr-white t-med t-sm">Откуда</h4>
+                                    @if (string.IsNullOrWhiteSpace(Model.UserInfoDetail.Address))
                                     {
-                                        <a asp-route-section="@Model.Section" asp-controller="user" asp-action="@Model.UserDetail.UserId" asp-route-page="@pageInfo.NumberValue" class="me-1 btn btn-page">
-                                            @pageInfo.NumberValue
-                                        </a>
+                                    <p class="clr-mute t-med t-sm">
+                                        Адрес не заполнен
+                                    </p>
+                                    }
+                                    else
+                                    { 
+                                    <p class="clr-mute t-med t-sm">
+                                            @Model.UserInfoDetail.Address
+                                    </p>
+                                    }
+                                    <h4 class="clr-white t-med t-sm">Связь</h4>
+                                    @if (string.IsNullOrEmpty(Model.UserInfoDetail.Contact?.Name) ||
+                                        string.IsNullOrEmpty(Model.UserInfoDetail.Contact?.Url))
+                                    {
+                                    <span class="clr-mute t-med t-sm">Не указана</span>
+                                    }
+                                    else
+                                    { 
+                                    <a href="@Model.UserInfoDetail.Contact.Url" class="clr-blue t-smbold t-md">
+                                        @Model.UserInfoDetail.Contact.Name
+                                    </a>
                                     }
                                 </div>
-                            }
-                        </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>

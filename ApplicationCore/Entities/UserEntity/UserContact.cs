@@ -24,14 +24,15 @@ namespace ApplicationCore.Entities.UserEntity
 
     public class UserContact : BaseEntity
     {
+        public string Name { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
         public string Url { get; set; }
 
-        public UserContact(string userId, string url)
+        public UserContact(string url, string name)
         {
-            UserId = userId;
             Url = url;
+            Name = name;
         }
 
         public UserContact(ApplicationUser user, string url)

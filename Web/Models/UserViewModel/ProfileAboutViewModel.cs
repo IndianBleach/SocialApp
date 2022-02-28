@@ -10,7 +10,7 @@ namespace Web.Models.UserViewModel
 {
     public class ProfileAboutViewModel
     {
-        public UserDetailDto? UserDetail { get; set; }
+        public UserAboutInfoDto? UserInfoDetail { get; set; }
         public List<TagDto> AllTags { get; set; }
         public ProfileFriendshipType FriendType { get; set; }
         public bool IsAuthorized { get; set; }

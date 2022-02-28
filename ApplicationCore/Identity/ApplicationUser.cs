@@ -26,7 +26,7 @@ namespace ApplicationCore.Identity
         public ICollection<IdeaInvitation> Invitations {  get; set; }
         public ICollection<IdeaRepost> Reposts { get; set; }
         public ICollection<ChatUser> Chats { get; set; }
-        public UserContact? UserContact { get; set; }
+        public ICollection<UserContact> Contacts { get; set; }
         public UserAvatar Avatar { get; set; }
         public DateTime CheckEventsDate { get; set; }
 
@@ -43,6 +43,7 @@ namespace ApplicationCore.Identity
             Reposts = new List<IdeaRepost>();
             Chats = new List<ChatUser>();
             CheckEventsDate = DateTime.Now;
+            Contacts = new List<UserContact>();
         }
     }
 }
