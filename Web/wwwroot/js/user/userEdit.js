@@ -7,7 +7,32 @@
 
     $("#editAccountUserForm").on("submit", (e) => {
         e.preventDefault();
-    })
+
+        let tags = [];
+        $("#updatedTagsContainer button").each((e, elem) => {
+            tags.push(elem.dataset.tag);
+        });
+
+        let model = {
+            Username: e.target.getElementsByTagName("input")[0].value,
+            tags,
+            oldPassword: e.target.getElementsByTagName("input")[1].value,
+            newPassword: e.target.getElementsByTagName("input")[2].value,
+            newPasswordConfirm: e.target.getElementsByTagName("input")[3].value,
+        };
+
+        $.post("/user/im/account", { model }, resp => {
+            console.log(resp);
+            window.location.reload();
+        });
+    });
+
+    $("#editRemoveUserForm").on("submit", (e) => {
+        e.preventDefault();
+        $.post("/user/im/remove", { password: e.target.getElementsByTagName("input")[0].value }, resp => {
+            console.log(resp);
+        });
+    });
 
     // TAGS - Switcher
     sessionStorage.setItem("etca", $("#updatedTagsContainer button").length);

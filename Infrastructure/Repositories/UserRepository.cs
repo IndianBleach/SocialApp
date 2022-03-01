@@ -639,7 +639,7 @@ namespace Infrastructure.Repositories
                         false;
 
                     if (canEdit)
-                        getUser.UserName = model.Username;
+                        await _userManager.ChangePasswordAsync(getUser, model.OldPassword, model.NewPassword);
                 }
 
                 if (model.Tags.Count > 0)

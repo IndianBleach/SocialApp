@@ -34,9 +34,6 @@ namespace WebUi.Controllers
         }
 
 
-
-
-
         [HttpPost]
         [Route("/user/im/general")]
         [ActionName("UpdateGeneral")]
@@ -50,6 +47,7 @@ namespace WebUi.Controllers
 
             return RedirectToAction("Im", "User", new { section = "editgeneral"});
         }
+
 
         [HttpPost]
         [Route("/user/im/account")]
@@ -66,14 +64,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-        [HttpPost]
-        [Route("/user/im/remove")]
-        public async Task<JsonResult> RemoveAccount()
-        {
-            return Json(null);
-        }
-
-
 
         [HttpGet]
         [Route("/user/im")]
@@ -88,7 +78,6 @@ namespace WebUi.Controllers
             {
                 "editgeneral",
                 "editaccount",
-                "editremove",
             };
 
             string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true
@@ -131,7 +120,7 @@ namespace WebUi.Controllers
                     IsSelfProfile = currentUserGuid != null && _userRepository.CheckIsSelfProfile(currentUserGuid, currentUserGuid)
                 };
 
-                return View("Index2", indexVm);
+                return View("Index", indexVm);
             }            
         }
 
@@ -171,7 +160,7 @@ namespace WebUi.Controllers
         [Route("user/{userGuid}")]
         public async Task<IActionResult> Index(string userGuid, int? page, string? section)
         {
-            string? currentUserGuid = GetUserIdOrNull();
+            string? currentUserGuid = GetUserIdOrNull();            
 
             if ((userGuid == null) || (currentUserGuid == null))
                 return RedirectToAction("login", "account");
@@ -219,7 +208,7 @@ namespace WebUi.Controllers
                     IsSelfProfile = currentUserGuid != null && _userRepository.CheckIsSelfProfile(currentUserGuid, userGuid)
                 };
 
-                return View("Index2", indexVm);
+                return View("Index", indexVm);
             }            
         }
     }

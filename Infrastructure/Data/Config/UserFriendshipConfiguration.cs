@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
+using ApplicationCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -10,6 +11,16 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Config
 {
+
+    public class UserIdeaConfiguration : IEntityTypeConfiguration<ApplicationUser>
+    {
+        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
+        {
+            builder.HasMany(x => x.Ideas).WithOne(x => x.User)
+                .OnDelete(DeleteBehavior.SetNull);                        
+        }
+    }
+
     public class UserFriendshipRequestsConfiguration : IEntityTypeConfiguration<FriendshipRequest>
     {
         public void Configure(EntityTypeBuilder<FriendshipRequest> builder)

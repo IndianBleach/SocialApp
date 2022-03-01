@@ -60,10 +60,10 @@ namespace Infrastructure.Services
         public async Task<AuthorizationResultDto> UserSignUpAsync(UserSignUpDto model)
         {
             var config = new MapperConfiguration(conf => conf.CreateMap<UserSignUpDto, ApplicationUser>()
-            .ForMember("UserName", opt => opt.MapFrom(x => x.Username))
-            .ForMember(x => x.Tags, opt => opt.MapFrom(x => _tagService.CreateTagList(x.Tags)))
-            .ForMember("Avatar", opt => opt.MapFrom(x => _dbContext.UserAvatars
-                .FirstOrDefault(x => x.Name.Equals(AvatarInformation.UserDefaultAvatarName)))));
+                .ForMember("UserName", opt => opt.MapFrom(x => x.Username))
+                .ForMember(x => x.Tags, opt => opt.MapFrom(x => _tagService.CreateTagList(x.Tags)))
+                .ForMember("Avatar", opt => opt.MapFrom(x => _dbContext.UserAvatars
+                    .FirstOrDefault(x => x.Name.Equals(AvatarInformation.UserDefaultAvatarName)))));
 
             var mapper = new Mapper(config);
 

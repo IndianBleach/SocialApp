@@ -14,6 +14,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IUserRepository
     {
+        //REMOVE ACCOUNT
         Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model);
         Task<OperationResultDto> UpdateGeneralSettingsAsync(string userId, UpdateGeneralSettingsDto model, IEnumerable<ClaimsIdentity> identities);
         Task<UserEditAccountDto> GetEditAccountUserAsync(string userId);

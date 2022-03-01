@@ -23,8 +23,8 @@ namespace ApplicationCore.Entities.IdeaEntity
     public class IdeaMember : BaseEntity
     {
         public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
-        public Idea Idea { get; set; }
+        public ApplicationUser? User { get; set; }
+        public Idea? Idea { get; set; }
         public IdeaMemberRoles Role { get; set; }
 
         public IdeaMember(string userId, IdeaMemberRoles role)
