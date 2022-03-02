@@ -728,5 +728,27 @@ namespace Infrastructure.Repositories
 
             return new(false, "Op. Update User (Failed)");
         }
+
+
+
+        public IEnumerable<IdeaUserParticipationDto> GetUserParticipations(string userId)
+        {
+            var getRoles = _dbContext.IdeaMembers
+                .Include(x => x.Idea)
+                .Where(x => x.UserId.Equals(userId))                
+                .Take(20);
+
+            var config = new MapperConfiguration(conf => conf.CreateMap<IdeaMember, IdeaUserParticipationDto>()
+                .ForMember("Guid", opt => opt.MapFrom(x => x.Idea.Id))
+                .ForMember("Name", opt => opt.MapFrom(x => x.Idea.Name))
+                .ForMember("RoleName", opt => opt.MapFrom(x => 
+                    IdeaHelper.NormalizeRoleName(x.Role))));                
+
+            var mapper = new Mapper(config);
+
+            IEnumerable<IdeaUserParticipationDto> dtos = mapper.Map<IEnumerable<IdeaUserParticipationDto>>(getRoles);
+
+            return dtos;
+        }
     }
 }

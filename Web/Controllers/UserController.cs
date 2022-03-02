@@ -34,6 +34,18 @@ namespace WebUi.Controllers
         }
 
 
+        [HttpGet]
+        [Route("/user/get/participation")]
+        public JsonResult GetUserParticipation()
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+                return Json(_userRepository.GetUserParticipations(curUserId));
+            else
+                return Json(null);
+        }
+
+
         [HttpPost]
         [Route("/user/im/general")]
         [ActionName("UpdateGeneral")]

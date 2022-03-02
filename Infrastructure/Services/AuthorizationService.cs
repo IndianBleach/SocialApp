@@ -72,10 +72,12 @@ namespace Infrastructure.Services
             var result = await _userManager.CreateAsync(createUser, model.Password);
 
             Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
-            Claim guidClaim = new("UserId", createUser.Id);   
+            Claim guidClaim = new("UserId", createUser.Id);
+            Claim nameClaim = new("UserName", createUser.UserName);
 
             if (result.Succeeded)
             {
+                await _userManager.AddClaimAsync(createUser, nameClaim);
                 await _userManager.AddClaimAsync(createUser, guidClaim);
                 await _userManager.AddClaimAsync(createUser, avatarClaim);
                 await _userManager.AddToRoleAsync(createUser, "user");

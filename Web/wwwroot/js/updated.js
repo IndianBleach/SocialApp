@@ -184,5 +184,38 @@
         $("#friendRequestsWindowLoadPrev").addClass("d-none");
     });
 
+    $(".closeParticipationWindowBtn").on("click", () => {
+        $("#participationWindow").addClass("d-none");
+        $("#hideBackgroundWrapper").addClass("d-none");
+        $("body").removeClass("overflow-hidden");
+        $("participationWindowLoadPrev").addClass("d-none");
+        $(".repostToUser").remove();
+    })
+
+    $(".showParticipationWindowBtn").on("click", () => {
+        $("#participationWindow").removeClass("d-none");
+        $("#hideBackgroundWrapper").removeClass("d-none");
+        $("body").addClass("overflow-hidden");
+        $(".repostToUser").remove();
+
+        $("#participationWindowLoadPrev").removeClass("d-none");
+        $.get("/user/get/participation", {}, resp => {
+            if (resp != null) {
+                $("#participationWindowLoadPrev").addClass("d-none");
+                if (resp.length == 0) {
+                    $("#participationWindowLoad").append("<div class='participationWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Активных идей не найдено</p></div>");
+                }
+                else {
+                    resp.forEach(x => {
+                        $("#participationWindowLoad").append(`<div class="mb-2 repostToUser"><a href="/idea/${x.guid}"><span class="t-smbold clr-white hover-white d-inline-block text-truncate" style="max-width: 190px;">${x.name}</span></a><label class="clr-mute t-smbold t-sm">${x.roleName}</label></div>`);
+                    });
+                }                
+            }
+            else {
+                $("#participationWindowLoad").append("<div class='participationWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Активных идей не найдено</p></div>");
+            }
+        })
+    })
+
 
 })

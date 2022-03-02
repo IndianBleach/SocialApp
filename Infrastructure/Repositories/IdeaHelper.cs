@@ -123,5 +123,16 @@ namespace Infrastructure.Repositories
 
             return getRole != null ? role >= getRole : false;
         }
+
+        public static string NormalizeRoleName(IdeaMemberRoles role)
+        {
+            return role switch
+            {
+                IdeaMemberRoles.Author => "Автор",
+                IdeaMemberRoles.Member => "Участник",
+                IdeaMemberRoles.Modder => "Модератор",
+                _ => "",
+            };
+        }
     }
 }

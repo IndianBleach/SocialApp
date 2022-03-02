@@ -42,7 +42,7 @@ namespace WebUi.Controllers
             return Ok();
         }
 
-
+        [Route("/chat")]
         public async Task<IActionResult> Index(string? user)
         {
             string curUserGuid = GetUserIdOrNull();

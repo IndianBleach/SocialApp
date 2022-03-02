@@ -6,6 +6,10 @@
     background-color: #000000 !important;
 }
 
+.nav-link-pad {
+    padding: 0.5rem 0.4rem !important;
+}
+
 .idea_content_section {
     padding: 15px 14px;
     display: flex;
