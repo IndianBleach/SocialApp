@@ -42,6 +42,9 @@ namespace Infrastructure.Repositories
 
         public async Task<CreateOperationResult> CreateIdeaAsync(CreateIdeaDto model)
         {
+            if (model.AuthorGuid == null)
+                return new CreateOperationResult(false, null, "При создании идеи что-то пошло не так");
+
             IdeaAvatar avatar = await _dbContext.IdeaAvatars
                 .FirstOrDefaultAsync(x => x.IsDefault);
 

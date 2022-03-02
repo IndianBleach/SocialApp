@@ -16,25 +16,20 @@ namespace WebUi.Controllers
             _ideaRepository = ideaRepository;
         }
 
-
         
         [HttpPost]
-        [Route("create/idea")]
+        [Route("/create/idea")]
         public async Task<JsonResult> Idea(CreateIdeaDto model)
         {
-            string? userGuid = GetUserIdOrNull();
-
-            if (userGuid != null)
-                model.AuthorGuid = userGuid;
+            model.AuthorGuid = GetUserIdOrNull();
 
             if (ModelState.IsValid)
-            {               
+            {
                 var res = await _ideaRepository.CreateIdeaAsync(model);
-
                 return Json(res);
             }
 
-            return Json(1);
+            return Json(null);
         }
     }
 }

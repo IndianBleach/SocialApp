@@ -11,6 +11,8 @@ namespace ApplicationCore.DTOs.Create
     {
         public string? AuthorGuid { get; set; }
         [Required]
+        [MaxLength(36, ErrorMessage = "Максимум 36 символов")]
+        [MinLength(4, ErrorMessage = "Минимум 4 символа")]
         public string Name { get; set; }
         [Required]
         public string Description {  get; set; }
