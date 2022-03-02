@@ -340,8 +340,18 @@
             tags.push(e.dataset.tag);
         })
 
-        let model = {
-            avatar: e.target.getElementsByTagName("input")[1].value,
+        let model = new FormData();
+        model.append('avatar', e.target.getElementsByTagName("input")[1].files[0]);
+        model.append('description', e.target.getElementsByTagName("textarea")[0].value);
+        model.append('status', e.target.getElementsByTagName("select")[0].value);
+        model.append('private', e.target.getElementsByTagName("input")[2].checked);
+        model.append('idea', e.target.getElementsByTagName("input")[0].value);
+        model.append('tags', tags);
+
+        console.log(model);
+
+        let model2 = {
+            avatar: e.target.getElementsByTagName("input")[1].files[0],
             description: e.target.getElementsByTagName("textarea")[0].value,
             status: e.target.getElementsByTagName("select")[0].value,
             private: e.target.getElementsByTagName("input")[2].checked,
@@ -349,9 +359,22 @@
             tags: tags
         };
 
+        /*
         $.post("/asyncload/idea/update", { model }, resp => {
             console.log(resp);
-        });         
+        });
+        */
+
+        $.ajax({
+            url: '/asyncload/idea/update',
+            type: 'POST',
+            data: model,
+            processData: false,
+            contentType: false,
+            success: (res) => {
+                console.log(res);
+            }
+        });
     })
 
     // TAGS - Switcher
