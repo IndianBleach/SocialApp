@@ -42,11 +42,12 @@
             $("#reactWindow").addClass("d-none");
             $(".topicRemoveBtn").remove();
             $("#participationWindow").addClass("d-none");
+            $(".goalMessage").remove();
 
             //profile
             $(".firendsWarning").remove();
             $(".repostWarning").remove();
-            $(".repostToUser").remove();
+            $(".repostToUser").remove();            
 
             //chat 
             $(".chatWarning").remove();

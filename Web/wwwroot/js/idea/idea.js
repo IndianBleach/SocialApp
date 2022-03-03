@@ -11,19 +11,17 @@
         $("#hideBackgroundWrapper").removeClass("d-none");
         $("body").addClass("overflow-hidden");
         $("#topicWindowWrapper").removeClass("d-none");
-
         let guid = e.target.closest("a").dataset.topic;
 
         $.get("/asyncload/idea/gettopic", { guid }, resp => {
             if (resp != null) {
-                console.log(resp);
                 $("#topicWindowForm").attr("data-guid", resp.guid);
                 $("#topicDetailAuthorLink").attr("src", "/user/" + resp.authorGuid);
                 $("#topicDetailAuthorLink img").attr("src", "../media/userAvatars/" + resp.authorAvatar);
                 $("#topicDetailAuthorLink span").text(resp.datePublished);
                 $("#topicDetailName").text(resp.name);
                 $("#topicDetailDescription").text(resp.description);
-                
+
                 if (resp.canEdit == true) {
                     $("#topicDetailEdit").append(`<button data-guid="${resp.guid}" class="topicRemoveBtn t-xl t-med btn p-0 ps-2 bg-transparent text-danger">X</button>`);
                 }
@@ -46,7 +44,7 @@
                     let comment = e.target.dataset.comment;
                     e.target.parentElement.parentElement.remove();
                     $.post("/asyncload/idea/removetopiccomment", { topicGuid: topic, commentGuid: comment }, resp => {
-                        console.log(resp);
+                        //
                     })
                 })
 
@@ -54,7 +52,10 @@
                 $(".topicRemoveBtn").on("click", (e) => {
                     let topicGuid = e.target.dataset.guid;
                     $.post("/asyncload/idea/removetopic", { topicGuid }, resp => {
-                        console.log(resp);
+                        if (resp != null)
+                            if (resp.isSuccess == true) {
+                                window.location.reload();
+                            }
                     })
                 });
             }
@@ -72,6 +73,7 @@
             let avatar = $("#topicCommentAvatar").attr("src");
             $("#topicWindowCommentsLoad").append(`<div class="topicMessage"><img src="${avatar}" /><div><a disabled>Вы<span class="text-muted"> - сегодня</span></a><br />${text}</div></div>`);
             $("#topicCommentInput").val("");
+            $("#choiceEmojiWindow").addClass("d-none");
         });
     })
 
@@ -314,8 +316,8 @@
         $("#choiceEmojiWindow").removeClass("d-none");
     });
     $(".asyncSendEmojiBtn").on("click", (e) => {
-        let messageTopic = Validate($("#topicCommentInput").val());
-        let messageTask = Validate($("#goalTaskInput").val());
+        let messageTopic = $("#topicCommentInput").val();
+        let messageTask = $("#goalTaskInput").val();
 
         if (messageTopic != undefined) {
             let mess = `${messageTopic + e.target.textContent.replace(/ /g, "")}`;
