@@ -61,7 +61,7 @@
         })
     });
 
-    // TOPIC - Comment
+    // TOPIC - Comment +
     $("#topicWindowForm").on("submit", (e) => {
         e.preventDefault();
         let base = e.target.getElementsByTagName("input")[0].value;
@@ -69,7 +69,6 @@
         let guid = e.target.dataset.guid;
 
         $.post("/asyncload/idea/topiccomment", { guid, text }, resp => {
-            console.log(resp);
             let avatar = $("#topicCommentAvatar").attr("src");
             $("#topicWindowCommentsLoad").append(`<div class="topicMessage"><img src="${avatar}" /><div><a disabled>Вы<span class="text-muted"> - сегодня</span></a><br />${text}</div></div>`);
             $("#topicCommentInput").val("");
@@ -99,7 +98,7 @@
         $("body").removeClass("overflow-hidden");
     });
 
-    // TOPIC - Create
+    // TOPIC - Create +
     $("#newTopicForm").on("submit", (e) => {
         e.preventDefault();
         let ideaGuid = e.target.dataset.guid;
@@ -123,7 +122,7 @@
         })
     })
 
-    // GOAL - New window
+    // GOAL - New window +
     $(".showNewGoallWindowBtn").on("click", (e) => {
         $("#newGoalWindow").removeClass("d-none");
         $("#hideBackgroundWrapper").removeClass("d-none");
@@ -142,7 +141,16 @@
         let withTasks = e.target.getElementsByTagName("input")[1].checked;
 
         $.post("/asyncload/idea/creategoal", { idea, name, desc, withTasks }, resp => {
-            console.log(resp);
+            if (resp != null) {
+                if (resp.isSuccess == true) {
+                    window.location.reload();
+                }
+                else {
+                    $("#newGoalWindowError").text("При создании цели что-то пошло не так");
+                }
+            } else {
+                $("#newGoalWindowError").text("При создании цели что-то пошло не так");
+            }
         });
     })
 

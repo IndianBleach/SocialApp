@@ -504,7 +504,7 @@
                                     </button>
                                 </div>
                                 <form id="topicWindowForm"
-                                      style="height:50px!important"                                      
+                                      style="height:50px!important"
                                       class="form-upd rad-md col ms-2 flex-form-dark">
                                     <input id="topicCommentInput"
                                            class="form-upd form-control"
@@ -593,7 +593,7 @@
                                 <button type="submit" class="mt-4 icon-link-btn">
                                     Создать
                                 </button>
-                                <label id="newTopicWindowError" class="pt-2 t-sm text-danger" for="floatingInput">                                    
+                                <label id="newTopicWindowError" class="pt-2 t-sm text-danger" for="floatingInput">
                                 </label>
                             </form>
                         </div>
@@ -674,12 +674,12 @@
                                 Участники
                             </button>
                             @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Author)
-                            { 
-                            <button id="toMemberRequestsWindowBtn"
-                                    class="clr-mute btn-full-link btn-unfocus btn bg-transparent">
-                                Заявки
-                            </button>
-                            }                            
+                            {
+                                <button id="toMemberRequestsWindowBtn"
+                                        class="clr-mute btn-full-link btn-unfocus btn bg-transparent">
+                                    Заявки
+                                </button>
+                            }
                         </div>
                         <div class="mt-2 col-12">
                             <section>
@@ -712,41 +712,41 @@
                             </section>
                             @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
                             {
-                            <section>
-                                <div class="d-none pt-1 custom-scroll"
-                                     id="memberRequestsWindowLoad">
-                                    @if (Model.Idea.MemberRequests.Count <= 0)
-                                    {
-                                        <div class='h-100 d-flex justify-content-center align-items-center text-center'>
-                                            <p class='t-md t-med text-muted'>Запросов в идею нет. <br />Отправляйте приглашения, либо ждите заявки</p>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        @foreach (var member in Model.Idea.MemberRequests)
+                                <section>
+                                    <div class="d-none pt-1 custom-scroll"
+                                         id="memberRequestsWindowLoad">
+                                        @if (Model.Idea.MemberRequests.Count <= 0)
                                         {
-                                <div class="mb-2 repostToUser">
-                                    <a asp-action="@member.Guid" asp-controller="user">
-                                        <img class="me-1" src="~/media/userAvatars/@member.Avatar" />
-                                        @member.Name
-                                    </a>
-                                    @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Author)
-                                    {
-                                        <button data-idea="@Model.Idea.Guid" data-user="@member.Guid" class="asyncAcceptMemberBtn btn clr-mute t-med">
-                                            Принять
-                                        </button>
-                                        <button data-idea="@Model.Idea.Guid" data-user="@member.Guid" class="ms-1 asyncRejectMemberBtn btn clr-mute t-med">
-                                            <svg data-idea="@Model.Idea.Guid" data-user="@member.Guid" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                            </svg>
-                                        </button>
-                                    }
-                                </div>
+                                            <div class='h-100 d-flex justify-content-center align-items-center text-center'>
+                                                <p class='t-md t-med text-muted'>Запросов в идею нет. <br />Отправляйте приглашения, либо ждите заявки</p>
+                                            </div>
                                         }
-                                    }
-                                </div>
-                            </section>
-                            }                            
+                                        else
+                                        {
+                                            @foreach (var member in Model.Idea.MemberRequests)
+                                            {
+                                                <div class="mb-2 repostToUser">
+                                                    <a asp-action="@member.Guid" asp-controller="user">
+                                                        <img class="me-1" src="~/media/userAvatars/@member.Avatar" />
+                                                        @member.Name
+                                                    </a>
+                                                    @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Author)
+                                                    {
+                                                        <button data-idea="@Model.Idea.Guid" data-user="@member.Guid" class="asyncAcceptMemberBtn btn clr-mute t-med">
+                                                            Принять
+                                                        </button>
+                                                        <button data-idea="@Model.Idea.Guid" data-user="@member.Guid" class="ms-1 asyncRejectMemberBtn btn clr-mute t-med">
+                                                            <svg data-idea="@Model.Idea.Guid" data-user="@member.Guid" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                            </svg>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </section>
+                            }
                         </div>
                     </div>
                 </div>
@@ -754,7 +754,7 @@
 
                 @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
                 {
-                    <!--New Goal-->
+                    <!--New Goal + -->
                     <div id="newGoalWindow" class="d-none window_rounded_shadow">
                         <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                             <span class="clr-white t-md">
@@ -797,17 +797,22 @@
                             <div class="mt-2 col-12 d-flex justify-content-center">
                                 <form data-guid="@Model.Idea.Guid" id="newGoalForm" class="col-10">
                                     <div class="col-12 mb-2">
-                                        <input type="text"
-                                               class="form-control"
+                                        <input minlength="4"
+                                               maxlength="60"
+                                               autocomplete="off"
+                                               type="text"
+                                               class="form-upd form-control"
                                                id="floatingInput" />
                                         <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                             Придумайте название
                                         </label>
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <textarea style="height: 116px; resize: none !important;"
+                                        <textarea minlength="4"
+                                                  maxlength="234"
+                                                  style="height: 116px; resize: none !important;"
                                                   type="text"
-                                                  class="form-control"
+                                                  class="form-upd form-control"
                                                   id="floatingInput"></textarea>
                                         <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                             Опишите цель, другие участники могут добавлять задачи и
@@ -828,6 +833,9 @@
                                     <button type="submit" class="mt-4 icon-link-btn">
                                         Создать цель
                                     </button>
+                                    <label id="newGoalWindowError" class="pt-2 t-sm text-danger form-check-label"
+                                           for="flexCheckChecked">
+                                    </label>
                                 </form>
                             </div>
                         </div>

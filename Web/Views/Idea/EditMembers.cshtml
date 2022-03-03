@@ -424,7 +424,7 @@
 
                 @if (Model.Idea.CurrentRole.Role <= ApplicationCore.DTOs.Idea.CurrentUserRoleTypes.Modder)
                 {
-                    <!--New Goal-->
+                    <!--New Goal + -->
                     <div id="newGoalWindow" class="d-none window_rounded_shadow">
                         <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                             <span class="clr-white t-md">
@@ -467,17 +467,22 @@
                             <div class="mt-2 col-12 d-flex justify-content-center">
                                 <form data-guid="@Model.Idea.Guid" id="newGoalForm" class="col-10">
                                     <div class="col-12 mb-2">
-                                        <input type="text"
-                                               class="form-control"
+                                        <input minlength="4"
+                                               maxlength="60"
+                                               autocomplete="off"
+                                               type="text"
+                                               class="form-upd form-control"
                                                id="floatingInput" />
                                         <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                             Придумайте название
                                         </label>
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <textarea style="height: 116px; resize: none !important;"
+                                        <textarea minlength="4"
+                                                  maxlength="234"
+                                                  style="height: 116px; resize: none !important;"
                                                   type="text"
-                                                  class="form-control"
+                                                  class="form-upd form-control"
                                                   id="floatingInput"></textarea>
                                         <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                             Опишите цель, другие участники могут добавлять задачи и
@@ -498,6 +503,9 @@
                                     <button type="submit" class="mt-4 icon-link-btn">
                                         Создать цель
                                     </button>
+                                    <label id="newGoalWindowError" class="pt-2 t-sm text-danger form-check-label"
+                                           for="flexCheckChecked">
+                                    </label>
                                 </form>
                             </div>
                         </div>
