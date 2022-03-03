@@ -183,16 +183,9 @@ namespace WebUi.Controllers
         [Route("/asyncload/idea/createtopic")]
         public async Task<JsonResult> CreateTopic(string name, string content, string ideaGuid)
         {
-            string curUserGuid = GetUserIdOrNull();
+            var res = await _loadService.CreateTopicAsync(name, content, ideaGuid, GetUserIdOrNull());
 
-            if (curUserGuid != null)
-            {
-                var res = await _loadService.CreateTopicAsync(name, content, ideaGuid, curUserGuid);
-
-                return Json(res);
-            }
-
-            return Json(null);
+            return Json(res);
         }
 
 

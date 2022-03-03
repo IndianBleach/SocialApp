@@ -196,7 +196,7 @@
                     </div>
                 </div>
                 <!---->
-                <!--New Topic-->
+                <!--New Topic + -->
                 <div id="newTopicWindow" class="d-none window_rounded_shadow">
                     <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                         <span class="clr-white t-md">
@@ -239,17 +239,22 @@
                         <div class="mt-2 col-12 d-flex justify-content-center">
                             <form data-guid="@Model.Idea.Guid" id="newTopicForm" class="col-10">
                                 <div class="col-12 mb-2">
-                                    <input type="text"
-                                           class="form-control"
+                                    <input autocomplete="off"
+                                           minlength="4"
+                                           maxlength="78"
+                                           type="text"
+                                           class="form-upd form-control"
                                            id="floatingInput" />
                                     <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                         Придумайте название
                                     </label>
                                 </div>
                                 <div class="col-12">
-                                    <textarea style="height: 116px; resize: none !important;"
+                                    <textarea minlength="4"
+                                              maxlength="234"
+                                              style="height: 116px; resize: none !important;"
                                               type="text"
-                                              class="form-control"
+                                              class="form-upd form-control"
                                               id="floatingInput"></textarea>
                                     <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                         Опишите эту тему, другие смогут комментировать топик
@@ -258,6 +263,8 @@
                                 <button type="submit" class="mt-4 icon-link-btn">
                                     Создать
                                 </button>
+                                <label id="newTopicWindowError" class="pt-2 t-sm text-danger" for="floatingInput">
+                                </label>
                             </form>
                         </div>
                     </div>

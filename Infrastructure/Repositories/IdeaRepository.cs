@@ -21,8 +21,6 @@ namespace Infrastructure.Repositories
 {
     public class IdeaRepository : IIdeaRepository
     {
-        //private readonly UserManager<ApplicationUser> _userManager;
-        //private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationContext _dbContext;
         private readonly ITagService _tagService;
         private readonly IGlobalService<Idea> _globalService;

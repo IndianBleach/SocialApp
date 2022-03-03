@@ -711,7 +711,8 @@ namespace Infrastructure.Services
 
         public async Task<OperationResultDto> CreateTopicAsync(string name, string content, string ideaGuid, string authorGuid)
         {
-            if (!string.IsNullOrWhiteSpace(name) &&
+            if (!string.IsNullOrEmpty(authorGuid) &&
+                !string.IsNullOrWhiteSpace(name) &&
                 !string.IsNullOrWhiteSpace(content) &&
                 !string.IsNullOrWhiteSpace(ideaGuid))
             {

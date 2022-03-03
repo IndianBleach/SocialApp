@@ -27,7 +27,7 @@ namespace ApplicationCore.Interfaces
         Task<OperationResultDto> RemoveIdeaMemberAsync(string ideaGuid, string userGuid, string curUserGuid);
         Task<OperationResultDto> RejectIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid);
         Task<OperationResultDto> AcceptIdeaMemberRequestAsync(string ideaGuid, string userGuid, string curUserGuid);
-        Task<OperationResultDto> CreateTopicAsync(string name, string content, string ideaGuid, string authorGuid);
+        Task<OperationResultDto> CreateTopicAsync(string name, string content, string ideaGuid, string? authorGuid);
         Task<OperationResultDto> RemoveTopicCommentAsync(string commentGuid, string topicGuid, string currentUserGuid);
         Task<OperationResultDto> RemoveTopicAsync(string topicGuid, string currentUserRole);
         //

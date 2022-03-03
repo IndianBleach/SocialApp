@@ -16,6 +16,8 @@ namespace WebUi.Controllers
             _ideaRepository = ideaRepository;
         }
 
+
+
         
         [HttpPost]
         [Route("/create/idea")]

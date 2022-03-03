@@ -108,12 +108,18 @@
         let desc = e.target.getElementsByTagName("textarea")[0].value;
         let normalizeDesc = Validate(desc);
 
-        console.log(baseName);
-        console.log(normalizeName);
-        console.log(normalizeDesc);
-
         $.post("/asyncload/idea/createtopic", { name: normalizeName, content: normalizeDesc, ideaGuid }, resp => {
-            console.log(resp);
+            if (resp != null) {
+                if (resp.isSuccess == true) {
+                    window.location.reload();
+                }
+                else if (resp.isSuccess == false) {
+                    $("#newTopicWindowError").text("При создании что-то пошло не так");
+                }
+            }
+            else {
+                $("#newTopicWindowError").text("При создании что-то пошло не так");
+            }
         })
     })
 
@@ -131,14 +137,9 @@
     $("#newGoalForm").on("submit", (e) => {
         e.preventDefault();
         let idea = e.target.dataset.guid;
-        let name = e.target.getElementsByTagName("input")[0].value;
-        let desc = e.target.getElementsByTagName("textarea")[0].value;
+        let name = Validate(e.target.getElementsByTagName("input")[0].value);
+        let desc = Validate(e.target.getElementsByTagName("textarea")[0].value);
         let withTasks = e.target.getElementsByTagName("input")[1].checked;
-
-        console.log(idea);
-        console.log(name);
-        console.log(desc);
-        console.log(withTasks);
 
         $.post("/asyncload/idea/creategoal", { idea, name, desc, withTasks }, resp => {
             console.log(resp);
@@ -202,7 +203,7 @@
         e.preventDefault();
         let goal = e.target.dataset.goal;
         let idea = e.target.dataset.idea;
-        let content = e.target.getElementsByTagName("input")[0].value;        
+        let content = Validate(e.target.getElementsByTagName("input")[0].value);
         $("#goalTaskInput").val("");
         $("#choiceEmojiWindow").addClass("d-none");
         $("#goalWindowLoad").append(`<div class="goalMessage"><a href="/user/im" class="text-truncate idea_hide_text col-2"><img class="me-1" src="${curUserAvatar}" />Вы</a><p class="col-7">${content}</p><span class="col-1"><button disabled data-gcomplete="false" class="asyncChangeStatusBtn g-status btn">🎯</button></span><span class="idea_hide_elems col-2">сейчас</span></div>`);
@@ -299,14 +300,14 @@
         $("body").removeClass("overflow-hidden");
     });
 
-    // EMOJI
+    // EMOJI -check
     $("#showMessageEmojiBtn").on("click", (e) => {
         e.preventDefault();
         $("#choiceEmojiWindow").removeClass("d-none");
     });
     $(".asyncSendEmojiBtn").on("click", (e) => {
-        let messageTopic = $("#topicCommentInput").val();
-        let messageTask = $("#goalTaskInput").val();
+        let messageTopic = Validate($("#topicCommentInput").val());
+        let messageTask = Validate($("#goalTaskInput").val());
 
         if (messageTopic != undefined) {
             let mess = `${messageTopic + e.target.textContent.replace(/ /g, "")}`;
@@ -325,7 +326,7 @@
     $("#removeIdeaForm").on("submit", (e) => {
         e.preventDefault();
         let idea = e.target.dataset.guid;
-        let password = e.target.getElementsByTagName("input")[0].value;
+        let password = Validate(e.target.getElementsByTagName("input")[0].value);
         $.post("/asyncload/idea/remove", { idea, password }, resp => {
             console.log(resp);
         });
