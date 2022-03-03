@@ -1,8 +1,5 @@
 ﻿$(document).ready(() => {
-    const Validate = (str) => {
-        return str.replace(/^(\s|\.|\,|\;|\:|\?|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\~|\`|\'|\\|\-|\/|\+)*?$/, '');
-    }
-
+    // Idea - create
     $("#asyncNewIdeaForm").on("submit", e => {
         e.preventDefault();
 
@@ -13,8 +10,8 @@
 
         let model = {
             authorGuid: "",
-            name: Validate(e.target.getElementsByTagName("input")[0].value),
-            description: Validate(e.target.getElementsByTagName("textarea")[0].value),
+            name: e.target.getElementsByTagName("input")[0].value,
+            description: e.target.getElementsByTagName("textarea")[0].value,
             tags: selectedTags,
             isPrivate: e.target.getElementsByTagName("input")[1].checked,
         };

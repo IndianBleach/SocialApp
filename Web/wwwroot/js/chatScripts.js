@@ -9,6 +9,7 @@
 
             //chat 
             $(".chatWarning").remove();
+            //$(".repostToUser").remove();
         }
     });
 
@@ -23,45 +24,49 @@
 
         let userGuid = e.target.dataset.guid;
 
-        $.get("/asyncload/chat/new", { userGuid }, resp => {
-            if (resp.length == 0) {
-                $("#newChatWindowLoadPrev").addClass("d-none");
-                $("#newChatWindowLoad").append("<div class='chatWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Добавьте друзей, <br/> чтобы общаться с ними</p></div>");
-            }
-            else if (resp.length > 0) {
-                $("#newChatWindowLoadPrev").addClass("d-none");
-                resp.forEach(x => {
-                    $("#newChatWindowLoad").append(`<div class="mb-2 repostToUser"><a href='/user/${x.guid}'><img class="me-1" src="../media/userAvatars/${x.avatarName}" />${x.name}</a><button data-guid='${x.guid}' data-avatar='${x.avatarName}' data-name='${x.name}' class="asyncNewChatBtn btn">Отправить</button></div>`);
-                });                
-            }
+        let alreadyLoaded = Boolean(sessionStorage.getItem("new_chats_loaded"));
+        if (!alreadyLoaded) {
+            $.get("/asyncload/chat/new", { userGuid }, resp => {
+                sessionStorage.setItem("new_chats_loaded", true);
+                if (resp.length == 0) {
+                    $("#newChatWindowLoadPrev").addClass("d-none");
+                    $("#newChatWindowLoad").append("<div class='chatWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Добавьте друзей, <br/> чтобы общаться с ними</p></div>");
+                }
+                else if (resp.length > 0) {
+                    $("#newChatWindowLoadPrev").addClass("d-none");
+                    resp.forEach(x => {
+                        $("#newChatWindowLoad").append(`<div class="mb-2 repostToUser"><a href='/user/${x.guid}'><img class="me-1" src="../media/userAvatars/${x.avatarName}" />${x.name}</a><button data-guid='${x.guid}' data-avatar='${x.avatarName}' data-name='${x.name}' class="asyncNewChatBtn btn">Отправить</button></div>`);
+                    });
+                }
 
-            // CHAT - Create new
-            $(".asyncNewChatBtn").on("click", (e) => {
-                e.preventDefault();
-                $(".repostToUser").remove();
-                
-                $("#hideBackgroundWrapper").addClass("d-none");
-                $("body").removeClass("overflow-hidden");
-                $("#newChatWindow").addClass("d-none");
-                $("#defaultChatContainer").addClass("d-none");
+                // CHAT - Create new
+                $(".asyncNewChatBtn").on("click", (e) => {
+                    e.preventDefault();
+                    $(".repostToUser").remove();
 
-                let userGuid = e.target.dataset.guid;
-                let avatar = e.target.dataset.avatar;
-                let name = e.target.dataset.name;
+                    $("#hideBackgroundWrapper").addClass("d-none");
+                    $("body").removeClass("overflow-hidden");
+                    $("#newChatWindow").addClass("d-none");
+                    $("#defaultChatContainer").addClass("d-none");
 
-                sessionStorage.setItem("activeChat", null);
-                sessionStorage.setItem("chatWith", userGuid);
+                    let userGuid = e.target.dataset.guid;
+                    let avatar = e.target.dataset.avatar;
+                    let name = e.target.dataset.name;
 
-                sessionStorage.setItem("inviteUser", userGuid);
-                $("#inviteWindowUsername").text(name);
-                $("#inviteWindowAvatar").attr("src", "../media/userAvatars/" + avatar);
+                    sessionStorage.setItem("activeChat", null);
+                    sessionStorage.setItem("chatWith", userGuid);
 
-                $("#activeChatContainer").removeClass("d-none");
-                $("#activeChatUserAvatar").attr("src", "../media/userAvatars/" + avatar)
-                $("#activeChatUserName").text(name);
-                $("#activeChatWarning").removeClass("d-none");
-            });
-        })
+                    sessionStorage.setItem("inviteUser", userGuid);
+                    $("#inviteWindowUsername").text(name);
+                    $("#inviteWindowAvatar").attr("src", "../media/userAvatars/" + avatar);
+
+                    $("#activeChatContainer").removeClass("d-none");
+                    $("#activeChatUserAvatar").attr("src", "../media/userAvatars/" + avatar)
+                    $("#activeChatUserName").text(name);
+                    $("#activeChatWarning").removeClass("d-none");
+                });
+            })
+        }
     });
 
     // CHAT - Send message
@@ -218,6 +223,7 @@
         $("#hideBackgroundWrapper").addClass("d-none");
         $("body").removeClass("overflow-hidden");
         $("#newChatWindow").addClass("d-none");
+        //$(".repostToUser").remove();
     });
    
     // Chat - Recieve
@@ -273,29 +279,32 @@
 
         $("#inviteWindowLoadPrev").removeClass("d-none");        
 
-        $.get("/asyncload/user/getinvite", {}, resp => {
-            console.log(resp);
-            if (resp.length > 0) {
-                $("#inviteWindowLoadPrev").addClass("d-none");
-                resp.forEach(x => {
-                    $("#inviteWindowLoad").append(`<div class="mb-2 repostToUser"><a class="inviteIdeaLink text-truncate" href="/idea/${x.ideaGuid}"><span class="ideaInviteLink hover-white">${x.ideaName}</span></a><button data-idea="${x.ideaGuid}" class="asyncInviteBtn btn">Отправить</button></div>`)
-                });
-
-                // INVITE - Send
-                $(".asyncInviteBtn").on("click", (e) => {
-                    e.preventDefault();
-                    e.target.classList.add("clr-mute");
-                    e.target.textContent = "Отправлено";
-                    e.target.setAttribute("disabled", true);
-
-                    let user = sessionStorage.getItem("inviteUser");
-                    let idea = e.target.dataset.idea;
-                    $.post("/asyncload/user/sendinvite", { user, idea }, resp => {
-                        console.log(resp);
+        let alreadyLoaded = Boolean(sessionStorage.getItem("invite_ideas_loaded"));
+        if (!alreadyLoaded) {
+            $.get("/asyncload/user/getinvite", {}, resp => {
+                sessionStorage.setItem("invite_ideas_loaded", true);
+                if (resp.length > 0) {
+                    $("#inviteWindowLoadPrev").addClass("d-none");
+                    resp.forEach(x => {
+                        $("#inviteWindowLoad").append(`<div class="mb-2 repostToUser"><a class="inviteIdeaLink text-truncate" href="/idea/${x.ideaGuid}"><span class="ideaInviteLink hover-white">${x.ideaName}</span></a><button data-idea="${x.ideaGuid}" class="asyncInviteBtn btn">Отправить</button></div>`)
                     });
-                });
-            }
-        })
+
+                    // INVITE - Send
+                    $(".asyncInviteBtn").on("click", (e) => {
+                        e.preventDefault();
+                        e.target.classList.add("clr-mute");
+                        e.target.textContent = "Отправлено";
+                        e.target.setAttribute("disabled", true);
+
+                        let user = sessionStorage.getItem("inviteUser");
+                        let idea = e.target.dataset.idea;
+                        $.post("/asyncload/user/sendinvite", { user, idea }, resp => {
+                            console.log(resp);
+                        });
+                    });
+                }
+            })
+        };
     });
 
     $(".closeInviteWindowBtn").on("click", (e) => {

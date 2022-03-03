@@ -6,6 +6,12 @@
         return str.replace(/^(\s|\.|\,|\;|\:|\?|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\~|\`|\'|\\|\-|\/|\+)*?$/, '');
     }
 
+    const ValidateUpdated = (str) => {
+        let res = str.replace(/^(\s|\w|\d|\.|\,|\;|\:|\?|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\~|\`|\'|\\|\-|\/|\+)*?$/, '');
+        return res;
+    }
+
+
     // TOPIC - Show
     $(".asyncShowTopicWindow").on("click", (e) => {
         $("#hideBackgroundWrapper").removeClass("d-none");

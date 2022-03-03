@@ -494,7 +494,7 @@ namespace Infrastructure.Repositories
             UserProfileIdeaList res = new()
             {
                 Ideas = ideas,
-                Pages = _globalService.CreatePages(ideasCount, page),
+                Pages = _globalService.CreatePages(ideasCount, normalizePage),
             };
 
             return res;
@@ -620,7 +620,7 @@ namespace Infrastructure.Repositories
             return null;
         }
 
-        public async Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model)
+        public async Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model, IEnumerable<ClaimsIdentity> identities)
         {
             ApplicationUser getUser = await _dbContext.Users
                 .Include(x => x.Tags)
@@ -628,11 +628,22 @@ namespace Infrastructure.Repositories
 
             if (getUser != null)
             {
-                if (!string.IsNullOrEmpty(model.Username))
-                    getUser.UserName = model.Username;
+                if (!string.IsNullOrEmpty(model.Username) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(model.Username))
+                {
+                    var userIdentity = identities.FirstOrDefault(x => x.Name == getUser.UserName);
+                    if (userIdentity != null)
+                    {
+                        var getClaim = userIdentity.FindFirst("UserName");
+                        Claim newClaim = new("UserName", model.Username);
+
+                        await _userManager.ReplaceClaimAsync(getUser, getClaim, newClaim);
+                    }
+                }
 
                 if (!string.IsNullOrEmpty(model.NewPassword) &&
-                    !string.IsNullOrEmpty(model.NewPasswordConfirm))
+                    !string.IsNullOrEmpty(model.NewPasswordConfirm) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(model.NewPassword))
                 {
                     bool canEdit = model.NewPassword.Equals(model.NewPasswordConfirm) ?
                         await _userManager.CheckPasswordAsync(getUser, model.OldPassword) :
@@ -698,17 +709,22 @@ namespace Infrastructure.Repositories
                         }
                     }
 
-                if (!string.IsNullOrWhiteSpace(model.Description))
+                if (!string.IsNullOrWhiteSpace(model.Description) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(model.Description))
                     getUser.Description = model.Description;
 
-                if (!string.IsNullOrWhiteSpace(model.AddressCity))
+                if (!string.IsNullOrWhiteSpace(model.AddressCity) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(model.AddressCity))
                     getUser.AddressCity = model.AddressCity;
 
-                if (!string.IsNullOrWhiteSpace(model.AddressCountry))
+                if (!string.IsNullOrWhiteSpace(model.AddressCountry) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(model.AddressCountry))
                     getUser.AddressCountry = model.AddressCountry;
 
                 if (!string.IsNullOrWhiteSpace(model.ContactName) &&
-                    !string.IsNullOrWhiteSpace(model.ContactUrl))
+                    !string.IsNullOrWhiteSpace(model.ContactUrl) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(model.ContactName) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(model.ContactUrl))
                 {
                     _dbContext.UserContacts.RemoveRange(getUser.Contacts);
                     getUser.Contacts = new List<UserContact>()
@@ -728,8 +744,6 @@ namespace Infrastructure.Repositories
 
             return new(false, "Op. Update User (Failed)");
         }
-
-
 
         public IEnumerable<IdeaUserParticipationDto> GetUserParticipations(string userId)
         {

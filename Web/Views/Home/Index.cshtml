@@ -308,14 +308,14 @@
                                     <button type="submit" class="mt-3 icon-link-btn">
                                         Создать идею
                                     </button>
-                                    <label id="newIdeaWindowError" class="pt-2 text-center text-danger t-sm">                                       
+                                    <label id="newIdeaWindowError" class="pt-2 text-center text-danger t-sm">
                                     </label>
                                 </form>
                             </div>
                         </div>
                     </div>
                     <!---->
-                    <!--Repost-->
+                    <!--Repost + -->
                     <div id="repostWindow" class="d-none window_rounded_shadow">
                         <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                             <span class="clr-white t-md">
@@ -341,15 +341,16 @@
                             </button>
                         </div>
                         <div class="col-12 p-4">
-                            <form class="col-12 flex-form-dark">
+                            <form class="form-upd col-12 flex-form-dark">
                                 <div class="col-10 form-floating">
-                                    <input type="text"
-                                           class="form-control"
+                                    <input disabled
+                                           type="text"
+                                           class="form-upd form-control"
                                            id="floatingInput"
-                                           placeholder="Поиск по имени" />
-                                    <label class="text-dark" for="floatingInput">Поиск по имени</label>
+                                           placeholder="Поиск (В обновлении)" />
+                                    <label class="text-dark" for="floatingInput">Поиск (В обновлении)</label>
                                 </div>
-                                <button class="clr-mute btn bg-transparent">
+                                <button disabled class="clr-mute btn bg-transparent">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16"
                                          height="16"
@@ -623,14 +624,16 @@ else
                               url(../media/ideaAvatars/@idea.AvatarName);
                           ">
                                         <div class="p-sm-2 p-md-3 text-start col-12">
-                                            <h3 class="mb-0 t-idea-slide-md">
-                                                @idea.Name
-                                            </h3>
-                                            <div style="height:60px;" class="overflow-hidden  mb-4">
-                                                <p class="pt-2 t-lg clr-mute t-smbold">
-                                                    @idea.Description
-                                                </p>
-                                            </div>
+                                            <a asp-action="@idea.Guid" asp-controller="idea">
+                                                <h3 class="mb-0 t-idea-slide-md">
+                                                    @idea.Name
+                                                </h3>
+                                                <div style="height:60px;" class="overflow-hidden  mb-4">
+                                                    <p class="pt-2 t-lg clr-mute t-smbold">
+                                                        @idea.Description
+                                                    </p>
+                                                </div>
+                                            </a>
                                             <div class="col-12 d-flex align-items-end">
                                                 <form class="">
                                                     <div class="pt-sm-3 pt-lg-5 d-flex">

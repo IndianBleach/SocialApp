@@ -4,6 +4,7 @@ using ApplicationCore.Interfaces;
 using AutoMapper;
 using Infrastructure.Constants;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -59,34 +60,37 @@ namespace Infrastructure.Services
 
         public async Task<AuthorizationResultDto> UserSignUpAsync(UserSignUpDto model)
         {
-            var config = new MapperConfiguration(conf => conf.CreateMap<UserSignUpDto, ApplicationUser>()
-                .ForMember("UserName", opt => opt.MapFrom(x => x.Username))
-                .ForMember(x => x.Tags, opt => opt.MapFrom(x => _tagService.CreateTagList(x.Tags)))
-                .ForMember("Avatar", opt => opt.MapFrom(x => _dbContext.UserAvatars
-                    .FirstOrDefault(x => x.Name.Equals(AvatarInformation.UserDefaultAvatarName)))));
-
-            var mapper = new Mapper(config);
-
-            ApplicationUser createUser = mapper.Map<ApplicationUser>(model);
-
-            var result = await _userManager.CreateAsync(createUser, model.Password);
-
-            Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
-            Claim guidClaim = new("UserId", createUser.Id);
-            Claim nameClaim = new("UserName", createUser.UserName);
-
-            if (result.Succeeded)
+            if (SafetyInputHelper.CheckAntiXSSRegex(model.Username) &&
+                SafetyInputHelper.CheckAntiXSSRegex(model.ConfirmPassword))
             {
-                await _userManager.AddClaimAsync(createUser, nameClaim);
-                await _userManager.AddClaimAsync(createUser, guidClaim);
-                await _userManager.AddClaimAsync(createUser, avatarClaim);
-                await _userManager.AddToRoleAsync(createUser, "user");
-                await _signInManager.SignInAsync(createUser, false);
+                var config = new MapperConfiguration(conf => conf.CreateMap<UserSignUpDto, ApplicationUser>()
+                 .ForMember("UserName", opt => opt.MapFrom(x => x.Username))
+                 .ForMember(x => x.Tags, opt => opt.MapFrom(x => _tagService.CreateTagList(x.Tags)))
+                 .ForMember("Avatar", opt => opt.MapFrom(x => _dbContext.UserAvatars
+                     .FirstOrDefault(x => x.Name.Equals(AvatarInformation.UserDefaultAvatarName)))));
 
-                return CreateResult(true, "Регистрация прошла успешно!");
-            }
+                var mapper = new Mapper(config);
 
-            else return CreateResult(false, "При регистрации что-то пошло не так, попробуйте снова");
+                ApplicationUser createUser = mapper.Map<ApplicationUser>(model);
+
+                var result = await _userManager.CreateAsync(createUser, model.Password);
+
+                Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
+                Claim guidClaim = new("UserId", createUser.Id);
+                Claim nameClaim = new("UserName", createUser.UserName);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddClaimAsync(createUser, nameClaim);
+                    await _userManager.AddClaimAsync(createUser, guidClaim);
+                    await _userManager.AddClaimAsync(createUser, avatarClaim);
+                    await _userManager.AddToRoleAsync(createUser, "user");
+                    await _signInManager.SignInAsync(createUser, false);
+
+                    return CreateResult(true, "Регистрация прошла успешно!");
+                }
+            }           
+            return CreateResult(false, "При регистрации что-то пошло не так, попробуйте снова");
         }
     }
 }

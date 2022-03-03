@@ -1,5 +1,9 @@
 ﻿$(document).ready(() => {
 
+    const Validate = (str) => {
+        return str.replace(/^(\s|\.|\,|\;|\:|\?|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\~|\`|\'|\\|\-|\/|\+)*?$/, '');
+    }
+
     $("#formAvatarInput").on("input", (e) => {
         e.preventDefault();
         $("#avatarUpdateSuccess").removeClass("d-none");
@@ -14,23 +18,24 @@
         });
 
         let model = {
-            Username: e.target.getElementsByTagName("input")[0].value,
+            Username: Validate(e.target.getElementsByTagName("input")[0].value),
             tags,
-            oldPassword: e.target.getElementsByTagName("input")[1].value,
-            newPassword: e.target.getElementsByTagName("input")[2].value,
-            newPasswordConfirm: e.target.getElementsByTagName("input")[3].value,
+            oldPassword: Validate(e.target.getElementsByTagName("input")[1].value),
+            newPassword: Validate(e.target.getElementsByTagName("input")[2].value),
+            newPasswordConfirm: Validate(e.target.getElementsByTagName("input")[3].value),
         };
 
-        $.post("/user/im/account", { model }, resp => {
-            console.log(resp);
-            window.location.reload();
-        });
-    });
-
-    $("#editRemoveUserForm").on("submit", (e) => {
-        e.preventDefault();
-        $.post("/user/im/remove", { password: e.target.getElementsByTagName("input")[0].value }, resp => {
-            console.log(resp);
+        $.post("/user/im/account", { model }, resp => {            
+            if (resp != null)
+                if (resp.isSuccess == true) {
+                    window.location.reload();
+                }
+                else {
+                    $("#updateAccountError").text("При сохранении пошло не так");
+                }
+            else {
+                $("#updateAccountError").text("При сохранении пошло не так");
+            }
         });
     });
 

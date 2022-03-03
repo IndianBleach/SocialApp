@@ -37,11 +37,12 @@
             $("#topicWindowWrapper").addClass("d-none");
             $("#newTopicWindow").addClass("d-none");
             $("#newGoalWindow").addClass("d-none");
-            $("#membersWindow").addClass("d-none");
-            $(".topicMessage").remove();
+            $("#membersWindow").addClass("d-none");            
             $("#reactWindow").addClass("d-none");
-            $(".topicRemoveBtn").remove();
             $("#participationWindow").addClass("d-none");
+
+            $(".topicMessage").remove();
+            $(".topicRemoveBtn").remove();
             $(".goalMessage").remove();
 
             //profile

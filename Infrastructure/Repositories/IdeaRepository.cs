@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
@@ -36,8 +35,6 @@ namespace Infrastructure.Repositories
         }
 
 
-
-
         public async Task<CreateOperationResult> CreateIdeaAsync(CreateIdeaDto model)
         {
             if (model.AuthorGuid == null)
@@ -49,7 +46,10 @@ namespace Infrastructure.Repositories
             IdeaStatus status = await _dbContext.IdeaStatuses
                 .FirstOrDefaultAsync(x => x.Type.Equals(IdeaStatusType.FindMembers));
 
-            if (avatar != null && status != null)
+            if (SafetyInputHelper.CheckAntiXSSRegex(model.Name) &&
+                SafetyInputHelper.CheckAntiXSSRegex(model.Description) &&
+                avatar != null && 
+                status != null)
             {
                 ICollection<Tag> tags = await _tagService.CreateTagListAsync(model.Tags);
 
@@ -61,7 +61,7 @@ namespace Infrastructure.Repositories
                 List<IdeaTopic> topics = new()
                 {
                     new(model.AuthorGuid, "Об этой идее", model.Description, true, false, true)
-                };
+                };               
 
                 Idea createIdea = new(model.Name, model.IsPrivate,
                     avatar, status, tags, members, topics);
@@ -73,7 +73,7 @@ namespace Infrastructure.Repositories
                 return new CreateOperationResult(true, createIdea.Id, "Идея успешно создана!");
             }
 
-            return new CreateOperationResult(false, null, "Что-то пошло не так"); ;
+            return new CreateOperationResult(false, null, "При создании идеи что-то пошло не так"); ;
         }        
 
         public ICollection<HomeIdeaDto> GetIdeasPerPage(int? page, string? currentUserId, string? sortReact, string? key, string? tag, string? search)

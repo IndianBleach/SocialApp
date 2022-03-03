@@ -151,15 +151,15 @@
                         </button>
                     </div>
                     <div class="col-12 p-4">
-                        <form class="col-12 flex-form-dark">
+                        <form class="form-upd col-12 flex-form-dark">
                             <div class="col-10 form-floating">
-                                <input type="text"
-                                       class="form-control"
+                                <input disabled type="text"
+                                       class="form-upd form-control"
                                        id="floatingInput"
-                                       placeholder="Поиск по имени" />
-                                <label class="text-dark" for="floatingInput">Поиск по имени</label>
+                                       placeholder="Поиск (В обновлении)" />
+                                <label class="text-dark" for="floatingInput">Поиск (В обновлении)</label>
                             </div>
-                            <button class="clr-mute btn bg-transparent">
+                            <button disabled class="clr-mute btn bg-transparent">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="16"
                                      height="16"
@@ -181,8 +181,7 @@
                                 </div>
                             </div>
                             <p class="mt-3 mb-1 clr-mute t-sm text-center">
-                                Выберите чат, в который хотите отправить идею, либо
-                                воспользуйтесь поиском.
+                                Выберите пользователя, с которым <br /> хотите начать чат
                             </p>
                         </div>
                     </div>
@@ -440,8 +439,8 @@ else
     <div id="asideChatAdaptive" class="position-relative">
         <aside>
             <section>
-                <div class="p-2 pt-3 d-flex justify-content-center align-items-center">
-                    <img class="chat_hide_elems" src="./icon.png" height="33" width="33" />
+                <div class="p-1 pt-2 d-flex justify-content-center align-items-center">
+                    <img class="chat_hide_elems" src="~/media/site/lightrnd.png" height="55" />
                     <button data-guid="@Model.Guid"
                             class="showNewChatBtn btn bg-transparent btn-unfocus clr-white t-smbold">
                         Новый чат
@@ -458,15 +457,15 @@ else
                     </button>
                 </div>
                 <div class="search_chat chat_hide_elems p-2 ps-2 pe-2 d-flex justify-content-center">
-                    <form class="col-12 flex-form-dark b-none">
+                    <form class="form-upd col-12 flex-form-dark b-none">
                         <div class="col form-floating">
-                            <input type="text"
-                                   class="form-control"
+                            <input disabled type="text"
+                                   class="form-upd form-control"
                                    id="floatingInput"
-                                   placeholder="Поиск по имени" />
-                            <label class="text-dark" for="floatingInput">Поиск по имени</label>
+                                   placeholder="Поиск (В обновлении)" />
+                            <label class="text-dark" for="floatingInput">Поиск (В обновлении)</label>
                         </div>
-                        <button class="clr-mute btn bg-transparent">
+                        <button disabled class="clr-mute btn bg-transparent">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="16"
                                  height="16"

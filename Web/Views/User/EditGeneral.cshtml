@@ -17,7 +17,7 @@
         <div id="checkOutContainer">
             <div class="d-flex position-relative">
 
-                <!--Repost-->
+                <!--Repost + -->
                 <div id="repostWindow" class="d-none window_rounded_shadow">
                     <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                         <span class="clr-white t-md">
@@ -43,15 +43,16 @@
                         </button>
                     </div>
                     <div class="col-12 p-4">
-                        <form class="col-12 flex-form-dark">
+                        <form class="form-upd col-12 flex-form-dark">
                             <div class="col-10 form-floating">
-                                <input type="text"
-                                       class="form-control"
+                                <input disabled
+                                       type="text"
+                                       class="form-upd form-control"
                                        id="floatingInput"
-                                       placeholder="Поиск по имени" />
-                                <label class="text-dark" for="floatingInput">Поиск по имени</label>
+                                       placeholder="Поиск (В обновлении)" />
+                                <label class="text-dark" for="floatingInput">Поиск (В обновлении)</label>
                             </div>
-                            <button class="clr-mute btn bg-transparent">
+                            <button disabled class="clr-mute btn bg-transparent">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="16"
                                      height="16"
@@ -88,7 +89,7 @@
                     </div>
                 </div>
                 <!---->
-                <!--New Idea-->
+                <!--New Idea + -->
                 <div id="newIdeaWindow" class="d-none window_rounded_shadow">
                     <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                         <span class="clr-white t-md">
@@ -131,17 +132,17 @@
                         <div class="mt-2 col-12 d-flex justify-content-center">
                             <form id="asyncNewIdeaForm" class="col-10">
                                 <div class="col-12 mb-2">
-                                    <input type="text"
-                                           class="form-control"
+                                    <input autocomplete="off" minlength="4" maxlength="56" type="text"
+                                           class="form-upd form-control"
                                            id="floatingInput" />
                                     <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                         Придумайте название
                                     </label>
                                 </div>
                                 <div class="col-12 mb-3">
-                                    <textarea style="height: 82px; resize: none !important;"
+                                    <textarea autocomplete="off" minlength="4" maxlength="220" style="height: 82px; resize: none !important;"
                                               type="text"
-                                              class="form-control"
+                                              class="form-upd form-control"
                                               id="floatingInput"></textarea>
                                     <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                         Дайте краткое описание своей идее
@@ -152,7 +153,7 @@
                                            type="checkbox"
                                            value=""
                                            id="flexCheckChecked" />
-                                    <span class="g-status-text">
+                                    <span class="me-1">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="26"
                                              height="26"
@@ -188,15 +189,17 @@
                                     </span>
                                     <div class="mt-2" id="selectedNewIdeaTags"></div>
                                 </div>
-                                <button type="submit" class="mt-4 icon-link-btn">
+                                <button type="submit" class="mt-3 icon-link-btn">
                                     Создать идею
                                 </button>
+                                <label id="newIdeaWindowError" class="pt-2 text-center text-danger t-sm">
+                                </label>
                             </form>
                         </div>
                     </div>
                 </div>
                 <!---->
-                <!--Friends-->
+                <!--Friends + -->
                 <div id="friendsWindow" class="d-none window_rounded_shadow">
                     <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                         <span class="clr-white t-md">
@@ -222,15 +225,15 @@
                         </button>
                     </div>
                     <div class="col-12 p-4">
-                        <form class="col-12 flex-form-dark">
+                        <form class="form-upd col-12 flex-form-dark">
                             <div class="col-10 form-floating">
-                                <input type="text"
-                                       class="form-control"
+                                <input disabled type="text"
+                                       class="form-upd form-control"
                                        id="floatingInput"
                                        placeholder="Поиск по имени" />
                                 <label class="text-dark" for="floatingInput">Поиск по имени</label>
                             </div>
-                            <button class="clr-mute btn bg-transparent">
+                            <button disabled class="clr-mute btn bg-transparent">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="16"
                                      height="16"
@@ -277,7 +280,7 @@
                     </div>
                 </div>
                 <!---->
-                <!--Invite-->
+                <!--Invite + -->
                 <div id="inviteWindow" class="d-none window_rounded_shadow">
                     <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                         <span class="clr-white t-md">
@@ -568,7 +571,8 @@
                                     <div class="col-9 col-md-10 p-3">
                                         <form action="/user/im/general" method="post" enctype="multipart/form-data">
                                             <div class="mb-3 d-flex align-items-center p-2 rad-md">
-                                                <input name="avatar"
+                                                <input accept=".jpg,.jpeg,.png"
+                                                       name="avatar"
                                                        style="background-image: url(../media/userAvatars/@avatar);"
                                                        class="input-avatar form-control"
                                                        type="file"
@@ -584,11 +588,12 @@
                                             <div class="mb-3 col-12">
                                                 <label class="pb-2 t-md clr-mute t-smbold"
                                                        for="floatingInput">Описание ваших навыков</label>
-                                                <textarea name="description"
+                                                <textarea maxlength="276"
+                                                          name="description"
                                                           placeholder="@Model.UserDetail.Description"
                                                           style="height: 88px; resize: none;"
                                                           type="text"
-                                                          class="form-upd btn-unfocus form-control"
+                                                          class="form-upd form-control"
                                                           id="floatingInput"></textarea>
                                                 <span class="pt-1 t-med t-sm text-muted">
                                                     Эту информацию видят пользователи в ленте
@@ -620,23 +625,28 @@
                                                 </label>
                                                 @if (Model.UserDetail.ContactName != null)
                                                 {
-                                                    <input name="contactName"
+                                                    <input autocomplete="off" minlength="4"
+                                                           maxlength="76"
+                                                           name="contactName"
                                                            placeholder="@Model.UserDetail.ContactName"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 else
                                                 {
-                                                    <input name="contactName" placeholder="Название"
+                                                    <input autocomplete="off" minlength="4"
+                                                           maxlength="76" name="contactName" placeholder="Название"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 @if (Model.UserDetail.ContactUrl != null)
                                                 {
-                                                    <input name="contactUrl" placeholder="@Model.UserDetail.ContactUrl"
+                                                    <input autocomplete="off" minlength="4"
+                                                           maxlength="234" name="contactUrl" placeholder="@Model.UserDetail.ContactUrl"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 else
                                                 {
-                                                    <input name="contactUrl" placeholder="Url (ссылка)"
+                                                    <input autocomplete="off" minlength="4"
+                                                           maxlength="234" name="contactUrl" placeholder="Url (ссылка)"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 <label class="pt-1 t-med t-sm text-muted">
@@ -651,22 +661,27 @@
                                                 </label>
                                                 @if (Model.UserDetail.AddressCountry != null)
                                                 {
-                                                    <input name="AddressCountry" placeholder="@Model.UserDetail.AddressCountry"
+                                                    <input autocomplete="off" minlength="2"
+                                                           maxlength="122" name="AddressCountry" placeholder="@Model.UserDetail.AddressCountry"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 else
                                                 {
-                                                    <input name="AddressCountry" placeholder="Страна"
+                                                    <input autocomplete="off" minlength="2"
+                                                           maxlength="122" name="AddressCountry" placeholder="Страна"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 @if (Model.UserDetail.AddressCity != null)
                                                 {
-                                                    <input name="AddressCity" placeholder="@Model.UserDetail.AddressCity"
+                                                    <input autocomplete="off" minlength="2"
+                                                           maxlength="122" name="AddressCity" placeholder="@Model.UserDetail.AddressCity"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 else
                                                 {
-                                                    <input name="AddressCity" placeholder="Город"
+                                                    <input autocomplete="off"
+                                                           minlength="2"
+                                                           maxlength="122" name="AddressCity" placeholder="Город"
                                                            class="mb-2 form-upd p-2 form-control" />
                                                 }
                                                 <label class="pt-1 t-med t-sm text-muted">

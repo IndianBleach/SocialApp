@@ -208,21 +208,33 @@ namespace Infrastructure.Services
                 .Where(x => x.Users.Any(x => x.Id.Equals(guid)))
                 .ToListAsync();
 
+            var getUser = await _dbContext.Users
+                .Include(x => x.Chats)
+                .ThenInclude(x => x.Chat)
+                .ThenInclude(x => x.Users)
+                .FirstOrDefaultAsync(x => x.Id.Equals(guid));
+
+            var activeChatsUserId = getUser.Chats
+                .Select(x => x.Chat.Users.FirstOrDefault(x => !x.UserId.Equals(guid)));
+
             List<SmallUserDto> dtos = new List<SmallUserDto>();
 
             foreach (var friend in getFriends)
             {
                 var dtoFriend = friend.Users.FirstOrDefault(x => x.Id != guid);
 
-                if (dtoFriend != null)
+                if (!activeChatsUserId.Any(x => x.UserId == dtoFriend.Id))
                 {
-                    dtos.Add(new()
+                    if (dtoFriend != null)
                     {
-                        AvatarName = dtoFriend.Avatar.Name,
-                        Guid = dtoFriend.Id,
-                        Name = dtoFriend.UserName
-                    });
-                }
+                        dtos.Add(new()
+                        {
+                            AvatarName = dtoFriend.Avatar.Name,
+                            Guid = dtoFriend.Id,
+                            Name = dtoFriend.UserName
+                        });
+                    }
+                }                
             }
 
             return dtos;
@@ -230,36 +242,39 @@ namespace Infrastructure.Services
 
         private async Task<ChatMessage> CreateChatAsync(string authorGuid, string userSecGuid, string message)
         {
-            ApplicationUser? messageAuthor = await _dbContext.Users
-                .Include(x => x.Avatar)
-                .FirstOrDefaultAsync(x => x.Id.Equals(authorGuid));
-
-            ApplicationUser? toUser = await _dbContext.Users
-                .Include(x => x.Avatar)
-                .FirstOrDefaultAsync(x => x.Id.Equals(userSecGuid));
-
-            bool isExist = _dbContext.Chats
-                .Include(x => x.Users)
-                .Any(x => x.Users.All(x => x.Id == authorGuid ||
-                    x.Id == userSecGuid));
-
-            if (!isExist)
+            if (SafetyInputHelper.CheckAntiXSSRegex(message))
             {
-                Chat createChat = new Chat();
-                ChatMessage createMessage = new ChatMessage(messageAuthor, message, createChat);
-                ChatUser chatUser = new ChatUser(authorGuid, createChat);
-                ChatUser chatUserSec = new ChatUser(userSecGuid, createChat);
+                ApplicationUser? messageAuthor = await _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(authorGuid));
 
-                createChat.Messages.Add(createMessage);
-                createChat.Users.Add(chatUser);
-                createChat.Users.Add(chatUserSec);
+                ApplicationUser? toUser = await _dbContext.Users
+                    .Include(x => x.Avatar)
+                    .FirstOrDefaultAsync(x => x.Id.Equals(userSecGuid));
 
-                createMessage.Chat = createChat;
+                bool isExist = _dbContext.Chats
+                    .Include(x => x.Users)
+                    .Any(x => x.Users.All(x => x.Id == authorGuid ||
+                        x.Id == userSecGuid));
 
-                await _dbContext.Chats.AddAsync(createChat);
-                await _dbContext.SaveChangesAsync();
+                if (!isExist)
+                {
+                    Chat createChat = new Chat();
+                    ChatMessage createMessage = new ChatMessage(messageAuthor, message, createChat);
+                    ChatUser chatUser = new ChatUser(authorGuid, createChat);
+                    ChatUser chatUserSec = new ChatUser(userSecGuid, createChat);
 
-                return createMessage;
+                    createChat.Messages.Add(createMessage);
+                    createChat.Users.Add(chatUser);
+                    createChat.Users.Add(chatUserSec);
+
+                    createMessage.Chat = createChat;
+
+                    await _dbContext.Chats.AddAsync(createChat);
+                    await _dbContext.SaveChangesAsync();
+
+                    return createMessage;
+                }
             }
 
             return null;
@@ -298,7 +313,8 @@ namespace Infrastructure.Services
 
         public async Task<MessageResultDto> SendChatMessageAsync(string message, string authorGuid, string userGuid, string? chatGuid)
         {
-            if (chatGuid == null)
+            if ((chatGuid == null) &&
+                SafetyInputHelper.CheckAntiXSSRegex(message))
             {
                 ChatMessage res = await CreateChatAsync(authorGuid, userGuid, message);
 
@@ -327,7 +343,8 @@ namespace Infrastructure.Services
                     .ThenInclude(x => x.Author)
                     .FirstOrDefaultAsync(x => x.Id.Equals(chatGuid));
 
-                if ((author != null) && (getChat != null))
+                if ((author != null) && (getChat != null) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(message))
                 {
                     string lastAG = getChat.Messages
                         .OrderBy(x => x.DateCreated)
@@ -697,7 +714,8 @@ namespace Infrastructure.Services
 
         public async Task<OperationResultDto> CreateTopicCommentAsync(string authorGuid, string topicGuid, string text)
         {
-            if (!string.IsNullOrWhiteSpace(text))
+            if (!string.IsNullOrWhiteSpace(text) &&
+                SafetyInputHelper.CheckAntiXSSRegex(text))
             {
                 IdeaTopicComment createComment = new(topicGuid, authorGuid, text);
                 await _dbContext.IdeaTopicComments.AddAsync(createComment);
@@ -726,7 +744,9 @@ namespace Infrastructure.Services
                         .FirstOrDefault(x => x.UserId.Equals(authorGuid))
                         ?.Role;                    
 
-                    if (getRole != null)
+                    if ((getRole != null) &&
+                        SafetyInputHelper.CheckAntiXSSRegex(name) &&
+                        SafetyInputHelper.CheckAntiXSSRegex(content))
                     {
                         bool isDed = getRole <= IdeaMemberRoles.Modder;
                         IdeaTopic createTopic = new(idea, authorGuid, name, content, isDed, false);
@@ -803,7 +823,9 @@ namespace Infrastructure.Services
                 ApplicationUser getUser = await _dbContext.Users
                     .FirstOrDefaultAsync(x => x.Id.Equals(authorGuid));
 
-                if ((getIdea != null) && (getUser != null))
+                if ((getIdea != null) && (getUser != null) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(name) &&
+                    SafetyInputHelper.CheckAntiXSSRegex(description))
                 {
                     IdeaGoal create = new(getIdea, getUser, name, description, false, false);
 
@@ -938,7 +960,7 @@ namespace Infrastructure.Services
                     IdeaGoal getGoal = getIdea.Goals
                         .FirstOrDefault(x => x.Id.Equals(goalGuid));
 
-                    if (getGoal != null)
+                    if (getGoal != null && SafetyInputHelper.CheckAntiXSSRegex(content))
                     {
                         IdeaGoalTask createTask = new(currentUserGuid, IdeaGoalTaskType.Waiting, content);
                         getGoal.Tasks.Add(createTask);
@@ -1052,7 +1074,8 @@ namespace Infrastructure.Services
                 bool canUserEdit = IdeaHelper.CheckUserIsHavingIdeaRole(
                   getIdea.Members, currentUserGuid, IdeaMemberRoles.Author);
 
-                if (canUserEdit)
+                if (canUserEdit && 
+                    SafetyInputHelper.CheckAntiXSSRegex(model.Description))
                 {
                     if (!string.IsNullOrWhiteSpace(model.Description))
                     {
