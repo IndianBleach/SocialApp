@@ -26,7 +26,6 @@ namespace Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationContext _dbContext;
-        private readonly ITagService _tagService;
         private readonly IGlobalService<Idea> _globalService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -39,7 +38,6 @@ namespace Infrastructure.Repositories
             SignInManager<ApplicationUser> signInManager)
         {
             _dbContext = context;
-            _tagService = tagService;
             _globalService = globalService;
             _userManager = userManager;
             _signInManager = signInManager;

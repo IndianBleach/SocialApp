@@ -16,7 +16,7 @@ namespace ApplicationCore.Interfaces
     {
         //REMOVE ACCOUNT
         IEnumerable<IdeaUserParticipationDto> GetUserParticipations(string userId);
-        Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model);
+        Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model, IEnumerable<ClaimsIdentity> identities);
         Task<OperationResultDto> UpdateGeneralSettingsAsync(string userId, UpdateGeneralSettingsDto model, IEnumerable<ClaimsIdentity> identities);
         Task<UserEditAccountDto> GetEditAccountUserAsync(string userId);
         Task<UserEditGeneralDto> GetEditGeneralUserAsync(string userId);

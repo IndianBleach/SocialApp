@@ -11,7 +11,6 @@ namespace WebUi.Controllers
     public class FindController : ExtendedController
     {
         private readonly ITagService _tagService;
-        private readonly IIdeaRepository _ideaRepository;
         private readonly IGlobalService<ApplicationUser> _globalService;
         private readonly IUserRepository _userRepository;
 
@@ -22,7 +21,6 @@ namespace WebUi.Controllers
             IUserRepository userRepository)
         {
             _tagService = tagService;
-            _ideaRepository = ideaRepository;
             _globalService = globalService;
             _userRepository = userRepository;
         }

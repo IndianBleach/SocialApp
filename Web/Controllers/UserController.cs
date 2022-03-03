@@ -17,8 +17,6 @@ namespace WebUi.Controllers
     public class UserController : ExtendedController
     {
         private readonly ITagService _tagService;
-        private readonly IIdeaRepository _ideaRepository;
-        private readonly IGlobalService<ApplicationUser> _globalService;
         private readonly IUserRepository _userRepository;
 
         public UserController(
@@ -28,8 +26,6 @@ namespace WebUi.Controllers
             IUserRepository userRepository)
         {
             _tagService = tagService;
-            _ideaRepository = ideaRepository;
-            _globalService = globalService;
             _userRepository = userRepository;
         }
 
@@ -60,7 +56,6 @@ namespace WebUi.Controllers
             return RedirectToAction("Im", "User", new { section = "editgeneral"});
         }
 
-
         [HttpPost]
         [Route("/user/im/account")]
         public async Task<JsonResult> UpdateAccount(UpdateAccountSettingsDto model)
@@ -68,14 +63,13 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _userRepository.UpdateAccountSettingsAsync(curUserId, model);
+                var res = await _userRepository.UpdateAccountSettingsAsync(curUserId, model, User.Identities);
 
                 return Json(res);
             }
 
             return Json(null);
         }
-
 
         [HttpGet]
         [Route("/user/im")]
@@ -135,38 +129,6 @@ namespace WebUi.Controllers
                 return View("Index", indexVm);
             }            
         }
-
-
-        public async Task<IActionResult> Test(string userGuid, int? page, string? section)
-        {
-            string? currentUserGuid = GetUserIdOrNull();
-
-            string[] allSections = new string[]
-            {
-                "selfideas",
-                "participation",
-                "about",
-                "edit",
-            };
-
-            string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true
-                ? section?.ToLower() : "participation";
-
-            if (userGuid == null)
-                return RedirectToAction("login", "account");
-
-
-            /*
-            ProfileIdeasViewModel indexVm = new()
-            {
-                IdeaList = await _userRepository.GetUserParticipationIdeaListAsync(userGuid, currentUserGuid, page),
-                UserDetail = await _userRepository.GetUserDetailOrNullAsync
-            };
-            */
-
-            return View();
-        }
-
 
         [HttpGet]
         [Route("user/{userGuid}")]

@@ -27,10 +27,7 @@ namespace WebUi.Controllers
             _ideaRepository = ideaRepository;
             _globalService = globalService;
         }
-
-                
-
-        
+                       
         public async Task<IActionResult> Index(int? page, string? react, string? key, string? tag, string? search)
         {
             if (!string.IsNullOrEmpty(tag) ||

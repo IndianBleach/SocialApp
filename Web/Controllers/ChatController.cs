@@ -12,12 +12,9 @@ namespace WebUi.Controllers
     [Authorize]
     public class ChatController : ExtendedController
     {
-
         private readonly ITagService _tagService;
-        private readonly IIdeaRepository _ideaRepository;
         private readonly IHubContext<ChatHub> _chatContext;
         private readonly IUserRepository _userRepository;
-        private readonly IAsyncLoadService _loadService;
 
         public ChatController(ITagService tagService,
             IIdeaRepository ideaRepository,
@@ -26,10 +23,8 @@ namespace WebUi.Controllers
             IAsyncLoadService loadService)
         {
             _tagService = tagService;
-            _ideaRepository = ideaRepository;
             _userRepository = userRepository;
             _chatContext = chatContext;
-            _loadService = loadService;
         }
 
         

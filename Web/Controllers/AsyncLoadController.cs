@@ -19,14 +19,6 @@ namespace WebUi.Controllers
         }
 
 
-        public async Task<bool> Test(string u1, string u2, string u3)
-        {
-            var res = await _loadService.RemoveIdeaAsync(u1, u2, u3);
-
-            return true;
-        }
-
-
         [HttpPost]
         [Route("/asyncload/idea/remove")]
         public async Task<JsonResult> RemoveIdea(string idea, string password)
@@ -41,7 +33,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-
         [HttpPost]
         [Route("/asyncload/idea/updaterole")]
         public async Task<JsonResult> IdeaRoleToDefault(string idea, string user, IdeaRolesToUpdate role)
@@ -55,9 +46,6 @@ namespace WebUi.Controllers
             }
             return Json(null);
         }
-
-
-
 
         [HttpPost]
         [Route("/asyncload/idea/update")]
@@ -74,7 +62,6 @@ namespace WebUi.Controllers
 
             return Json(null);
         }
-
 
         [HttpPost]
         [Route("/asyncload/idea/createtask")]
@@ -118,8 +105,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-
-
         [HttpPost]
         [Route("/asyncload/idea/rejectmember")]
         public async Task<JsonResult> RejectIdeaMemberRequest(string idea, string user)
@@ -133,7 +118,6 @@ namespace WebUi.Controllers
             }
             return Json(null);
         }
-
 
         [HttpPost]
         [Route("/asyncload/idea/removemember")]
@@ -163,7 +147,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-
         [HttpPost]
         [Route("/asyncload/idea/creategoal")]
         public async Task<JsonResult> CreateGoalAsync(string idea, string name, string desc, bool withTasks)
@@ -178,7 +161,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-
         [HttpPost]
         [Route("/asyncload/idea/createtopic")]
         public async Task<JsonResult> CreateTopic(string name, string content, string ideaGuid)
@@ -187,7 +169,6 @@ namespace WebUi.Controllers
 
             return Json(res);
         }
-
 
         [Route("/asyncload/idea/removetopiccomment")]
         public async Task<JsonResult> RemoveTopicComment(string topicGuid, string commentGuid)
@@ -202,7 +183,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-
         [Route("/asyncload/idea/removetopic")]
         public async Task<JsonResult> RemoveTopic(string topicGuid)
         {
@@ -215,8 +195,6 @@ namespace WebUi.Controllers
             }
             return Json(null);
         }
-
-
 
         [HttpPost]
         [Route("/asyncload/idea/topiccomment")]
@@ -247,7 +225,6 @@ namespace WebUi.Controllers
 
             return Json(null);
         }
-
 
         [HttpPost]
         [Route("/asyncload/user/sendinvite")]
@@ -290,7 +267,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-
         [HttpPost]
         [Route("/asyncload/idea/setreaction")]
         public async Task<JsonResult> IdeaSetReaction(string reaction, string idea)
@@ -309,7 +285,6 @@ namespace WebUi.Controllers
             else return Json(null);
         }
 
-
         [HttpPost]
         [Route("/asyncload/idea/setlike")]
         public async Task<JsonResult> IdeaSetLike(string idea)
@@ -327,7 +302,6 @@ namespace WebUi.Controllers
             }
             else return Json(null);
         }
-
 
         [HttpGet]
         [Route("asyncload/chat/getchat")]
@@ -362,7 +336,6 @@ namespace WebUi.Controllers
             return Json(null);
         }
 
-
         [HttpPost]
         [Route("asyncload/chat/create")]
         public async Task<JsonResult> CreateChat(string userGuid, string message)
@@ -378,7 +351,6 @@ namespace WebUi.Controllers
 
             return Json(null);
         }
-
 
         [HttpGet]
         [Route("asyncload/chat/new")]
@@ -474,7 +446,6 @@ namespace WebUi.Controllers
             }
             return Json(null);            
         }
-
 
         [HttpGet]
         [Route("asyncload/repostusers")]

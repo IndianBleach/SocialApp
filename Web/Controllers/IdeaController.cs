@@ -17,7 +17,6 @@ namespace Web.Controllers
     public class IdeaController : ExtendedController
     {
         private readonly IIdeaRepository _ideaRepository;
-        private readonly IGlobalService<Idea> _globalService;
         private readonly ITagService _tagService;
 
         public IdeaController(
@@ -26,7 +25,6 @@ namespace Web.Controllers
             ITagService tagService)
         {
             _ideaRepository = ideaRepository;
-            _globalService = globalService;
             _tagService = tagService;
         }
 
