@@ -1,0 +1,153 @@
+﻿@using Web.Models.UserViewModel;
+@using ApplicationCore.DTOs;
+@using ApplicationCore.Entities.UserEntity;
+@using ApplicationCore.DTOs.User; 
+@model UserSmallDto;
+
+@{
+    ViewData["Title"] = $"{Model.Name}";
+}
+
+@{
+    string avatar = @User.Claims.Where(x => x.Type.Equals("UserAvatarName")).Select(x => x.Value).SingleOrDefault();
+}
+
+
+<div class="container-sm p-0 main_idea" style="margin-top: 140px;">
+    <div class="mt-3 mt-md-0 idea_aside position-relative">
+        <aside>
+            <div class="position-relative">
+                <div class="position-fixed-profile position-fixed-idea">
+                    <section>
+                        <div class="profile_aside mt-3 col-12 bg-darkn rad-lg">
+                            <div class="col-12 d-flex justify-content-center">
+                                <img src="~/media/userAvatars/@avatar"
+                                     height="192"
+                                     width="192"
+                                     class="rounded-circle" />
+                            </div>
+                            <div class="aside_section_adaptive b-bottom pt-5 pb-5 justify-content-center col-12 d-flex align-items-center">
+                                <span class="t-md t-med clr-white">@Model.Name</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </aside>
+    </div>
+    <main>
+        <div class="idea_adaptive">
+            <div class="profile_inside idea_inside">
+                <div class="col-12 rad-md bg-darkn mt-3">
+                    <ul class="nav d-flex col-12">
+                        <li class="p-0 text-center active idea_menu_link nav-item">
+                            <a class="p-3 ps-1 pe-1 ps-lg-2 ps-xl-3 pe-xl-3 nav-link hover-white">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="16"
+                                     height="16"
+                                     fill="currentColor"
+                                     class="bi bi-gear"
+                                     viewBox="0 0 16 16">
+                                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                                </svg>
+                                Админ панель
+                            </a>
+                        </li>
+                        <li disabled class="disabled col b-bottom"></li>
+                    </ul>
+                    <section>
+                        <div class="p-1 col-12 d-flex justify-content-center">
+                            <div class="col-3 b-right">
+                                <div class="btn-back-hover aside_section_adaptive p-2 ps-0 pe-0 ps-md-1 pe-md-1 ps-lg-2 pe-lg-2">
+                                    <a class="text-truncate settings_link_text text-start col-12 btn clr-white t-smbold t-md bg-transparent">
+                                        Основные
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-center">
+                                <div class="col-9 col-md-10 p-3">
+                                    <form class="mb-3">
+                                        <div class="mb-2 col-12">
+                                            <label class="mb-2 clr-mute t-smbold t-md">
+                                                Удалить идею
+                                            </label>
+                                            <input placeholder="Введите Guid"
+                                                   class="mb-1 form-upd p-2 form-control" />
+                                        </div>
+                                        <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                    <form class="mb-3">
+                                        <div class="mb-2 col-12">
+                                            <label class="mb-2 clr-mute t-smbold t-md">
+                                                Удалить пользователя
+                                            </label>
+                                            <input placeholder="Введите Guid аккаунта"
+                                                   class="mb-1 form-upd p-2 form-control" />
+                                        </div>
+                                        <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                    <form class="mb-3">
+                                        <div class="mb-2 col-12">
+                                            <label class="mb-2 clr-mute t-smbold t-md">
+                                                Удалить топик
+                                            </label>
+                                            <input placeholder="Введите Guid топика"
+                                                   class="mb-1 form-upd p-2 form-control" />
+                                        </div>
+                                        <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                    <form class="mb-3">
+                                        <div class="mb-2 col-12">
+                                            <label class="mb-2 clr-mute t-smbold t-md">
+                                                Удалить цель
+                                            </label>
+                                            <input placeholder="Введите Guid цели"
+                                                   class="mb-1 form-upd p-2 form-control" />
+                                        </div>
+                                        <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                    <hr class="clr-mute">
+                                    <form class="mb-3">
+                                        <div class="mb-2 col-12">
+                                            <div class="col-12 d-flex justify-content-between flex-wrap">
+                                                <label class=" clr-mute t-smbold t-md">
+                                                    Очистка комментариев
+                                                </label>
+                                                <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-primary">
+                                                    Очистить
+                                                </button>
+                                            </div>
+                                            <span class="text-muted t-md t-med">Удаляет все комменарии на топики идей с отступом в 40</span>
+                                        </div>
+                                    </form>
+                                    <form class="mb-3">
+                                        <div class="mb-2 col-12">
+                                            <div class="col-12 d-flex justify-content-between flex-wrap">
+                                                <label class=" clr-mute t-smbold t-md">
+                                                    Очистка задач
+                                                </label>
+                                                <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-primary">
+                                                    Очистить
+                                                </button>
+                                            </div>
+                                            <span class="text-muted t-md t-med">Удаляет все выполненные задачи в целях с отступом в 30</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

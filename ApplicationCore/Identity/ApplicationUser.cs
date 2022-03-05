@@ -24,7 +24,7 @@ namespace ApplicationCore.Identity
         public ICollection<Tag> Tags { get; set; }
         public ICollection<IdeaReaction> Reactions {  get; set; }
         public ICollection<IdeaInvitation> Invitations {  get; set; }
-        public ICollection<IdeaRepost> Reposts { get; set; }
+        //public ICollection<IdeaRepost> Reposts { get; set; }
         public ICollection<ChatUser> Chats { get; set; }
         public ICollection<UserContact> Contacts { get; set; }
         public UserAvatar Avatar { get; set; }
@@ -40,7 +40,7 @@ namespace ApplicationCore.Identity
             Tags = new List<Tag>();
             Reactions = new List<IdeaReaction>();
             Invitations = new List<IdeaInvitation>();
-            Reposts = new List<IdeaRepost>();
+            //Reposts = new List<IdeaRepost>();
             Chats = new List<ChatUser>();
             CheckEventsDate = DateTime.Now;
             Contacts = new List<UserContact>();

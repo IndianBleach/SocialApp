@@ -51,7 +51,7 @@
             $(".repostToUser").remove();            
 
             //chat 
-            $(".chatWarning").remove();
+            //$(".chatWarning").remove();
         }
     });
 

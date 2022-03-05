@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Interfaces;
+using ApplicationCore.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,7 @@ namespace WebUi.Configuration
     {
         public static void AddCoreServices(this IServiceCollection services)
         {
+            services.AddTransient<IAuthorizationService, AuthorizationService>();
 
             services.AddSignalR(x => {
                 x.EnableDetailedErrors = true;
@@ -16,7 +18,7 @@ namespace WebUi.Configuration
 
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 
-            //services.AddTransient(typeof(IPageService), typeof(PageService));
+            services.AddScoped(typeof(IAdminRepository), typeof(AdminRepository));
 
             services.AddScoped(typeof(IIdeaRepository), typeof(IdeaRepository));
 
@@ -24,7 +26,7 @@ namespace WebUi.Configuration
 
             services.AddScoped(typeof(IGlobalService<>), typeof(GlobalService<>));
 
-            services.AddTransient<IAuthorizationService, AuthorizationService>();
+            
 
             services.AddScoped<IAsyncLoadService, AsyncLoadService>();
         }

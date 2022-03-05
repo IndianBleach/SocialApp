@@ -9,6 +9,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IAuthorizationService
     {
+        Task<AuthorizationResultDto> CreateAdminUserAsync();
         AuthorizationResultDto CreateResult(bool success, string message);
         Task<AuthorizationResultDto> UserSignUpAsync(UserSignUpDto model);
         Task<AuthorizationResultDto> UserSignInAsync(UserSignInDto model);

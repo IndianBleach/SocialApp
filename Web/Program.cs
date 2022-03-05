@@ -1,4 +1,6 @@
+using ApplicationCore.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +27,7 @@ namespace Web
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
                 await ApplicationContextSeed.SeedRolesAsync(roleManager);
-                await ApplicationContextSeed.SeedDatabaseAsync(context);
+                await ApplicationContextSeed.SeedDatabaseAsync(context);                
             }
 
             await app.RunAsync();

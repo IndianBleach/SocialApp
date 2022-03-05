@@ -37,6 +37,46 @@ namespace Infrastructure.Services
             _tagService = tagService;
         }
 
+        public async Task<AuthorizationResultDto> CreateAdminUserAsync()
+        {
+            UserSignUpDto model = new()
+            {
+                ConfirmPassword = "adminPa$$word928",
+                Password = "adminPa$$word928",
+                Tags = new List<string>() { _dbContext.Tags.First().Id },
+                Username = "AlabamaBleach928"
+            };
+
+            var config = new MapperConfiguration(conf => conf.CreateMap<UserSignUpDto, ApplicationUser>()
+                 .ForMember("UserName", opt => opt.MapFrom(x => x.Username))
+                 .ForMember(x => x.Tags, opt => opt.MapFrom(x => _tagService.CreateTagList(x.Tags)))
+                 .ForMember("Avatar", opt => opt.MapFrom(x => _dbContext.UserAvatars
+                     .FirstOrDefault(x => x.Name.Equals(AvatarInformation.UserDefaultAvatarName)))));
+
+            var mapper = new Mapper(config);
+
+            ApplicationUser createUser = mapper.Map<ApplicationUser>(model);
+
+            var result = await _userManager.CreateAsync(createUser, model.Password);
+
+            Claim avatarClaim = new("UserAvatarName", AvatarInformation.UserDefaultAvatarName);
+            Claim guidClaim = new("UserId", createUser.Id);
+            Claim nameClaim = new("UserName", createUser.UserName);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddClaimAsync(createUser, nameClaim);
+                await _userManager.AddClaimAsync(createUser, guidClaim);
+                await _userManager.AddClaimAsync(createUser, avatarClaim);
+                await _userManager.AddToRoleAsync(createUser, "admin");
+                await _signInManager.SignInAsync(createUser, false);
+
+                return CreateResult(true, "Регистрация прошла успешно!");
+            }
+
+            return new(false, "Something failed when create admin account");
+        }
+
         public AuthorizationResultDto CreateResult(bool success, string message)
             => new(success, message);
 

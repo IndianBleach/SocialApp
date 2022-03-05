@@ -52,7 +52,7 @@ namespace Infrastructure.Data
                 new("😴", null),
                 new("👏", null),
                 new("😼", null),
-            });
+            });           
 
             dbContext.IdeaAvatars.Add(new IdeaAvatar(true, AvatarInformation.IdeaDefaultAvatarName));
 

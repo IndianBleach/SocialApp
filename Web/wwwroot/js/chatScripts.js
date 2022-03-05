@@ -8,7 +8,7 @@
             $("#newChatWindow").addClass("d-none");
 
             //chat 
-            $(".chatWarning").remove();
+            //$(".chatWarning").remove();
             //$(".repostToUser").remove();
         }
     });
@@ -207,6 +207,7 @@
     $(".asyncSelectChatBtn").on("click", (e) => {
 
         let elem = e.target.closest("button");
+        $(".asyncSelectChatBtn").removeClass("active");
         elem.classList.add("active");
 
         let chatGuid = elem.dataset.guid;
@@ -302,6 +303,8 @@
                             console.log(resp);
                         });
                     });
+                } else {
+                    $("#inviteWindowLoad").append("<div class='inviteWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Активных идей не найдено</p></div>")
                 }
             })
         };
