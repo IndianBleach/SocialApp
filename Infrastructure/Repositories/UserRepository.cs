@@ -280,7 +280,7 @@ namespace Infrastructure.Repositories
 
             return dtos;
         }
-
+        
         public async Task<UserDetailDto?> GetUserDetailOrNullAsync(string userGuid)
         {
             if (userGuid != null)

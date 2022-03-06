@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities.IdeaEntity;
+﻿using ApplicationCore.Entities.Chat;
+using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Entities.UserEntity;
 using ApplicationCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +18,26 @@ namespace Infrastructure.Data.Config
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             builder.HasMany(x => x.Ideas).WithOne(x => x.User)
-                .OnDelete(DeleteBehavior.SetNull);                        
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasMany(x => x.FriendRequests).WithOne(x => x.RequestToUser)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.FriendRequestsSended).WithOne(x => x.Author)
+                .OnDelete(DeleteBehavior.ClientCascade);
+
+            //
+            builder.HasMany(x => x.Chats).WithOne(x => x.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.ChatMessages).WithOne(x => x.Author)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
         }
     }
 
+    /*
     public class UserFriendshipRequestsConfiguration : IEntityTypeConfiguration<FriendshipRequest>
     {
         public void Configure(EntityTypeBuilder<FriendshipRequest> builder)
@@ -29,6 +46,21 @@ namespace Infrastructure.Data.Config
                 .OnDelete(DeleteBehavior.ClientCascade);
         }
     }
+    */
+
+    public class ChatConfiguration : IEntityTypeConfiguration<Chat>
+    {
+        public void Configure(EntityTypeBuilder<Chat> builder)
+        {
+            builder.HasMany(x => x.Users).WithOne(x => x.Chat)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Messages).WithOne(x => x.Chat)
+                .OnDelete(DeleteBehavior.Cascade);
+
+        }
+    }
+
 
     public class UserFriendshipConfiguration : IEntityTypeConfiguration<Friendship>
     {

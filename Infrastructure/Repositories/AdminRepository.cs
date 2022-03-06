@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.DTOs.AsyncLoad;
 using ApplicationCore.DTOs.User;
+using ApplicationCore.Entities.Chat;
 using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Identity;
 using ApplicationCore.Interfaces.Repositories;
@@ -31,16 +32,49 @@ namespace Infrastructure.Repositories
             _userManager = userManager;
         }
 
-
-
-        public Task<OperationResultDto> CleanGoalTasksAsync(string currentUserId)
+        public async Task<OperationResultDto> CleanGoalTasksAsync(string currentUserId)
         {
-            throw new NotImplementedException();
+            if (GetAdminAccountOrNullAsync(currentUserId) != null)
+            {
+                ICollection<IdeaGoal> getTopics = await _dbContext.IdeaGoals
+                    .Include(x => x.Tasks)
+                    .ToListAsync();
+
+                foreach (var goal in getTopics)
+                {
+                    _dbContext.IdeaGoalTasks
+                        .RemoveRange(goal.Tasks
+                            .OrderByDescending(x => x.Type.Equals(IdeaGoalTaskType.Complete))
+                            .OrderByDescending(x => x.DateCreated)
+                            .Skip(50));
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return new(true, "Op. clean goals comments by admin (Success)");
+            }
+            return new(true, "Op. clean goals comments by admin (Failed)");
         }
 
-        public Task<OperationResultDto> CleanTopicCommentsAsync(string currentUserId)
+        public async Task<OperationResultDto> CleanTopicCommentsAsync(string currentUserId)
         {
-            throw new NotImplementedException();
+            if (GetAdminAccountOrNullAsync(currentUserId) != null)
+            {
+                ICollection<IdeaTopic> getTopics = await _dbContext.IdeaTopics
+                    .Include(x => x.Comments)
+                    .ToListAsync();
+
+                foreach (var topic in getTopics)
+                {
+                    _dbContext.IdeaTopicComments
+                        .RemoveRange(topic.Comments
+                            .OrderByDescending(x => x.DateCreated)
+                            .Skip(40));
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return new(true, "Op. clean topic comments by admin (Success)");
+            }
+            return new(true, "Op. clean topic comments by admin (Failed)");
         }
 
         public async Task<UserSmallDto> GetAdminAccountOrNullAsync(string userId)
@@ -70,6 +104,8 @@ namespace Infrastructure.Repositories
                 try
                 {
                     ApplicationUser getUser = await _dbContext.Users
+                        .Include(x => x.Tags)
+                        .Include(x => x.Reactions)
                     .Include(x => x.Chats)
                     .ThenInclude(x => x.Chat)
                     .ThenInclude(x => x.Messages)
@@ -82,6 +118,23 @@ namespace Infrastructure.Repositories
 
                     if (getUser != null)
                     {
+                        IEnumerable<string> chatIds = getUser.Chats
+                            .Select(x => x.Chat.Id);
+
+                        ICollection<Chat> chats = new List<Chat>();
+                        foreach (var chatId in chatIds)
+                        {
+                            Chat getChat = await _dbContext.Chats
+                                .Include(x => x.Users)
+                                .Include(x => x.Messages)
+                                .FirstOrDefaultAsync(x => x.Id.Equals(chatId));
+
+                            if (getChat != null)
+                                chats.Add(getChat);
+                        }
+                        _dbContext.Chats.RemoveRange(chats);
+
+
                         _dbContext.Users.Remove(getUser);
                         await _dbContext.SaveChangesAsync();
                         return new(true, "Op. remove account by admin (Success)");

@@ -25,12 +25,84 @@ namespace Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        [Route("/admin/create/username=AlabamaBleach$928&password=adminPa$$word928")]
+        [Route("/admin/create/username=AlabamaUser$928&password=alabamaPassword$928")]
         public async Task<JsonResult> CreateAdmin()
         {
             var res = await _authorizationService.CreateAdminUserAsync();
 
             return Json(res);
+        }
+
+        public async Task<JsonResult> CleanGoalTasks()
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _adminRepisitory.CleanGoalTasksAsync(curUserId);
+
+                return Json(res);
+            }
+            return Json("Not authorize for admin role or something failed");
+        }
+
+        public async Task<JsonResult> CleanTopicComments()
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _adminRepisitory.CleanTopicCommentsAsync(curUserId);
+
+                return Json(res);
+            }
+            return Json("Not authorize for admin role or something failed");
+        }
+
+        public async Task<JsonResult> RemoveTopic(string topicId)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _adminRepisitory.RemoveTopicByIdAsync(topicId, curUserId);
+
+                return Json(res);
+            }
+            return Json("Not authorize for admin role or something failed");
+        }
+
+        public async Task<JsonResult> RemoveGoal(string goalId)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _adminRepisitory.RemoveGoalByIdAsync(goalId, curUserId);
+
+                return Json(res);
+            }
+            return Json("Not authorize for admin role or something failed");
+        }
+
+        public async Task<JsonResult> RemoveUserById(string userId)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _adminRepisitory.RemoveAccountByIdAsync(userId, curUserId);
+
+                return Json(res);
+            }
+            return Json("Not authorize for admin role or something failed");
+        }
+
+        public async Task<JsonResult> RemoveIdeaById(string ideaId)
+        {
+            string curUserId = GetUserIdOrNull();
+            if (curUserId != null)
+            {
+                var res = await _adminRepisitory.RemoveIdeaByIdAsync(ideaId, curUserId);
+
+                return Json(res);
+            }
+            return Json("Not authorize for admin role or something failed");
         }
 
         public async Task<IActionResult> Index()

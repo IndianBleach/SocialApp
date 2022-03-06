@@ -67,48 +67,48 @@
                             </div>
                             <div class="col d-flex justify-content-center">
                                 <div class="col-9 col-md-10 p-3">
-                                    <form class="mb-3">
+                                    <form asp-action="removeIdeaById" asp-controller="admin" class="mb-3">
                                         <div class="mb-2 col-12">
                                             <label class="mb-2 clr-mute t-smbold t-md">
                                                 Удалить идею
                                             </label>
-                                            <input placeholder="Введите Guid"
+                                            <input name="ideaId" placeholder="Введите Guid"
                                                    class="mb-1 form-upd p-2 form-control" />
                                         </div>
                                         <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
                                             Удалить
                                         </button>
                                     </form>
-                                    <form class="mb-3">
+                                    <form asp-action="removeUserById" asp-controller="admin" class="mb-3">
                                         <div class="mb-2 col-12">
                                             <label class="mb-2 clr-mute t-smbold t-md">
                                                 Удалить пользователя
                                             </label>
-                                            <input placeholder="Введите Guid аккаунта"
+                                            <input name="userId" placeholder="Введите Guid аккаунта"
                                                    class="mb-1 form-upd p-2 form-control" />
                                         </div>
                                         <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
                                             Удалить
                                         </button>
                                     </form>
-                                    <form class="mb-3">
+                                    <form asp-action="removeTopic" asp-controller="admin" class="mb-3">
                                         <div class="mb-2 col-12">
                                             <label class="mb-2 clr-mute t-smbold t-md">
                                                 Удалить топик
                                             </label>
-                                            <input placeholder="Введите Guid топика"
+                                            <input name="topicId" placeholder="Введите Guid топика"
                                                    class="mb-1 form-upd p-2 form-control" />
                                         </div>
                                         <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
                                             Удалить
                                         </button>
                                     </form>
-                                    <form class="mb-3">
+                                    <form  asp-action="removeGoal" asp-controller="admin" class="mb-3">
                                         <div class="mb-2 col-12">
                                             <label class="mb-2 clr-mute t-smbold t-md">
                                                 Удалить цель
                                             </label>
-                                            <input placeholder="Введите Guid цели"
+                                            <input name="goalId" placeholder="Введите Guid цели"
                                                    class="mb-1 form-upd p-2 form-control" />
                                         </div>
                                         <button class="ps-0 pt-0 t-sm  t-smbold btn bg-transparent text-danger">
@@ -116,7 +116,7 @@
                                         </button>
                                     </form>
                                     <hr class="clr-mute">
-                                    <form class="mb-3">
+                                    <form asp-action="cleantopiccomments" asp-controller="admin" class="mb-3">
                                         <div class="mb-2 col-12">
                                             <div class="col-12 d-flex justify-content-between flex-wrap">
                                                 <label class=" clr-mute t-smbold t-md">
@@ -129,7 +129,7 @@
                                             <span class="text-muted t-md t-med">Удаляет все комменарии на топики идей с отступом в 40</span>
                                         </div>
                                     </form>
-                                    <form class="mb-3">
+                                    <form asp-action="cleangoaltasks" asp-controller="admin" class="mb-3">
                                         <div class="mb-2 col-12">
                                             <div class="col-12 d-flex justify-content-between flex-wrap">
                                                 <label class=" clr-mute t-smbold t-md">
@@ -139,7 +139,7 @@
                                                     Очистить
                                                 </button>
                                             </div>
-                                            <span class="text-muted t-md t-med">Удаляет все выполненные задачи в целях с отступом в 30</span>
+                                            <span class="text-muted t-md t-med">Удаляет все выполненные задачи в целях с отступом в 40</span>
                                         </div>
                                     </form>
                                 </div>

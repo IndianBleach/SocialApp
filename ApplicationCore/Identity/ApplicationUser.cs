@@ -20,6 +20,8 @@ namespace ApplicationCore.Identity
         public string? Description { get; set; }
         public ICollection<Friendship> Friends { get; set; }
         public ICollection<FriendshipRequest> FriendRequests { get; set; }
+        public ICollection<FriendshipRequest> FriendRequestsSended { get; set; }
+        public ICollection<ChatMessage> ChatMessages { get; set; }
         public ICollection<IdeaMember> Ideas { get; set; }
         public ICollection<Tag> Tags { get; set; }
         public ICollection<IdeaReaction> Reactions {  get; set; }
