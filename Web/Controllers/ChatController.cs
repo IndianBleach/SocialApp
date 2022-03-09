@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.ChatHub;
+using ApplicationCore.DTOs.User;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

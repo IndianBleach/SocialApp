@@ -103,7 +103,57 @@ namespace Infrastructure.Repositories
             {
                 try
                 {
+                    // 1) REMOVE ALL IDEAS (=Author)
+                    List<Idea> getUserIdeas = await _dbContext.Ideas
+                        .Include(x => x.Status)
+                        .Include(x => x.Reactions)
+                        .Include(x => x.Members)
+                        .Include(x => x.Invitations)
+                        .Include(x => x.Reposts)
+                        .Include(x => x.Topics)
+                        .ThenInclude(x => x.Comments)
+                        .Include(x => x.Goals)
+                        .ThenInclude(x => x.Tasks)
+                        .Include(x => x.Avatar)
+                        .Include(x => x.Contact)
+                        .Where(x => x.Members.Any(x => x.UserId.Equals(userId) &&
+                            x.Role.Equals(IdeaMemberRoles.Author)))
+                        .ToListAsync();
+
+                    if (getUserIdeas.Count > 0)
+                    {
+                        foreach (var idea in getUserIdeas)
+                        {
+                            if (!idea.Avatar.Name.Equals(AvatarInformation.IdeaDefaultAvatarName) &&
+                                    !idea.Avatar.IsDefault)
+                            {
+                                File.Delete("wwwroot/media/ideaAvatars/" + idea.Avatar.Name);
+                            }
+                        }
+
+
+                        _dbContext.Ideas.RemoveRange(getUserIdeas);
+                        await _dbContext.SaveChangesAsync();
+                        return new(true, "Remove user: 1) remove all authored ideas (Success)");
+                    }
+
+                    // 2) REMOVE ALL MEMBERSHIP (!=Author)
+                    List<IdeaMember> getUserMembers = await _dbContext.IdeaMembers
+                        .Include(x => x.Idea)
+                        .Where(x => x.UserId.Equals(userId))
+                        .ToListAsync();
+
+                    if (getUserMembers.Count > 0)
+                    {
+                        _dbContext.IdeaMembers.RemoveRange(getUserMembers);
+                        await _dbContext.SaveChangesAsync();
+                        return new(true, "Remove user: 2) remove all membership (Success)");
+                    }
+
+
                     ApplicationUser getUser = await _dbContext.Users
+                        .Include(x => x.Ideas)
+                        .ThenInclude(x => x.Idea)
                         .Include(x => x.Tags)
                         .Include(x => x.Reactions)
                     .Include(x => x.Chats)
@@ -137,7 +187,7 @@ namespace Infrastructure.Repositories
 
                         _dbContext.Users.Remove(getUser);
                         await _dbContext.SaveChangesAsync();
-                        return new(true, "Op. remove account by admin (Success)");
+                        return new(true, "Remove user: 3) other (Success)");
                     }
                 }
                 catch (Exception exp)

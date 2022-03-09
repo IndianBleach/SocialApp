@@ -91,31 +91,43 @@ namespace WebUi.Controllers
 
             if (validSection.Equals("editgeneral"))
             {
+                UserEditGeneralDto getUser = await _userRepository.GetEditGeneralUserAsync(currentUserGuid);
+                if (getUser == null)
+                    return NotFound();
+
                 ProfileEditGeneralViewModel editVm = new()
                 {
                     AllTags = await _tagService.GetAllTagsAsync(),
-                    UserDetail = await _userRepository.GetEditGeneralUserAsync(currentUserGuid),
+                    UserDetail = getUser,
                 };
 
                 return View("EditGeneral", editVm);
             }
             else if (validSection.Equals("editaccount"))
             {
+                UserEditAccountDto getUser = await _userRepository.GetEditAccountUserAsync(currentUserGuid);
+                if (getUser == null)
+                    return NotFound();
+
                 ProfileEditAccountViewModel editVm = new()
                 {
                     AllTags = await _tagService.GetAllTagsAsync(),
-                    UserDetail = await _userRepository.GetEditAccountUserAsync(currentUserGuid),
+                    UserDetail = getUser,
                 };
 
                 return View("EditAccount", editVm);
             }
             else
             {
+                UserDetailDto getUser = await _userRepository.GetUserDetailOrNullAsync(currentUserGuid);
+                if (getUser == null)
+                    return NotFound();
+
                 ProfileIdeasViewModel indexVm = new()
                 {
                     AuthoredIdeas = validSection.Equals("authored"),
                     Section = validSection,
-                    UserDetail = await _userRepository.GetUserDetailOrNullAsync(currentUserGuid),
+                    UserDetail = getUser,
                     FriendType = currentUserGuid != null ?
                         await _userRepository.CheckFriendsAsync(currentUserGuid, currentUserGuid) :
                         ProfileFriendshipType.NotFriends,
@@ -131,7 +143,7 @@ namespace WebUi.Controllers
         }
 
         [HttpGet]
-        [Route("user/{userGuid}")]
+        [Route("/user/{userGuid}")]
         public async Task<IActionResult> Index(string userGuid, int? page, string? section)
         {
             string? currentUserGuid = GetUserIdOrNull();            
@@ -151,9 +163,12 @@ namespace WebUi.Controllers
 
             if (validSection.Equals("about"))
             {
+                UserAboutInfoDto getUser = await _userRepository.GetUserAboutInfoAsync(userGuid);
+                if (getUser == null)
+                    return NotFound();
                 ProfileAboutViewModel aboutVm = new()
                 {
-                    UserInfoDetail = await _userRepository.GetUserAboutInfoAsync(userGuid),
+                    UserInfoDetail = getUser,
                     Section = validSection,
                     AllTags = await _tagService.GetAllTagsAsync(),
                     IsAuthorized = IsUserAuthenticated(),
@@ -167,11 +182,15 @@ namespace WebUi.Controllers
             }
             else
             {
+                UserDetailDto getUser = await _userRepository.GetUserDetailOrNullAsync(userGuid);
+                if (getUser == null)
+                    return NotFound();
+
                 ProfileIdeasViewModel indexVm = new()
                 {
                     AuthoredIdeas = validSection.Equals("authored"),
                     Section = validSection,
-                    UserDetail = await _userRepository.GetUserDetailOrNullAsync(userGuid),
+                    UserDetail = getUser,
                     FriendType = currentUserGuid != null ?
                     await _userRepository.CheckFriendsAsync(currentUserGuid, userGuid) :
                     ProfileFriendshipType.NotFriends,

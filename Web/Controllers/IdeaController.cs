@@ -46,6 +46,10 @@ namespace Web.Controllers
                 ? section?.ToLower() : "about";
 
             IdeaDetailDto idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid);
+                        
+            if (idea == null)
+                return NotFound();
+            
             List<TagDto> allTags = await _tagService.GetAllTagsAsync();
 
             bool isAuthor = idea.CurrentRole.Role.Equals(CurrentUserRoleTypes.Author);

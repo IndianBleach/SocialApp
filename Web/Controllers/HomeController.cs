@@ -1,9 +1,12 @@
 ﻿using ApplicationCore.Entities.IdeaEntity;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using WebUi.Controllers.Extensions;
 using WebUi.Models;
@@ -27,7 +30,16 @@ namespace WebUi.Controllers
             _ideaRepository = ideaRepository;
             _globalService = globalService;
         }
-                       
+
+        [AllowAnonymous]
+        [Route("/notfound")]
+        public IActionResult NotFound404()
+        {
+            return View("notFound");
+        }       
+
+        [Route("/")]
+        [Route("/home")]
         public async Task<IActionResult> Index(int? page, string? react, string? key, string? tag, string? search)
         {
             if (!string.IsNullOrEmpty(tag) ||
@@ -52,8 +64,7 @@ namespace WebUi.Controllers
 
             return View(indexVm);
         }
-
-
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

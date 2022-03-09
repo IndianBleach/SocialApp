@@ -281,7 +281,7 @@ a {
 .login-window {
     min-height: 320px;
     width: 350px;
-    background-color: #0f0f0f;
+    background-color: #000000;
 }
 
 .form-floating label {
@@ -604,4 +604,62 @@ a {
     #adaptiveTopWindowsMargin {
         margin-top: 5.5rem;
     }
+}
+
+
+@keyframes ImageHeartBitAnimation {
+    from {
+        opacity: 1;
+    }
+
+    20% {
+        opacity: 0.7;
+    }
+
+    70% {
+        opacity: 1;
+        transform: scale(1.04);
+    }
+
+    80% {
+        opacity: 0.7;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.image-heartbit-animation {
+    opacity: 1;
+    transition: opacity 0.9s;
+    animation: ImageHeartBitAnimation 1s ease infinite;
+}
+
+.nav-doc-link {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+    .nav-doc-link:hover {
+        border-bottom: 1px solid #00476e;
+    }
+
+.nav-doc-link-active {
+    border-bottom: 1px solid #009aef !important;
+}
+
+.doct-h3 {
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+
+.doct-h2 {
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    font-size: 22px;
+}
+
+.showParticipationWindowBtn {
+    cursor:pointer!important;
 }

@@ -54,7 +54,7 @@ namespace Web
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        {                        
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -65,6 +65,18 @@ namespace Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            
+            app.UseStatusCodePages(async context =>
+            {
+                int statusCode = context.HttpContext.Response.StatusCode;
+                if (statusCode == 404)
+                {
+                    context.HttpContext.Response.Redirect("/notfound");
+                }
+            });
+            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

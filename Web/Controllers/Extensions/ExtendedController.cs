@@ -13,7 +13,7 @@ namespace WebUi.Controllers.Extensions
             string? userGuid = claim != null ? claim.Value : null;
 
             return userGuid;
-        }
+        }        
 
         public bool IsUserAuthenticated()
         {

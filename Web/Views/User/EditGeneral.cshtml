@@ -9,6 +9,7 @@
 
 @{
     string avatar = @User.Claims.Where(x => x.Type.Equals("UserAvatarName")).Select(x => x.Value).SingleOrDefault();
+    string userName = @User.Claims.Where(x => x.Type.Equals("UserName")).Select(x => x.Value).SingleOrDefault();
 }
 
 <div class="d-none position-fixed top-0" id="hideBackgroundWrapper">
@@ -335,16 +336,76 @@
                     </div>
                 </div>
                 <!---->
+                <!--Participation-->
+                <div id="participationWindow" class="d-none window_rounded_shadow">
+                    <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
+                        <span class="clr-white t-md">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="19"
+                                 height="19"
+                                 fill="currentColor"
+                                 class="clr-mute bi bi-person-plus"
+                                 viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
+                                <path fill-rule="evenodd"
+                                      d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+                            </svg>
+                            Недавние идеи
+                        </span>
+                        <button class="closeParticipationWindowBtn btn btn-sm bg-transparent clr-white">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 fill="currentColor"
+                                 class="bi bi-x"
+                                 viewBox="0 0 16 16">
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="col-12 p-4">
+                        <div class="p-3 d-flex justify-content-center align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img height="33"
+                                     width="33"
+                                     class="rounded-circle me-1"
+                                     src="~/media/userAvatars/@avatar" />
+                                <div class="ps-1">
+                                    @userName
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2 b-left col-12 ps-3 pe-3">
+                            <span class="t-sm clr-mute">Вы участвуйте</span>
+                            <div class="pt-1 custom-scroll" id="participationWindowLoad">
+                                <div class="mb-2 repostToUser">
+                                    <a>
+                                        <span class="t-smbold clr-white hover-white d-inline-block text-truncate"
+                                              style="max-width: 190px;">
+                                            Online SpaceshiompentOnline Spaceshiompent
+                                        </span>
+                                    </a>
+                                    <label class="clr-mute t-smbold t-sm">Автор</label>
+                                </div>
+                                <div id="participationWindowLoadPrev" class="d-none d-flex justify-content-center h-100 align-items-center">
+                                    <div class="pt-4 spinner-border clr-mute" role="status">
+                                        <span class="sr-only"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!---->
             </div>
         </div>
     </div>
 </div>
 <!---->
-<!---->
-<nav class="z-1 navbar fixed-top navbar-expand-lg navbar-dark bg-black b-bottom">
+<nav id="topNavbar" class="z-1 navbar navbar-expand-lg navbar-dark bg-black b-bottom">
     <div class="container container-micro pe-5">
-        <a class="navbar-brand me-2" href="#">
-            <img src="#" alt="" width="36" />
+        <a class="navbar-brand me-2" href="/">
+            <img src="~/media/site/logo.png" alt="" width="36" />
         </a>
         <button class="navbar-toggler"
                 type="button"
@@ -356,11 +417,43 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="flex-form-dark circle-flex-search">
-                <input class="t-md form-control me-2"
-                       type="search"
-                       placeholder="Найти идею"
-                       aria-label="Найти идею" />
+            <form asp-controller="find" class="search-nav-form flex-form-dark circle-flex-search">
+                <div class="dropdown">
+                    <input autocomplete="off"
+                           name="search"
+                           id="dropdownMenuLink"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false"
+                           class="search-form form-upd dropdown-toggle t-md form-control me-2 form-control"
+                           type="search"
+                           placeholder="Найти участника"
+                           aria-label="Search" />
+                    <ul class="mt-2 search-nav-dropdown pt-2 pb-2 col-12 rad-md bg-darkc dropdown-menu p-0 t-sm t-semi-bold"
+                        aria-labelledby="dropdownMenuLink">
+                        <h6 class="dropdown-header t-sm t-med">Найти по тегам</h6>
+                        <div class="p-2 pt-0 col-12 d-flex flex-wrap">
+                            @foreach (var tag in Model.AllTags)
+                            {
+                                <a asp-route-tag="@tag.Guid" asp-action="index" asp-controller="find" class="btn-tag">
+                                    @tag.Name
+                                </a>
+                            }
+                        </div>
+                        <h6 class="dropdown-header t-sm t-med">Найти по тегам</h6>
+                        <div class="p-2 pt-0 col-12 d-flex">
+                            <div class="pe-2 col">
+                                <input name="country"
+                                       placeholder="Страна"
+                                       class="form-upd p-2 form-control" />
+                            </div>
+                            <div class="pe-2 col">
+                                <input name="city"
+                                       placeholder="Город"
+                                       class="form-upd p-2 form-control" />
+                            </div>
+                        </div>
+                    </ul>
+                </div>
                 <button class="btn btn-unfocus" type="submit">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="16"
@@ -375,7 +468,7 @@
             <ul style="align-items: center;"
                 class="navbar-nav ms-auto mb-2 mb-lg-0 pe-4">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link-pad nav-link" href="/">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="22"
                              height="22"
@@ -390,7 +483,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a disabled class="nav-link-pad nav-link" href="/find">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="22"
                              height="22"
@@ -402,7 +495,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link-pad nav-link" href="/chat">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="22"
                              height="22"
@@ -414,7 +507,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="showParticipationWindowBtn nav-link-pad nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="22"
                              height="22"
@@ -426,7 +519,7 @@
                     </a>
                 </li>
                 <li class="me-3 nav-item">
-                    <button class="showNewIdeaWindowBtn btn bg-transparent p-1 m-0 nav-link">
+                    <button style="width: 34.5px;" class="showNewIdeaWindowBtn p-0 btn bg-transparent m-0 nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="22"
                              height="22"
@@ -440,15 +533,14 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <img src="~/media/userAvatars/@avatar" height="33" class="rounded-circle" />
+                    <a class="nav-link" asp-action="im" asp-controller="user">
+                        <img src="~/media/userAvatars/@avatar" height="33" class="b-all rounded-circle" />
                     </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
-<!---->
 
 <div class="container-sm p-0 main_idea" style="margin-top: 140px;">
     @if (Model.UserDetail != null)

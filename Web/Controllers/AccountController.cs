@@ -34,7 +34,7 @@ namespace WebUi.Controllers
             return View(indexVm);
         }        
 
-        [Route("account/signout")]
+        [Route("/account/signout")]
         public async Task<IActionResult> SignOut()
         {
             await _authorizationService.UserSignOutAsync();
@@ -43,7 +43,7 @@ namespace WebUi.Controllers
         }
 
         [HttpPost]
-        [Route("account/signup")]
+        [Route("/account/signup")]
         public async Task<JsonResult> SignUp(UserSignUpDto model)
         {
             if (ModelState.IsValid)
@@ -65,7 +65,7 @@ namespace WebUi.Controllers
         }
 
         [HttpPost]
-        [Route("account/signin")]
+        [Route("/account/signin")]
         public async Task<JsonResult> SignIn(UserSignInDto model)
         {
             if (ModelState.IsValid)

@@ -11,15 +11,18 @@
       >
         <div id="checkOutContainer">
           <div class="d-flex position-relative">
-            <div id="loginWindow" class="win-hide rounded d-none login-window">
+            <div id="loginWindow" class="win-hide window_rounded_shadow d-none login-window">
               <form id="userSignupInfoForm" class="p-5">
                 <div class="mb-3 text-center">
                   <span class="t-md t-med clr-mute">Основные данные 1/2</span>
                 </div>
                 <div class="form-floating mb-3">
                   <input
+                    autocomplete="off"
+                    minlength="4"
+                    maxlength="32"
                     type="text"
-                    class="begin-validate need-next-input form-control"
+                    class="form-upd begin-validate need-next-input form-control"
                     id="floatingInput"
                     placeholder="Имя пользователя"
                   />
@@ -29,8 +32,11 @@
                 </div>
                 <div class="mb-3 form-floating">
                   <input
+                    autocomplete="off"
+                    minlength="6"
+                    maxlength="32"
                     type="password"
-                    class="begin-validate need-next-input form-control"
+                    class="form-upd begin-validate need-next-input form-control"
                     id="floatingPassword"
                     placeholder="Пароль"
                   />
@@ -38,8 +44,11 @@
                 </div>
                 <div class="mb-3 form-floating">
                   <input
+                    autocomplete="off"
+                    minlength="6"
+                    maxlength="32"
                     type="password"
-                    class="begin-validate need-next-input form-control"
+                    class="form-upd begin-validate need-next-input form-control"
                     id="floatingPassword"
                     placeholder="Подтвердите пароль"
                   />
@@ -85,7 +94,7 @@
             </div>
             <div
               id="selectTagWindow"
-              class="win-hide z-m10 selectTagContainer position-absolute rounded login-window"
+              class="win-hide z-m10 selectTagContainer position-absolute window_rounded_shadow login-window"
             >
               <form id="userSignupTagsForm" class="p-5">
                 <div class="mb-3 text-center">
@@ -123,7 +132,7 @@
             </div>
             <div
               id="signinWindow"
-              class="position-absolute rounded d-none login-window"
+              class="position-absolute window_rounded_shadow d-none login-window"
             >
               <form id="userSignInForm" class="p-5">
                 <div class="mb-3 text-center">
@@ -133,8 +142,9 @@
                 </div>
                 <div class="form-floating mb-3">
                   <input
+                    autocomplete="off"
                     type="text"
-                    class="form-control"
+                    class="form-upd form-control"
                     id="floatingInput"
                     placeholder="Имя пользователя"
                   />
@@ -144,8 +154,9 @@
                 </div>
                 <div class="mb-3 form-floating">
                   <input
+                    autocomplete="off"
                     type="password"
-                    class="form-control"
+                    class="form-upd form-control"
                     id="floatingPassword"
                     placeholder="Пароль"
                   />
@@ -173,97 +184,66 @@
       </div>
     </div>
     <!---->
-    <nav>
-      <div
-        class="col-12 d-flex position-fixed align-items-center justify-content-center"
-        style="
+<nav style="height:75px!important;" class="bg-primary present_nav_wrapper container-fluid d-flex justify-content-center">
+    <div class="present_nav d-flex position-fixed align-items-center justify-content-center"
+         style="
           z-index: 10;
-          height: 100px;
+          height: 75px;
           top: 0 !important;
-          background: rgba(0, 0, 0, 0.81);
-        "
-      >
-        <div class="d-flex align-items-center">
-          <img height="55" src="./icon.png" />
-          <div class="ps-2">
-            <h1 class="t-brand mb-0">Roundile</h1>
-          </div>
-        </div>
-        <div class="ms-3">
-          <form class="flex-form-dark">
-            <div>
-              <input class="form-control" placeholder="Search" />
+          background: rgb(0 90 255 / 0%);
+        ">
+        <a href="/account/login">
+            <div class="d-flex align-items-center">
+                <img class="image-link-animation present_hide_elems" height="33" src="~/media/site/logo.png" />
+                <div class="ps-2">
+                    <h1 class="t-brand mb-0">Roundile</h1>
+                </div>
             </div>
-            <button class="clr-mute btn bg-transparent">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-search"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-                />
-              </svg>
+        </a>
+
+        <div class="ms-auto d-flex">
+            <a class="t-nav-link me-3" href="/home">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="26"
+                     height="26"
+                     fill="currentColor"
+                     class="bi bi-house"
+                     viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                          d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+                    <path fill-rule="evenodd"
+                          d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
+                </svg>
+            </a>
+            <a class="me-3 t-nav-link" href="/find">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="26"
+                     height="26"
+                     fill="currentColor"
+                     class="bi bi-people"
+                     viewBox="0 0 16 16">
+                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                </svg>
+            </a>
+            <a class="me-3 t-nav-link" href="/about">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="23"
+                     height="23"
+                     fill="currentColor"
+                     class="bi bi-info-circle"
+                     viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                </svg>
+            </a>
+        </div>
+        <div class="ps-2 ps-md-4">
+            <button class="bg-black present_btn async-open-login icon-link-btn">
+                Присоединиться
             </button>
-          </form>
         </div>
-        <div class="ps-4 d-flex">
-          <a class="t-nav-link me-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="26"
-              height="26"
-              fill="currentColor"
-              class="tbi bi-lightbulb"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z"
-              />
-            </svg>
-          </a>
-          <a class="me-3 t-nav-link">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="26"
-              height="26"
-              fill="currentColor"
-              class="bi bi-people"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"
-              />
-            </svg>
-          </a>
-          <a class="me-3 t-nav-link">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="23"
-              height="23"
-              fill="currentColor"
-              class="bi bi-info-circle"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-              />
-              <path
-                d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"
-              />
-            </svg>
-          </a>
-        </div>
-        <div class="ps-4">
-          <button class="async-open-login icon-link-btn">
-            Присоединиться
-          </button>
-        </div>
-      </div>
-    </nav>
+    </div>
+</nav>
     <!---->
     <div class="container" style="margin-top: 140px;">
       <div class="smooth-scroll-wrapper">

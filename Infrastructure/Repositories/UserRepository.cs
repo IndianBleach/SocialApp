@@ -635,6 +635,7 @@ namespace Infrastructure.Repositories
                         var getClaim = userIdentity.FindFirst("UserName");
                         Claim newClaim = new("UserName", model.Username);
 
+                        await _userManager.SetUserNameAsync(getUser, model.Username);
                         await _userManager.ReplaceClaimAsync(getUser, getClaim, newClaim);
                     }
                 }

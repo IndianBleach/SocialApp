@@ -33,7 +33,15 @@ namespace Infrastructure.Data.Config
             builder.HasMany(x => x.ChatMessages).WithOne(x => x.Author)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //            
+        }
+    }
 
+    public class IdeaMemberConfiguration : IEntityTypeConfiguration<IdeaMember>
+    {
+        public void Configure(EntityTypeBuilder<IdeaMember> builder)
+        {
+            //builder.HasOne(x => x.User)
         }
     }
 
