@@ -33,11 +33,18 @@
         border-bottom: 2px solid #104c91;
     }
 
+    .main_nav_menu button:hover {
+        border-bottom: 2px solid #104c91;
+    }
+
     .main_nav_menu button.active {
         border-bottom: 2px solid #1696ff;
-        box-shadow: #545453 0px 0px 33px 21px !important;
-        background-color: #99999966 !important;
+        box-shadow: none;
     }
+
+        .main_nav_menu button.active svg {
+            color: #5a94eb !important;
+        }
 
 .text_section_big {
     font-weight: 800;

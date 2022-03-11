@@ -190,7 +190,7 @@
                                     </span>
                                     <div class="mt-2" id="selectedNewIdeaTags"></div>
                                 </div>
-                                <button type="submit" class="mt-3 icon-link-btn">
+                                <button type="submit" class="mt-3 bubbly-button icon-link-btn">
                                     Создать идею
                                 </button>
                                 <label id="newIdeaWindowError" class="pt-2 text-center text-danger t-sm">
@@ -649,7 +649,7 @@
                                 else
                                 {
                                     <div class="btn-back-hover aside_section_adaptive">
-                                        <form asp-action="signout" asp-controller="account">
+                                        <form asp-action="signout" asp-controller="authorize">
                                             <button class="p-3 col-12 btn-unfocus hover-white btn clr-mute t-bold t-sm bg-transparent">
                                                 Выйти из акканута
                                             </button>
@@ -776,13 +776,13 @@
                                                             <label data-toggle="tooltip" data-placement="top" title="@idea.Status.Name" style="font-size: 24px">@idea.Status.EmojiValue</label>
                                                         </div>
                                                         <div class="ms-auto d-flex">
-                                                            <div class="position-relative me-5">
+                                                            <div class="position-relative" style="margin-right:2em;">
                                                                 @if (idea.IsLiked)
                                                                 {
                                                                     <button disabled class="btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
                                                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                                                             width="26"
-                                                                             height="26"
+                                                                             width="30"
+                                                                             height="30"
                                                                              fill="currentColor"
                                                                              class="pe-1 clr-blue bi bi-heart"
                                                                              viewBox="0 0 16 16">
@@ -793,10 +793,10 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <button data-idea="@idea.Guid" class="asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
+                                                                    <button data-idea="@idea.Guid" class="bubbly-button asyncSetLike btn position-absolute btn-unfocus bg-transparent clr-mute mt-1">
                                                                         <svg data-idea="@idea.Guid" xmlns="http://www.w3.org/2000/svg"
-                                                                             width="26"
-                                                                             height="26"
+                                                                             width="30"
+                                                                             height="30"
                                                                              fill="currentColor"
                                                                              class="pe-1 clr-mute bi bi-heart"
                                                                              viewBox="0 0 16 16">
@@ -809,8 +809,8 @@
                                                             <div class="position-relative">
                                                                 <button data-idea="@idea.Guid" class="showRepostWindowBtn btn bg-transparent clr-mute">
                                                                     <svg data-idea="@idea.Guid" xmlns="http://www.w3.org/2000/svg"
-                                                                         width="28"
-                                                                         height="28"
+                                                                         width="32"
+                                                                         height="32"
                                                                          fill="currentColor"
                                                                          class="ps-1 bi bi-reply"
                                                                          viewBox="0 0 16 16">

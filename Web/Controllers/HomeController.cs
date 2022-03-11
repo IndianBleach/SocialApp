@@ -38,7 +38,7 @@ namespace WebUi.Controllers
             return View("notFound");
         }       
 
-        [Route("/")]
+        [AllowAnonymous]
         [Route("/home")]
         public async Task<IActionResult> Index(int? page, string? react, string? key, string? tag, string? search)
         {

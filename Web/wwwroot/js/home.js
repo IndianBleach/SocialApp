@@ -156,11 +156,8 @@
         $("#hideBackgroundWrapper").addClass("d-none");
         $("body").removeClass("overflow-hidden");
         $("#newIdeaWindow").addClass("d-none");
-    })
+    });
 
-
-    //selectedNewIdeaTagsCount, selectedNewIdeaTags, choiceNewIdeaTags, async-select-tag
-    //select tags
     sessionStorage.setItem("stgidea", 0);
     $(".async-newidea-tag").on("click", (e) => {
         e.preventDefault();

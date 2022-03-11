@@ -18,7 +18,7 @@
         <div id="checkOutContainer">
             <div class="d-flex position-relative">
 
-                <!--New Idea-->
+                <!--New Idea + -->
                 <div id="newIdeaWindow" class="d-none window_rounded_shadow">
                     <div class="b-bottom d-flex p-2 ps-3 col-12 align-items-center justify-content-between">
                         <span class="clr-white t-md">
@@ -61,17 +61,17 @@
                         <div class="mt-2 col-12 d-flex justify-content-center">
                             <form id="asyncNewIdeaForm" class="col-10">
                                 <div class="col-12 mb-2">
-                                    <input type="text"
-                                           class="form-control"
+                                    <input autocomplete="off" minlength="4" maxlength="56" type="text"
+                                           class="form-upd form-control"
                                            id="floatingInput" />
                                     <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                         Придумайте название
                                     </label>
                                 </div>
                                 <div class="col-12 mb-3">
-                                    <textarea style="height: 82px; resize: none !important;"
+                                    <textarea autocomplete="off" minlength="4" maxlength="220" style="height: 82px; resize: none !important;"
                                               type="text"
-                                              class="form-control"
+                                              class="form-upd form-control"
                                               id="floatingInput"></textarea>
                                     <label class="pt-1 t-sm clr-mute" for="floatingInput">
                                         Дайте краткое описание своей идее
@@ -82,7 +82,7 @@
                                            type="checkbox"
                                            value=""
                                            id="flexCheckChecked" />
-                                    <span class="g-status-text">
+                                    <span class="me-1">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="26"
                                              height="26"
@@ -118,9 +118,11 @@
                                     </span>
                                     <div class="mt-2" id="selectedNewIdeaTags"></div>
                                 </div>
-                                <button type="submit" class="mt-4 icon-link-btn">
+                                <button type="submit" class="mt-3 bubbly-button icon-link-btn">
                                     Создать идею
                                 </button>
+                                <label id="newIdeaWindowError" class="pt-2 text-center text-danger t-sm">
+                                </label>
                             </form>
                         </div>
                     </div>

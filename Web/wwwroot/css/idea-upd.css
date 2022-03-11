@@ -177,22 +177,16 @@
         font-size: 24px !important;
     }
 
-    .btn_reaction:hover {
-        background: rgb(161 161 161 / 51%);
-        box-shadow: 0px -1px 5px 7px #9999998c;
-    }
-
     .btn_reaction {
         display: flex;
         align-items: center;
         font-size: 23px;
-        background: rgb(0 0 0 / 39%);
+        background: rgb(0 0 0 / 5%);
         border-radius: 24px;
         border: none;
         padding: 8px 11px;
         color: white;
         transition: all 0.2s ease;
-        box-shadow: 0px -1px 5px 7px #1414148c;
     }
 
         .btn_reaction span {

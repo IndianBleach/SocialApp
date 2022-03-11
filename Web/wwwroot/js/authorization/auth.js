@@ -13,7 +13,7 @@
             password: inputs[1].value,
         };
 
-        $.post("/account/signin", { model }, res => {
+        $.post("/authorize/signin", { model }, res => {
             if (res.isRedirect == true) {
                 window.location.href = res.redirectUrl
             }
@@ -43,7 +43,8 @@
             tags: selectedTags
         };
 
-        $.post("/account/signup", { model }, res => {
+        $.post("/authorize/signup", { model }, res => {
+            console.log(res.message);
             if (res.isRedirect == true) {
                 window.location.href = res.redirectUrl
             }

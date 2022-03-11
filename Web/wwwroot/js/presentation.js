@@ -74,9 +74,7 @@
         $("#selectTagWindow").removeClass("d-none");
         $("#selectTagWindow").addClass("win-hide-active");
     });
-
-    
-
+   
     //search by tag
     $(".async-search-bytag").on("click", (e) => {
         e.preventDefault();

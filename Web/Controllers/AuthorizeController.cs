@@ -1,44 +1,61 @@
 ﻿using ApplicationCore.DTOs.Authorization;
 using ApplicationCore.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebUi.Controllers.Extensions;
 using WebUi.Models;
 
-namespace WebUi.Controllers
+namespace Web.Controllers
 {
-    public class AccountController : ExtendedController
+    public class AuthorizeController : ExtendedController
     {
         private readonly ApplicationCore.Interfaces.IAuthorizationService _authorizationService;
         private readonly ITagService _tagService;
 
-        public AccountController(ApplicationCore.Interfaces.IAuthorizationService authService,
+        public AuthorizeController(ApplicationCore.Interfaces.IAuthorizationService authService,
             ITagService tagService)
         {
             _authorizationService = authService;
             _tagService = tagService;
         }
 
-        [HttpGet]
-        [Route("/account/login")]
-        public async Task<IActionResult> Login()
+
+        [Route("/authorize/signout")]
+        public async Task<IActionResult> SignOut()
         {
-            if (IsUserAuthenticated())
-                return RedirectToAction("index", "home");
+            await _authorizationService.UserSignOutAsync();
 
-            DemoViewModel indexVm = new()
+            return RedirectToAction("index", "authorize");
+        }
+
+
+        [HttpPost]
+        [Route("/authorize/signin")]
+        public async Task<JsonResult> SignIn(UserSignInDto model)
+        {
+            if (ModelState.IsValid)
             {
-                Tags = await _tagService.GetAllTagsAsync()
-            };
+                var result = await _authorizationService.UserSignInAsync(model);
 
-            return View(indexVm);
-        }        
+                if (result.IsSuccess)
+                {
+                    return Json(new
+                    {
+                        redirectUrl = Url.Action("Index", "Home"),
+                        isRedirect = true
+                    });
+                }
+            }
 
-        
+            var res = _authorizationService.CreateResult(false, "Введены некорректные данные");
+            return Json(res);
+        }
 
-        //[HttpPost]
-        [Route("/account/signup")]
+        [HttpPost]
+        [Route("/authorize/signup")]
         public async Task<JsonResult> SignUp(UserSignUpDto model)
         {
             if (ModelState.IsValid)
@@ -59,26 +76,19 @@ namespace WebUi.Controllers
             return Json(res);
         }
 
-        [HttpPost]
-        [Route("/account/signin")]
-        public async Task<JsonResult> SignIn(UserSignInDto model)
+        [HttpGet]
+        [Route("/")]
+        public async Task<IActionResult> Index()
         {
-            if (ModelState.IsValid)
+            if (IsUserAuthenticated())
+                return RedirectToAction("index", "home");
+
+            DemoViewModel indexVm = new()
             {
-                var result = await _authorizationService.UserSignInAsync(model);
+                Tags = await _tagService.GetAllTagsAsync()
+            };
 
-                if (result.IsSuccess)
-                {
-                    return Json(new
-                    {
-                        redirectUrl = Url.Action("Index", "Home"),
-                        isRedirect = true
-                    });
-                }
-            }
-
-            var res = _authorizationService.CreateResult(false, "Введены некорректные данные");
-            return Json(res);
+            return View(indexVm);
         }
     }
 }

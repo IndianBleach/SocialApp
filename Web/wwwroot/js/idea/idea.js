@@ -344,7 +344,9 @@
         let idea = e.target.dataset.guid;
         let password = Validate(e.target.getElementsByTagName("input")[0].value);
         $.post("/asyncload/idea/remove", { idea, password }, resp => {
-            console.log(resp);
+            if (resp.isSuccess == true) {
+                window.location.href = "/home/";
+            }
         });
     });
 
