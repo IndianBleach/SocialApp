@@ -19,6 +19,6 @@ namespace ApplicationCore.DTOs.Idea
         public int CountGoals { get; set; }
         public bool IsLiked { get; set; }
         public bool IsReacted { get; set; }
-        public ICollection<HomeIdeaReactionDto> Reactions { get; set; }
+        public ICollection<HomeIdeaReactionDtoUpdated> Reactions { get; set; }
     }    
 }

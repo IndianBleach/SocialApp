@@ -1,4 +1,5 @@
 ﻿.bubbly-button {
+    z-index:100;
     -webkit-appearance: none;
     appearance: none;
     cursor: pointer;

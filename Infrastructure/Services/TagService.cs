@@ -52,20 +52,12 @@ namespace Infrastructure.Services
 
         public async Task<List<TagDto>> GetAllTagsAsync()
         {
-
-            List<Tag> tags = await _dbContext.Tags
-                .ToListAsync();
-
-            var config = new MapperConfiguration(conf => conf.CreateMap<Tag, TagDto>()
-                .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
-                .ForMember("Name", opt => opt.MapFrom(x => x.Name)));
-
-
-            var mapper = new Mapper(config);
-
-            List<TagDto> dtos = mapper.Map<List<TagDto>>(tags);
-
-            return dtos;
+            return await _dbContext.Tags
+                .Select(x => new TagDto()
+                {
+                    Guid = x.Id,
+                    Name = x.Name
+                }).ToListAsync();
         }
 
         public IEnumerable<EditTagDto> GroupSelfAndOtherTags(ICollection<TagDto> allTags, ICollection<TagDto> sourceTags)

@@ -185,6 +185,7 @@
     });
 
     $(".closeParticipationWindowBtn").on("click", () => {
+        $(".participationWarning").remove();
         $("#participationWindow").addClass("d-none");
         $("#hideBackgroundWrapper").addClass("d-none");
         $("body").removeClass("overflow-hidden");
@@ -193,6 +194,7 @@
     })
 
     $(".showParticipationWindowBtn").on("click", () => {
+        $(".participationWarning").remove();
         $("#participationWindow").removeClass("d-none");
         $("#hideBackgroundWrapper").removeClass("d-none");
         $("body").addClass("overflow-hidden");

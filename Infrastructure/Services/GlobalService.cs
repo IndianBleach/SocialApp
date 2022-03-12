@@ -25,41 +25,29 @@ namespace Infrastructure.Services
         }
 
         public ICollection<PageInfoDto> CreatePages(int? currentPage)
-        {
-            List<PageInfoDto> pageInfoDtos = new List<PageInfoDto>();
-
-            int orderByCount = ConstantsHelper.OrderByCount;
-
-            int totalCount = _dbContext.Set<T>().Count();
-
-            return CreatePages(totalCount, currentPage);
-        }
+            => CreatePages(_dbContext.Set<T>().Count(), currentPage);
 
         public ICollection<PageInfoDto> CreatePages(int totalCount, int? currentPage)
         {
-            List<PageInfoDto> pageInfoDtos = new List<PageInfoDto>();
+            List<PageInfoDto> pageInfoDtos = new();
 
-            int orderByCount = ConstantsHelper.OrderByCount;
+            int countPages = (totalCount / ConstantsHelper.OrderByCount) + 1;
 
-            int countPages = (totalCount / orderByCount) + 1;
+            if (totalCount % ConstantsHelper.OrderByCount == 0) countPages--;
 
-            int correctPage = currentPage ?? 1;
-
-            if (totalCount % orderByCount == 0) countPages--;
-
-            if (countPages <= 1) pageInfoDtos.Add(new(true, correctPage));
+            if (countPages <= 1) pageInfoDtos.Add(new(true, currentPage ?? 1));
             else if (currentPage == countPages)
             {
                 if (countPages > 2)
                 {
-                    pageInfoDtos.Add(new(false, correctPage - 2));
-                    pageInfoDtos.Add(new(false, correctPage - 1));
-                    pageInfoDtos.Add(new(true, correctPage));
+                    pageInfoDtos.Add(new(false, (currentPage ?? 1) - 2));
+                    pageInfoDtos.Add(new(false, (currentPage ?? 1) - 1));
+                    pageInfoDtos.Add(new(true, currentPage ?? 1));
                 }
                 else
                 {
-                    pageInfoDtos.Add(new(false, correctPage - 1));
-                    pageInfoDtos.Add(new(true, correctPage));
+                    pageInfoDtos.Add(new(false, (currentPage ?? 1) - 1));
+                    pageInfoDtos.Add(new(true, currentPage ?? 1));
                 }
             }
             else
@@ -68,21 +56,21 @@ namespace Infrastructure.Services
                 {
                     if (currentPage == 1)
                     {
-                        pageInfoDtos.Add(new(true, correctPage));
-                        pageInfoDtos.Add(new(false, correctPage + 1));
-                        pageInfoDtos.Add(new(false, correctPage + 2));
+                        pageInfoDtos.Add(new(true, currentPage ?? 1));
+                        pageInfoDtos.Add(new(false, (currentPage ?? 1) + 1));
+                        pageInfoDtos.Add(new(false, (currentPage ?? 1) + 2));
                     }
                     else
                     {
-                        pageInfoDtos.Add(new(false, correctPage - 1));
-                        pageInfoDtos.Add(new(true, correctPage));
-                        pageInfoDtos.Add(new(false, correctPage + 1));
+                        pageInfoDtos.Add(new(false, (currentPage ?? 1) - 1));
+                        pageInfoDtos.Add(new(true, currentPage ?? 1));
+                        pageInfoDtos.Add(new(false, (currentPage ?? 1) + 1));
                     }
                 }
                 else
                 {
-                    pageInfoDtos.Add(new(true, correctPage));
-                    pageInfoDtos.Add(new(false, correctPage + 1));
+                    pageInfoDtos.Add(new(true, currentPage ?? 1));
+                    pageInfoDtos.Add(new(false, (currentPage ?? 1) + 1));
                 }
             }
 
@@ -165,23 +153,17 @@ namespace Infrastructure.Services
 
             users.AddRange(ideas);
 
-            List<HomeNewsDto> dtos = users.OrderByDescending(x => x.NewsDate)
+            return users.OrderByDescending(x => x.NewsDate)
                 .ToList();
-
-            return dtos;
         }
 
         public async Task<ICollection<SearchReactionDto>> GetSearchReactionsAsync()
-        {
-            var reacts = await _dbContext.Reactions
+            => await _dbContext.Reactions
                 .Select(x => new SearchReactionDto()
                 {
                     Guid = x.Id,
                     Value = x.Name
                 })
                 .ToListAsync();
-
-            return reacts;
-        }
     }
 }

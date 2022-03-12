@@ -95,6 +95,7 @@
     }
 
     .present_nav_wrapper {
+        z-index:1;
         height: 100px;
         top: 0px;
         position: fixed;

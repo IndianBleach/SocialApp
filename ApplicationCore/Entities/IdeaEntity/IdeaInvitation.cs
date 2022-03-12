@@ -18,6 +18,7 @@ namespace ApplicationCore.Entities.IdeaEntity
         public IdeaInvitationType Type { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+        //public string IdeaId { get; set; }
         public Idea Idea { get; set; }
         public DateTime DateCreated { get; set; }
 
@@ -30,6 +31,7 @@ namespace ApplicationCore.Entities.IdeaEntity
 
         public IdeaInvitation(IdeaInvitationType type, string userId, Idea idea)
         {
+            //IdeaId = idea.Id;
             UserId = userId;
             Type = type;
             Idea = idea;

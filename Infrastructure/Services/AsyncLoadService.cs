@@ -779,7 +779,7 @@ namespace Infrastructure.Services
 
                 if (checkCanUserEdit)
                 {
-                    _dbContext.IdeaTopics.Remove(getTopic);
+                    _dbContext.IdeaTopicComments.Remove(getComment);
                     await _dbContext.SaveChangesAsync();
 
                     return new(true, "Op. (Remove) Success");

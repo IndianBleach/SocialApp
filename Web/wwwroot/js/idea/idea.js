@@ -357,10 +357,12 @@
         let tags = [];
         $("#updatedTagsContainer button").each((x, e) => {
             tags.push(e.dataset.tag);
-        })
+        });
 
         let model = new FormData();
-        model.append('avatar', e.target.getElementsByTagName("input")[1].files[0]);
+
+        let av = e.target.getElementsByTagName("input")[1].files[0];
+        model.append('avatar', av);
         model.append('description', e.target.getElementsByTagName("textarea")[0].value);
         model.append('status', e.target.getElementsByTagName("select")[0].value);
         model.append('private', e.target.getElementsByTagName("input")[2].checked);
@@ -368,21 +370,6 @@
         model.append('tags', tags);
 
         console.log(model);
-
-        let model2 = {
-            avatar: e.target.getElementsByTagName("input")[1].files[0],
-            description: e.target.getElementsByTagName("textarea")[0].value,
-            status: e.target.getElementsByTagName("select")[0].value,
-            private: e.target.getElementsByTagName("input")[2].checked,
-            idea: e.target.getElementsByTagName("input")[0].value,
-            tags: tags
-        };
-
-        /*
-        $.post("/asyncload/idea/update", { model }, resp => {
-            console.log(resp);
-        });
-        */
 
         $.ajax({
             url: '/asyncload/idea/update',
@@ -394,7 +381,7 @@
                 console.log(res);
             }
         });
-    })
+    });
 
     // TAGS - Switcher
     sessionStorage.setItem("etc", $("#updatedTagsContainer button").length);

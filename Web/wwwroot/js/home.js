@@ -42,6 +42,7 @@
             $("#participationWindow").addClass("d-none");
 
             $(".topicMessage").remove();
+            $(".participationWarning").remove();
             $(".topicRemoveBtn").remove();
             $(".goalMessage").remove();
 

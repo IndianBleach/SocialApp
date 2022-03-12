@@ -35,7 +35,7 @@ namespace Web
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options => {
                 options.Password.RequiredLength = 4;
-                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireNonAlphanumeric = false;                
             })
             .AddEntityFrameworkStores<ApplicationContext>();
 
@@ -46,7 +46,7 @@ namespace Web
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(option =>
             {
-                option.LoginPath = new PathString("/Acccount/Login");
+                option.LoginPath = new PathString("/authorize/index");
             });
 
             services.AddCoreServices();
@@ -65,7 +65,6 @@ namespace Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             
             app.UseStatusCodePages(async context =>
             {
@@ -74,8 +73,7 @@ namespace Web
                 {
                     context.HttpContext.Response.Redirect("/notfound");
                 }
-            });
-            
+            });            
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -74,65 +74,107 @@ namespace Infrastructure.Repositories
             }
 
             return new CreateOperationResult(false, null, "При создании идеи что-то пошло не так"); ;
-        }        
+        }
+
+
+
+        private List<HomeIdeaReactionDtoUpdated> BuildReactionList(string ideaId, string userId)
+        {
+            var res = new List<HomeIdeaReactionDtoUpdated>();
+
+            var isAnyActive = _dbContext.IdeaReactions
+                .Include(x => x.Reaction)
+                .FirstOrDefault(x => x.IdeaId.Equals(ideaId) &&
+                x.UserId.Equals(userId));
+
+            if (isAnyActive != null)
+            {
+                res.Add(new HomeIdeaReactionDtoUpdated()
+                {
+                    Guid = isAnyActive.ReactionId,
+                    IsActive = true,
+                    Value = isAnyActive.Reaction.Name
+                });
+            }
+            else
+            {
+                foreach (var x in _dbContext.Reactions)
+                {
+                    res.Add(new()
+                    {
+                        Guid = x.Id,
+                        IsActive = false,
+                        Value = x.Name
+                    });
+                }                
+            }
+            return res;
+        }
+
+        private bool CheckIsLiked(string ideaId, string userId)
+        {
+            if (_dbContext.IdeaMembers
+                .Include(x => x.Idea)
+                .Any(x => x.UserId.Equals(userId) &&
+                x.Idea.Id.Equals(ideaId)))
+                return true;
+
+            else if (_dbContext.IdeaInvitations
+                .Include(x => x.Idea)
+                .Any(x => x.UserId.Equals(userId) &&
+                x.Idea.Id.Equals(ideaId))) return true;
+
+            else return false;
+        }
 
         public ICollection<HomeIdeaDto> GetIdeasPerPage(int? page, string? currentUserId, string? sortReact, string? key, string? tag, string? search)
         {
-            int correctPage = page ?? 1;
+            var config = new MapperConfiguration(conf => conf.CreateMap<Idea, HomeIdeaDto>()
+                .ForMember("DateUpdated", opt => opt.MapFrom(x => IdeaHelper.NormalizeDate(x.DateUpdated)))
+                .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
+                .ForMember("Name", opt => opt.MapFrom(x => x.Name))
+                .ForMember("Description", opt => opt.MapFrom(x => x.Topics
+                    .First().Description))
+                .ForMember("AvatarName", opt => opt.MapFrom(x => x.Avatar.Name))
+                .ForMember("Reactions", opt => opt.MapFrom(x => BuildReactionList(x.Id, currentUserId)))
+                .ForMember("CountGoals", opt => opt.MapFrom(x => x.Goals.Count))
+                .ForMember("CountTopics", opt => opt.MapFrom(x => x.Topics.Count))
+                .ForMember("IsLiked", opt => opt.MapFrom(x => CheckIsLiked(x.Id, currentUserId))));
 
-            int count = ConstantsHelper.CountIdeasPerPage;
-
-            ICollection<Reaction> allBaseReacts = _dbContext.Reactions.ToList();
-
-            IQueryable<Idea> getIdeas;
             if (!string.IsNullOrEmpty(sortReact))
             {
-                getIdeas = _dbContext.Ideas
-                .Include(x => x.Reactions)
-                    .ThenInclude(x => x.Reaction)
-                .Include(x => x.Avatar)
-                .Include(x => x.Topics)
-                .Include(x => x.Goals)
-                .Include(x => x.Invitations)
-                .Include(x => x.Members)
-                .OrderByDescending(x => x.Reactions
-                    .Where(x => x.ReactionId.Equals(sortReact)).Count())
-                .Skip((correctPage - 1) * count)
-                .Take(count);
+                return new Mapper(config).Map<ICollection<HomeIdeaDto>>(_dbContext.Ideas
+                    .Include(x => x.Reactions)
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Topics)
+                    .Include(x => x.Goals)
+                    .OrderByDescending(x => x.Reactions
+                        .Where(x => x.ReactionId.Equals(sortReact)).Count())
+                    .Skip((page ?? 0) * ConstantsHelper.CountIdeasPerPage)
+                    .Take(ConstantsHelper.CountIdeasPerPage)
+                    .ToList());
             }
             else if (!string.IsNullOrWhiteSpace(search))
             {
-                getIdeas = _dbContext.Ideas
-                   .Include(x => x.Reactions)
-                       .ThenInclude(x => x.Reaction)
+                return new Mapper(config).Map<ICollection<HomeIdeaDto>>(_dbContext.Ideas
                    .Include(x => x.Avatar)
                    .Include(x => x.Topics)
                    .Include(x => x.Goals)
-                   .Include(x => x.Invitations)
-                   .Include(x => x.Members)
                    .Where(x => x.Name.StartsWith(search))
-                   .Skip((correctPage - 1) * count)
-                   .Take(count);
+                   .Skip((page ?? 0) * ConstantsHelper.CountIdeasPerPage)
+                   .Take(ConstantsHelper.CountIdeasPerPage)
+                   .ToList());
             }
             else if (!string.IsNullOrEmpty(tag))
             {
-                Tag? getTag = _dbContext.Tags
-                    .FirstOrDefault(x => x.Id.Equals(tag));
-
-                if (getTag == null)
-                    getTag = _dbContext.Tags.First();
-
-                getIdeas = _dbContext.Ideas
-                   .Include(x => x.Reactions)
-                       .ThenInclude(x => x.Reaction)
+                return new Mapper(config).Map<ICollection<HomeIdeaDto>>(_dbContext.Ideas
                    .Include(x => x.Avatar)
                    .Include(x => x.Topics)
                    .Include(x => x.Goals)
-                   .Include(x => x.Invitations)
-                   .Include(x => x.Members)
-                   .Where(x => x.Tags.Contains(getTag))
-                   .Skip((correctPage - 1) * count)
-                   .Take(count);
+                   .Where(x => x.Tags.Any(x => x.Id.Equals(tag)))
+                   .Skip((page ?? 0) * ConstantsHelper.CountIdeasPerPage)
+                   .Take(ConstantsHelper.CountIdeasPerPage)
+                   .ToList());
             }
             else if (!string.IsNullOrEmpty(key))
             {
@@ -141,69 +183,32 @@ namespace Infrastructure.Repositories
 
                 if (keyName == "popular")
                 {
-                    getIdeas = _dbContext.Ideas
-                       .Include(x => x.Reactions)
-                           .ThenInclude(x => x.Reaction)
+                    return new Mapper(config).Map<ICollection<HomeIdeaDto>>(_dbContext.Ideas
                        .Include(x => x.Avatar)
                        .Include(x => x.Topics)
                        .Include(x => x.Goals)
-                       .Include(x => x.Invitations)
-                       .Include(x => x.Members)
                        .OrderByDescending(x => x.Reactions.Count)
-                       .Skip((correctPage - 1) * count)
-                       .Take(count);
+                       .Skip((page ?? 0) * ConstantsHelper.CountIdeasPerPage)
+                       .Take(ConstantsHelper.CountIdeasPerPage)
+                       .ToList());
                 }
-                else
-                {                   
-                    getIdeas = _dbContext.Ideas
-                       .Include(x => x.Reactions)
-                           .ThenInclude(x => x.Reaction)
-                       .Include(x => x.Avatar)
-                       .Include(x => x.Topics)
-                       .Include(x => x.Goals)
-                       .Include(x => x.Invitations)
-                       .Include(x => x.Members)
-                       .OrderByDescending(x => x.DateCreated)
-                       .Skip((correctPage - 1) * count)
-                       .Take(count);
-                }
-
+                else return new Mapper(config).Map<ICollection<HomeIdeaDto>>(_dbContext.Ideas
+                    .Include(x => x.Reactions)
+                    .Include(x => x.Avatar)
+                    .Include(x => x.Topics)
+                    .Include(x => x.Goals)
+                    .OrderByDescending(x => x.DateCreated)
+                    .Skip((page ?? 0) * ConstantsHelper.CountIdeasPerPage)
+                    .Take(ConstantsHelper.CountIdeasPerPage)
+                    .ToList());
             }
-            else
-            {
-                getIdeas = _dbContext.Ideas
-                   .Include(x => x.Reactions)
-                       .ThenInclude(x => x.Reaction)
-                   .Include(x => x.Avatar)
-                   .Include(x => x.Topics)
-                   .Include(x => x.Goals)
-                   .Include(x => x.Invitations)
-                   .Include(x => x.Members)
-                   .Skip((correctPage - 1) * count)
-                   .Take(count);
-            }
-
-            var config = new MapperConfiguration(conf => conf.CreateMap<Idea, HomeIdeaDto>()
-                .ForMember("DateUpdated", opt => opt.MapFrom(x => IdeaHelper.NormalizeDate(x.DateUpdated)))
-                .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
-                .ForMember("Name", opt => opt.MapFrom(x => x.Name))
-                .ForMember("Description", opt => opt.MapFrom(x => x.Topics
-                    .First().Description))
-                .ForMember("AvatarName", opt => opt.MapFrom(x => x.Avatar.Name))
-                .ForMember("Reactions", opt => opt.MapFrom(x => IdeaHelper.GroupIdeaReactions(allBaseReacts, x.Reactions, currentUserId)))
-                .ForMember("CountGoals", opt => opt.MapFrom(x => x.Goals.Count))
-                .ForMember("CountTopics", opt => opt.MapFrom(x => x.Topics.Count))
-                .ForMember("IsLiked", opt => opt.MapFrom(x => 
-                    IdeaHelper.CheckIsLiked(x.Members, x.Invitations, currentUserId))));
-
-            var mapper = new Mapper(config);
-            
-            ICollection<HomeIdeaDto> dtos = mapper.Map<ICollection<HomeIdeaDto>>(getIdeas);
-
-            foreach (var item in dtos)
-                item.IsReacted = item.Reactions.Any(x => x.IsActive);
-
-            return dtos;
+            else return new Mapper(config).Map<ICollection<HomeIdeaDto>>(_dbContext.Ideas
+                .Include(x => x.Avatar)
+                .Include(x => x.Topics)
+                .Include(x => x.Goals)
+                .Skip((page ?? 0) * ConstantsHelper.CountIdeasPerPage)
+                .Take(ConstantsHelper.CountIdeasPerPage)
+                .ToList());
         }
 
         public async Task<ICollection<HomeIdeaReactionDto>> GroupAllReactionsAsync()
@@ -223,8 +228,6 @@ namespace Infrastructure.Repositories
         {
             if (userGuid != null)
             {
-                var test = _dbContext.Users;
-
                 Tag? getUserFirstTag = _dbContext.Users?
                     .Include(x => x.Tags)
                     .FirstOrDefault(x => x.Id == userGuid)
@@ -232,9 +235,10 @@ namespace Infrastructure.Repositories
 
                 if (getUserFirstTag != null)
                 {
-                    IQueryable<Idea>? getIdeas = _dbContext.Ideas
+                    List<Idea>? getIdeas = _dbContext.Ideas
                     .Where(x => x.Tags.Contains(getUserFirstTag))?
-                    .Take(5);
+                    .Take(5)
+                    .ToList();
 
                     if (getIdeas != null)
                     {
@@ -242,11 +246,7 @@ namespace Infrastructure.Repositories
                         .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
                         .ForMember("AvatarName", opt => opt.MapFrom(x => x.Avatar.Name)));
 
-                        var mapper = new Mapper(config);
-
-                        ICollection<IdeaSmallDto> dtos = mapper.Map<List<IdeaSmallDto>>(getIdeas);
-
-                        return dtos;
+                        return new Mapper(config).Map<List<IdeaSmallDto>>(getIdeas);
                     }
                 }
             }

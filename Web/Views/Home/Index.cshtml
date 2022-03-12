@@ -531,7 +531,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-action="im" asp-controller="user">
-                            <img src="~/media/userAvatars/@avatar" height="33" class="b-all rounded-circle" />
+                            <img src="~/media/userAvatars/@avatar" height="33" width="33" class="b-all rounded-circle" />
                         </a>
                     </li>
                 </ul>
@@ -550,7 +550,7 @@ else
           top: 0 !important;
           background: rgb(0 90 255 / 0%);
         ">
-            <a asp-action="login" asp-controller="authorize">
+            <a asp-action="index" asp-controller="authorize">
                 <div class="d-flex align-items-center">
                     <img class="image-link-animation present_hide_elems" height="33" src="~/media/site/logo.png" />
                     <div class="ps-2">
@@ -565,7 +565,7 @@ else
                      width="26"
                      height="26"
                      fill="currentColor"
-                     class="bi bi-house"
+                     class="clr-white bi bi-house"
                      viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
                           d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
@@ -653,7 +653,7 @@ else
                                                 <form class="">
                                                     <div class="pt-sm-3 pt-lg-5 d-flex">
                                                         @{
-                                                            if (idea.IsReacted)
+                                                            if (idea.Reactions.Any(x => x.IsActive))
                                                             {
                                                                 @foreach (var react in idea.Reactions)
                                                                 {
@@ -663,8 +663,7 @@ else
                                                                              class="reaction-wrap position-relative react-wrap-active">
                                                                             <button disabled
                                                                                     class="async-reaction-btn position-absolute me-2 btn_reaction">
-                                                                                @react.Value
-                                                                                <span>@react.Count</span>
+                                                                                @react.Value                                                                                
                                                                             </button>
                                                                         </div>
                                                                     }
@@ -674,8 +673,7 @@ else
                                                                              class="reaction-wrap position-relative react-wrap-noactive">
                                                                             <button disabled
                                                                                     class="async-reaction-btn position-absolute me-2 btn_reaction">
-                                                                                @react.Value
-                                                                                <span>@react.Count</span>
+                                                                                @react.Value                                                                                
                                                                             </button>
                                                                         </div>
                                                                     }
@@ -697,7 +695,6 @@ else
                                                                                 data-react="@react.Guid"
                                                                                 class="bubbly-button async-reaction-btn position-absolute me-2 btn_reaction">
                                                                             @react.Value
-                                                                            <span>@react.Count</span>
                                                                         </button>
                                                                     </div>
                                                                     }
@@ -708,7 +705,6 @@ else
                                                                         <button disabled                                                                                
                                                                                 class="async-reaction-btn position-absolute me-2 btn_reaction">
                                                                             @react.Value
-                                                                            <span>@react.Count</span>
                                                                         </button>
                                                                     </div>
                                                                     }
@@ -858,15 +854,15 @@ else
                                     <a asp-action="@recIdea.Guid" asp-controller="idea">
                                         <div class="aside-rotate-padding position-relative">
                                             <div style="
-                              background: linear-gradient(
-                                  0deg,
-                                  rgba(0, 0, 0, 0.13),
-                                  rgba(0, 0, 0, 0.13)
-                                ),
-                                url(../media/ideaAvatars/@recIdea.AvatarName);" 
-                                                 class="asideRotateIdea"></div>
-                                        </div>
-                                    </a>
+                                      background: linear-gradient(
+                                          0deg,
+                                          rgba(0, 0, 0, 0.13),
+                                          rgba(0, 0, 0, 0.13)
+                                        ),
+                                        url(../media/ideaAvatars/@recIdea.AvatarName);" 
+                                                         class="asideRotateIdea"></div>
+                                                </div>
+                                            </a>
                                 }
                             </div>
                         </div>

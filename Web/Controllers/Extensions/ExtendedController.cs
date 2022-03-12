@@ -7,13 +7,9 @@ namespace WebUi.Controllers.Extensions
     {
         public string? GetUserIdOrNull()
         {
-            var claim = User.Identities.First().Claims
-                .FirstOrDefault(x => x.Type.Equals("UserId"));
-
-            string? userGuid = claim != null ? claim.Value : null;
-
-            return userGuid;
-        }        
+            return User.Identities.First().Claims
+                .FirstOrDefault(x => x.Type.Equals("UserId"))?.Value;
+        }
 
         public bool IsUserAuthenticated()
         {

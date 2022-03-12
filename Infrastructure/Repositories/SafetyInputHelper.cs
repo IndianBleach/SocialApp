@@ -10,7 +10,12 @@ namespace Infrastructure.Repositories
 {
     public static class SafetyInputHelper
     {
-        public static bool CheckAntiXSSRegex(string inputText)
-            => !Regex.IsMatch(inputText, ConstantsHelper.XSSCheckRegexPattern);
+        public static bool CheckAntiXSSRegex(string? inputText)
+        {
+            if (inputText == null)
+                return true;
+
+            return !Regex.IsMatch(inputText, ConstantsHelper.XSSCheckRegexPattern);
+        }
     }
 }

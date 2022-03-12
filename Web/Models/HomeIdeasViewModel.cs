@@ -18,5 +18,32 @@ namespace WebUi.Models
         public string? Search = null;
         public string? SearchTag = null;
         public string? SearchKey = null;
+
+        public HomeIdeasViewModel(
+             ICollection<PageInfoDto> pages,
+             ICollection<HomeNewsDto> news,
+             ICollection<IdeaSmallDto> recommends,
+             ICollection<HomeIdeaDto> ideas,
+             ICollection<SearchReactionDto> searchReactions,
+             List<TagDto> tags,
+             bool isAuthorized,
+             string? sortReact,
+             string? search,
+             string? searchKey,
+             string? searchTag
+             )
+        {
+            Pages = pages;
+            LastNews = news;
+            RecommendIdeas = recommends;
+            Ideas = ideas;
+            SearchReactions = searchReactions;
+            Tags = tags;
+            IsAuthorized = isAuthorized;
+            SortReact = sortReact;
+            Search = search;
+            SearchKey = searchKey;
+            SearchTag = searchTag;
+        }
     }
 }

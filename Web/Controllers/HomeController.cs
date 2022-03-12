@@ -13,6 +13,7 @@ using WebUi.Models;
 
 namespace WebUi.Controllers
 {
+    //cleaned
     public class HomeController : ExtendedController
     {
         private readonly ILogger<HomeController> _logger;
@@ -34,9 +35,7 @@ namespace WebUi.Controllers
         [AllowAnonymous]
         [Route("/notfound")]
         public IActionResult NotFound404()
-        {
-            return View("notFound");
-        }       
+            => View("notFound");
 
         [AllowAnonymous]
         [Route("/home")]
@@ -47,22 +46,18 @@ namespace WebUi.Controllers
                 !string.IsNullOrEmpty(search))
                 react = null;
 
-            HomeIdeasViewModel indexVm = new()
-            {
-                IsAuthorized = IsUserAuthenticated(),
-                Tags = await _tagService.GetAllTagsAsync(),
-                Ideas = _ideaRepository.GetIdeasPerPage(page, GetUserIdOrNull(), react, key, tag, search),
-                LastNews = await _globalService.GetLastNewsAsync(),
-                Pages = _globalService.CreatePages(page),
-                RecommendIdeas = _ideaRepository.GetRecommendIdeas(GetUserIdOrNull()),
-                SearchReactions = await _globalService.GetSearchReactionsAsync(),
-                SortReact = react,
-                SearchKey = key,
-                Search = search,
-                SearchTag = tag
-            };
-
-            return View(indexVm);
+            return View(new HomeIdeasViewModel(
+                _globalService.CreatePages(page),
+                await _globalService.GetLastNewsAsync(),
+                _ideaRepository.GetRecommendIdeas(GetUserIdOrNull()),
+                _ideaRepository.GetIdeasPerPage(page, GetUserIdOrNull(), react, key, tag, search),
+                await _globalService.GetSearchReactionsAsync(),
+                await _tagService.GetAllTagsAsync(),
+                IsUserAuthenticated(),
+                react,
+                search,
+                key,
+                tag));
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -83,12 +83,7 @@ namespace Web.Controllers
             if (IsUserAuthenticated())
                 return RedirectToAction("index", "home");
 
-            DemoViewModel indexVm = new()
-            {
-                Tags = await _tagService.GetAllTagsAsync()
-            };
-
-            return View(indexVm);
+            return View(new DemoViewModel(await _tagService.GetAllTagsAsync()));
         }
     }
 }
