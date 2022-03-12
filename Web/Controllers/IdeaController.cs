@@ -8,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Attributes;
 using Web.Models.IdeaViewModel;
 using WebUi.Controllers.Extensions;
 
 namespace Web.Controllers
 {
+    //[CustomAuthorizeAttribute]
     [Authorize]
     public class IdeaController : ExtendedController
     {

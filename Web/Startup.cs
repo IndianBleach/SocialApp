@@ -46,7 +46,7 @@ namespace Web
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(option =>
             {
-                option.LoginPath = new PathString("/authorize/index");
+                option.LoginPath = new PathString("/authorize/index");                
             });
 
             services.AddCoreServices();

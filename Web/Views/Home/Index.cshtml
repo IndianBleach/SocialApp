@@ -847,25 +847,34 @@ else
                         </div>
                     </section>
                     <section>
-                        <div>
-                            <div class="ps-2 similar-center-adaptive col-12 d-flex flex-wrap">
-                                @foreach (var recIdea in Model.RecommendIdeas)
-                                {
-                                    <a asp-action="@recIdea.Guid" asp-controller="idea">
-                                        <div class="aside-rotate-padding position-relative">
-                                            <div style="
+                        @if (!Model.IsAuthorized)
+                        {
+                            <div class="pt-3 col-12">
+                                <img class="b-all shadow rad-md col-12" src="~/media/site/authWarning.jpg" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <div class="ps-2 similar-center-adaptive col-12 d-flex flex-wrap">
+                                    @foreach (var recIdea in Model.RecommendIdeas)
+                                    {
+                                        <a asp-action="@recIdea.Guid" asp-controller="idea">
+                                            <div class="aside-rotate-padding position-relative">
+                                                <div style="
                                       background: linear-gradient(
                                           0deg,
                                           rgba(0, 0, 0, 0.13),
                                           rgba(0, 0, 0, 0.13)
                                         ),
-                                        url(../media/ideaAvatars/@recIdea.AvatarName);" 
-                                                         class="asideRotateIdea"></div>
-                                                </div>
-                                            </a>
-                                }
+                                        url(../media/ideaAvatars/@recIdea.AvatarName);"
+                                                     class="asideRotateIdea"></div>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        }
                     </section>
                 </div>
             </div>
