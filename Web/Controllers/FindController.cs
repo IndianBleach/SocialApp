@@ -8,6 +8,7 @@ using WebUi.Models;
 
 namespace WebUi.Controllers
 {
+    //cleaned
     public class FindController : ExtendedController
     {
         private readonly ITagService _tagService;
@@ -16,7 +17,6 @@ namespace WebUi.Controllers
 
         public FindController(
             ITagService tagService,
-            IIdeaRepository ideaRepository,
             IGlobalService<ApplicationUser> globalService,
             IUserRepository userRepository)
         {
@@ -34,24 +34,18 @@ namespace WebUi.Controllers
                 tag = null;
             if (!string.IsNullOrWhiteSpace(tag))
                 search = null;
-
-            FindUsersViewModel indexVm = new()
-            {
-                IsAuthorized = IsUserAuthenticated(),
-                LastNews = await _globalService.GetLastNewsAsync(),
-                Pages = _globalService.CreatePages(page),
-                RecommendUsers = await _userRepository.GetRecommendsUsersOrNullAsync(userGuid),
-                Tags = await _tagService.GetAllTagsAsync(),
-                Users = _userRepository.GetUsersPerPage(page, search, tag, country, city),
-                Search = search,
-                SearchCity = city,
-                SearchCountry = country,
-                SearchTag = tag,
-                SearchParamsResultString = _globalService
-                    .CreateSearchResultString(tag, search, country, city)
-            };
-
-            return View(indexVm);
+            
+            return View(new FindUsersViewModelUpdated(                
+                await _globalService.GetLastNewsAsync(),
+                await _userRepository.GetRecommendsUsersOrNullAsync(userGuid),
+                _userRepository.GetUserListPerPage(page, search, tag, country, city),
+                await _tagService.GetAllTagsAsync(),
+                IsUserAuthenticated(),
+                search,
+                tag,
+                country,
+                city,
+                _globalService.CreateSearchResultString(tag, search, country, city)));
         }
     }
 }

@@ -14,7 +14,8 @@ namespace ApplicationCore.Interfaces
 {
     public interface IUserRepository
     {
-        //REMOVE ACCOUNT
+
+        UserList GetUserListPerPage(int? page, string? search, string? tag, string? country, string? city);
         IEnumerable<IdeaUserParticipationDto> GetUserParticipations(string userId);
         Task<OperationResultDto> UpdateAccountSettingsAsync(string userId, UpdateAccountSettingsDto model, IEnumerable<ClaimsIdentity> identities);
         Task<OperationResultDto> UpdateGeneralSettingsAsync(string userId, UpdateGeneralSettingsDto model, IEnumerable<ClaimsIdentity> identities);
@@ -31,7 +32,7 @@ namespace ApplicationCore.Interfaces
         int GetUserIdeasCountByRole(string userGuid, IdeaMemberRoles role);
         ICollection<HomeIdeaDto> GetUserIdeasPerPage(int? page, string userGuid);
         Task<UserDetailDto?> GetUserDetailOrNullAsync(string userGuid); 
-        ICollection<UserDto> GetUsersPerPage(int? page, string? search, string? tag, string? country, string? city);
+        //ICollection<UserDto> GetUsersPerPage(int? page, string? search, string? tag, string? country, string? city);
         Task<ICollection<RecommendUserDto>?> GetRecommendsUsersOrNullAsync(string? userGuid);
     }
 }

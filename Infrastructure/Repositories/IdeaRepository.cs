@@ -236,6 +236,7 @@ namespace Infrastructure.Repositories
                 if (getUserFirstTag != null)
                 {
                     List<Idea>? getIdeas = _dbContext.Ideas
+                    .Include(x => x.Avatar)
                     .Where(x => x.Tags.Contains(getUserFirstTag))?
                     .Take(5)
                     .ToList();
