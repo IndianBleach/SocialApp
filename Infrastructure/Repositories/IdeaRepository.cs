@@ -6,6 +6,7 @@ using ApplicationCore.DTOs.Tag;
 using ApplicationCore.DTOs.User;
 using ApplicationCore.Entities;
 using ApplicationCore.Entities.IdeaEntity;
+using ApplicationCore.Identity;
 using ApplicationCore.Interfaces;
 using AutoMapper;
 using Infrastructure.Constants;
@@ -324,8 +325,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IdeaDetailDto?> GetIdeaDetailOrNullAsync(string currentUserGuid, string ideaGuid)
         {
-            if (!string.IsNullOrEmpty(currentUserGuid) &&
-                !string.IsNullOrEmpty(ideaGuid))
+            if (!string.IsNullOrEmpty(ideaGuid))
             {
                 Idea? getIdea = await _dbContext.Ideas
                     .Include(x => x.Invitations)
@@ -341,10 +341,13 @@ namespace Infrastructure.Repositories
 
                 if (getIdea != null)
                 {
-                    var reacts = await _dbContext.Reactions.ToListAsync();
-
-                    var getCurUser = await _dbContext.Users
+                    ApplicationUser getCurUser = await _dbContext.Users
                         .FirstOrDefaultAsync(x => x.Id.Equals(currentUserGuid));
+
+                    CurrentUserRoleDto role = currentUserGuid != null ?
+                        new(getIdea.Members.FirstOrDefault(x =>
+                               x.UserId.Equals(currentUserGuid))) :
+                               new(null);
 
                     var config = new MapperConfiguration(conf => conf.CreateMap<Idea, IdeaDetailDto>()
                         .ForMember("Guid", opt => opt.MapFrom(x => x.Id))
@@ -364,9 +367,7 @@ namespace Infrastructure.Repositories
                         .ForMember("Reactions", opt => opt.MapFrom(x => BuildReactionList(x.Id, currentUserGuid)))
                         .ForMember("AllReactionsByType", opt => opt.MapFrom(x => BuildReactionCount(x.Id)))
                         .ForMember("IsLiked", opt => opt.MapFrom(x => CheckIsLiked(x.Id, currentUserGuid)))
-                        .ForMember("CurrentRole", opt => opt.MapFrom(x => 
-                            new CurrentUserRoleDto(x.Members.FirstOrDefault(x => 
-                                x.UserId.Equals(currentUserGuid)))))
+                        .ForMember("CurrentRole", opt => opt.MapFrom(x => role))
                         .ForMember("MemberRequests", opt => opt.MapFrom(x => x.Invitations
                             .Where(e => e.Type.Equals(IdeaInvitationType.Join))
                             .Take(20).Select(e => new UserSmallDto(e.UserId, e.User.UserName, e.User.Avatar.Name))))
@@ -375,9 +376,7 @@ namespace Infrastructure.Repositories
                             .Take(20).Select(e => new UserSmallDto(e.UserId, e.User.UserName, e.User.Avatar.Name))))
                         );                                                      
 
-                    var mapper = new Mapper(config);
-
-                    IdeaDetailDto dto = mapper.Map<IdeaDetailDto>(getIdea);
+                    IdeaDetailDto dto = new Mapper(config).Map<IdeaDetailDto>(getIdea);
 
                     // Current User Can Wathing
                     if ((dto.IsSecret) && (dto.CurrentRole.Role == CurrentUserRoleTypes.Viewer))

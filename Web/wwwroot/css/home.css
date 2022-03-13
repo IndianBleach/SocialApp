@@ -57,14 +57,15 @@
 
 .asideRotateIdea {
     position: absolute;
-    width: 122.93px;
-    height: 89.09px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 6px;
-    transform: rotate(18.58deg);
+    width: 100.93px;
+    height: 62.09px;
+    box-shadow: 0px 4px 4px rgb(0 0 0 / 25%);
+    border-radius: 15px;
+    transform: rotate( 18.58deg);
     background-size: 100% auto !important;
     background-position: center !important;
     transition: all 0.3s ease;
+    border: 1px solid #0e0e0e;
 }
 
     .asideRotateIdea:hover {
@@ -72,8 +73,8 @@
     }
 
 .aside-rotate-padding {
-    padding-right: 4.5rem;
-    padding-bottom: 4.5rem;
+    padding-right: 4rem;
+    padding-bottom: 4rem;
 }
 
 .btn-page {

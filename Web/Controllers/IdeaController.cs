@@ -15,7 +15,7 @@ using WebUi.Controllers.Extensions;
 namespace Web.Controllers
 {
     //[CustomAuthorizeAttribute]
-    [Authorize]
+    //[Authorize]
     public class IdeaController : ExtendedController
     {
         private readonly IIdeaRepository _ideaRepository;
@@ -34,6 +34,26 @@ namespace Web.Controllers
         [Route("/idea/{guid}")]
         public async Task<IActionResult> Index(string? guid, int? page, string? section)
         {
+            IdeaDetailDto idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid);
+            List<TagDto> allTags = await _tagService.GetAllTagsAsync();
+
+            if (idea == null)
+                return NotFound();
+
+            if (!IsUserAuthenticated())
+            {
+                IdeaAboutViewModel indexVm = new()
+                {
+                    Idea = idea,
+                    TopicList = _ideaRepository.GetIdeaTopicList(guid, page),
+                    RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
+                    Tags = allTags,
+                    IsAuthorized = false
+                };
+                return View(indexVm);
+            }
+
+
             string[] allSections = new string[]
             {
                 "about",
@@ -46,13 +66,6 @@ namespace Web.Controllers
 
             string validSection = allSections.Any(x => x.Equals(section?.ToLower())) == true 
                 ? section?.ToLower() : "about";
-
-            IdeaDetailDto idea = await _ideaRepository.GetIdeaDetailOrNullAsync(GetUserIdOrNull(), guid);
-                        
-            if (idea == null)
-                return NotFound();
-            
-            List<TagDto> allTags = await _tagService.GetAllTagsAsync();
 
             bool isAuthor = idea.CurrentRole.Role.Equals(CurrentUserRoleTypes.Author);
 
@@ -124,6 +137,7 @@ namespace Web.Controllers
                     TopicList = _ideaRepository.GetIdeaTopicList(guid, page),
                     RecommendIdeas = await _ideaRepository.GetSimilarOrTrendsIdeasAsync(guid),
                     Tags = allTags,
+                    IsAuthorized = true
                 };
                 return View(indexVm);
             }                        

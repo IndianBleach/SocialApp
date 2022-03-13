@@ -250,13 +250,10 @@
                                     class="clr-mute btn-full-link btn-unfocus btn bg-transparent btn-link-active">
                                 Друзья
                             </button>
-                            @if (Model.IsSelfProfile)
-                            {
-                                <button id="toFriendRequestsWindowBtn"
-                                        class="clr-mute btn-full-link btn-unfocus btn bg-transparent">
-                                    Заявки
-                                </button>
-                            }
+                            <button id="toFriendRequestsWindowBtn"
+                                    class="clr-mute btn-full-link btn-unfocus btn bg-transparent">
+                                Заявки
+                            </button>
                         </div>
                         <div class="mt-2 col-12">
                             <section>
@@ -269,20 +266,17 @@
                                     </div>
                                 </div>
                             </section>
-                            @if (Model.IsSelfProfile)
-                            {
-                                <section>
-                                    <div class="d-none pt-1 custom-scroll"
-                                         id="friendRequestsWindowLoad">
-                                        <div id="friendRequestsWindowLoadPrev"
-                                             class="d-none d-flex justify-content-center h-100 align-items-center">
-                                            <div class="pt-4 spinner-border clr-mute" role="status">
-                                                <span class="sr-only"></span>
-                                            </div>
+                            <section>
+                                <div class="d-none pt-1 custom-scroll"
+                                     id="friendRequestsWindowLoad">
+                                    <div id="friendRequestsWindowLoadPrev"
+                                         class="d-none d-flex justify-content-center h-100 align-items-center">
+                                        <div class="pt-4 spinner-border clr-mute" role="status">
+                                            <span class="sr-only"></span>
                                         </div>
                                     </div>
-                                </section>
-                            }
+                                </div>
+                            </section>
                         </div>
                     </div>
                 </div>

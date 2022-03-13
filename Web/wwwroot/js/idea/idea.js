@@ -352,27 +352,33 @@
             console.log(e.dataset.tag);
         });
         let model = new FormData();
-        let av = e.target.getElementsByTagName("input")[1].files[0];
-        model.append('avatar', av);
-        model.append('description', e.target.getElementsByTagName("textarea")[0].value);
-        model.append('status', e.target.getElementsByTagName("select")[0].value);
-        model.append('private', e.target.getElementsByTagName("input")[2].checked);
-        model.append('idea', e.target.getElementsByTagName("input")[0].value);
+        let av = e.target.getElementsByTagName("input")[2].files[0];
+        let max = e.target.getElementsByTagName("input")[1].value;
+        console.log(av.size);
+        if (av.size < max) {
+            model.append('avatar', av);
+            model.append('description', e.target.getElementsByTagName("textarea")[0].value);
+            model.append('status', e.target.getElementsByTagName("select")[0].value);
+            model.append('private', e.target.getElementsByTagName("input")[3].checked);
+            model.append('idea', e.target.getElementsByTagName("input")[0].value);
 
-        for (var i = 0; i < tags.length; i++) {
-            model.append('tags[]', tags[i]);
-        };
+            for (var i = 0; i < tags.length; i++) {
+                model.append('tags[]', tags[i]);
+            };
 
-        $.ajax({
-            url: '/asyncload/idea/update',
-            type: 'POST',
-            data: model,
-            processData: false,
-            contentType: false,
-            success: (res) => {
-                console.log(res);
-            }
-        });
+            $.ajax({
+                url: '/asyncload/idea/update',
+                type: 'POST',
+                data: model,
+                processData: false,
+                contentType: false,
+                success: (res) => {
+                    console.log(res);
+                }
+            });
+        }
+
+        
     });
 
     // TAGS - Switcher

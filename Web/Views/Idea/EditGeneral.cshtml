@@ -722,20 +722,12 @@
 {
     <!---->
     <div class="container-sm main_idea d-flex justify-content-center"
-         style="margin-top: 140px;">
+         style="margin-top: 120px;">
         <main>
             <div class="idea_adaptive">
                 <div class="idea_inside">
-                    <div class="idea_detail_fix idea_detail idea-img-slide idea-post-upd d-flex align-items-end"
-                         style="
-                box-shadow: 0px 0px 32px #1c92ff40;
-                background: linear-gradient(
-                    0deg,
-                    rgba(0, 0, 0, 0.81),
-                    rgba(0, 0, 0, 0.81)
-                  ),
-                  url(../media/ideaAvatars/@Model.Idea.AvatarName);
-              ">
+                    <div class="rad-xl idea_detail_fix idea_detail idea-img-slide idea-post-upd d-flex align-items-end"
+                         style=" box-shadow: 0px 0px 9px #ffffff40; background: linear-gradient( 0deg, rgba(0, 0, 0, 0.81), rgba(0, 0, 0, 0.81) ), url(../media/ideaAvatars/ @Model.Idea.AvatarName ); ">
                         <div class="p-sm-2 p-md-3 col-12">
                             <div class="text-center">
                                 <div class="pb-2">
@@ -825,7 +817,7 @@
 }
 else
 {
-    <div class="container-sm main_idea" style="margin-top: 140px;">
+    <div class="container-sm main_idea" style="margin-top: 100px;">
         <main>
             <div class="idea_adaptive">
                 <div class="idea_inside">
@@ -1049,6 +1041,7 @@ else
                                     <div class="col-9 col-md-10 p-3">
                                         <form id="ideaUpdateForm">
                                             <input hidden value="@Model.Idea.Guid" name="idea" />
+                                            <input id="max_id" hidden type="hidden" name="MAX_FILE_SIZE" value="3145728" />
                                             <div class="mb-3 d-flex align-items-center p-2 rad-md">
                                                 <input accept=".jpg,.jpeg,.png"
                                                        name="newAvatar"

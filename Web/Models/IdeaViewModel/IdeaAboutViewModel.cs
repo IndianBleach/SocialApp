@@ -10,6 +10,7 @@ namespace Web.Models.IdeaViewModel
 {
     public class IdeaAboutViewModel
     {
+        public bool IsAuthorized { get; set; }
         public IdeaDetailDto Idea { get; set; }
         public IEnumerable<IdeaSmallDto> RecommendIdeas { get; set; }
         public IdeaTopicListDto TopicList { get; set; }
