@@ -1,5 +1,13 @@
 ﻿$(document).ready(() => {
 
+    sessionStorage.removeItem("newChatLoaded");
+    sessionStorage.removeItem("inviteIdeasLoaded");
+    sessionStorage.removeItem("repostLoaded");
+    sessionStorage.removeItem("inviteIdeasLoaded");
+    sessionStorage.removeItem("participationLoaded");
+    sessionStorage.removeItem("friendReqLoaded");
+    sessionStorage.removeItem("friendLoaded");
+
     // tooltips on
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -49,7 +57,7 @@
             //profile
             $(".firendsWarning").remove();
             $(".repostWarning").remove();
-            $(".repostToUser").remove();            
+            //$(".repostToUser").remove();            
 
             //chat 
             //$(".chatWarning").remove();
@@ -78,9 +86,6 @@
         for (let i = 0; i < btns.length; i++) {
             if (btns[i].dataset.react === thisReactVal) {
                 btns[i].closest("div").classList.add("react-wrap-active");
-                let val =
-                    Number(btns[i].getElementsByTagName("span")[0].textContent) + 1;
-                btns[i].getElementsByTagName("span")[0].textContent = val;
                 btns[i].setAttribute("disabled", true);
             } else {
                 btns[i].closest("div").classList.add("react-wrap-noactive");
@@ -92,56 +97,56 @@
         });
     });
 
-
-    //REPOST - Close
+    //REPOST - Close +
     $(".closeRepostWindowBtn").on("click", (e) => {
         $("#hideBackgroundWrapper").addClass("d-none");
         $("body").removeClass("overflow-hidden");
         $("#repostWindow").addClass("d-none");
-        $(".repostToUser").remove();
-        $(".repostWarning").remove();
+        //$(".repostToUser").remove();
+        //$(".repostWarning").remove();
     });
 
-    //REPOST - Show
+    //REPOST - Show +
     $(".showRepostWindowBtn").on("click", (e) => {
-
         sessionStorage.setItem("activeRepost", e.target.dataset.idea);
-
         $("#hideBackgroundWrapper").removeClass("d-none");
         $("body").addClass("overflow-hidden");
         $("#repostWindow").removeClass("d-none");
         $("repostWindowLoadPrev").removeClass("d-none");
 
-        $.get("/asyncload/repostusers", {}, resp => {
-            console.log(resp);
-            if (resp.length == 0) {
-                $("#repostWindowLoadPrev").addClass("d-none");
-                $("#repostWindowLoad").append("<div class='repostWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Добавьте друзей, <br/> чтобы делиться с ними идеями</p></div>");
-            } else if (resp.length > 0) {
-                $("#repostWindowLoadPrev").addClass("d-none");
-                resp.forEach(x => {
-                    $("#repostWindowLoad").append(`<div class="mb-2 repostToUser"><a href='/user/${x.guid}'><img class="me-1" src="../media/userAvatars/${x.avatarName}" />${x.name}</a><button data-guid='${x.guid}' class="asyncRepostBtn btn">Отправить</button></div>`);
-                });
+        //cleaned
+        if (sessionStorage.getItem("repostLoaded") != "true") {
+            $.get("/asyncload/repostusers", {}, resp => {
+                sessionStorage.setItem("repostLoaded", true);
+                if (resp.length == 0) {
+                    $("#repostWindowLoadPrev").addClass("d-none");
+                    $("#repostWindowLoad").append("<div class='repostWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Добавьте друзей, <br/> чтобы делиться с ними идеями</p></div>");
+                } else if (resp.length > 0) {
+                    $("#repostWindowLoadPrev").addClass("d-none");
+                    resp.forEach(x => {
+                        $("#repostWindowLoad").append(`<div class="mb-2 repostToUser"><a href='/user/${x.guid}'><img class="me-1" src="../media/userAvatars/${x.avatarName}" />${x.name}</a><button data-guid='${x.guid}' class="asyncRepostBtn btn">Отправить</button></div>`);
+                    });
 
-                //REPOST - Send
-                $(".asyncRepostBtn").on("click", (e) => {
-                    e.preventDefault();
-                    e.target.classList.add("clr-mute");
-                    e.target.textContent = "Отправлено";
-                    e.target.setAttribute("disabled", true);
+                    //REPOST - Send
+                    $(".asyncRepostBtn").on("click", (e) => {
+                        e.preventDefault();
+                        e.target.classList.add("clr-mute");
+                        e.target.textContent = "Отправлено";
+                        e.target.setAttribute("disabled", true);
 
-                    let user = e.target.dataset.guid;
-                    let idea = sessionStorage.getItem("activeRepost");
+                        let user = e.target.dataset.guid;
+                        let idea = sessionStorage.getItem("activeRepost");
 
-                    console.log(user);
-                    console.log(idea);
+                        console.log(user);
+                        console.log(idea);
 
-                    $.post("/asyncload/chat/repostidea", { user, idea }, resp => {
+                        $.post("/asyncload/chat/repostidea", { user, idea }, resp => {
 
-                    })
-                });
-            }
-        });
+                        })
+                    });
+                }
+            });
+        }
     });
    
    

@@ -70,7 +70,8 @@ namespace ApplicationCore.DTOs.Idea
         public IdeaStatusDto Status { get; set; }
         public IEnumerable<TagDto> Tags { get; set; }
         public IEnumerable<IdeaModderDto> Modders { get; set; }
-        public ICollection<HomeIdeaReactionDto> Reactions { get; set; }
+        public ICollection<HomeIdeaReactionDtoUpdated> Reactions { get; set; }
+        public ICollection<IdeaDetailReactionCount> AllReactionsByType { get; set; }
         public ICollection<UserSmallDto> Members { get; set; }
         public ICollection<UserSmallDto> MemberRequests { get; set; }
         public CurrentUserRoleDto CurrentRole { get; set; }

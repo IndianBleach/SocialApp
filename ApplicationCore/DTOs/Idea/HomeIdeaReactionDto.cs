@@ -13,6 +13,13 @@ namespace ApplicationCore.DTOs.Idea
         public string Value { get; set; }
     }
 
+    public class IdeaDetailReactionCount
+    {
+        public string Name { get; set; }
+        public int Count { get; set; }
+    }
+
+
 
 
     public class HomeIdeaReactionDto

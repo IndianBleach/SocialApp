@@ -6,12 +6,6 @@
         return str.replace(/^(\s|\.|\,|\;|\:|\?|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\~|\`|\'|\\|\-|\/|\+)*?$/, '');
     }
 
-    const ValidateUpdated = (str) => {
-        let res = str.replace(/^(\s|\w|\d|\.|\,|\;|\:|\?|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\~|\`|\'|\\|\-|\/|\+)*?$/, '');
-        return res;
-    }
-
-
     // TOPIC - Show
     $(".asyncShowTopicWindow").on("click", (e) => {
         $("#hideBackgroundWrapper").removeClass("d-none");
@@ -111,9 +105,9 @@
         e.preventDefault();
         let ideaGuid = e.target.dataset.guid;
         let baseName = e.target.getElementsByTagName("input")[0].value;
-        let normalizeName = Validate(baseName);
+        let normalizeName = baseName;
         let desc = e.target.getElementsByTagName("textarea")[0].value;
-        let normalizeDesc = Validate(desc);
+        let normalizeDesc = desc;
 
         $.post("/asyncload/idea/createtopic", { name: normalizeName, content: normalizeDesc, ideaGuid }, resp => {
             if (resp != null) {
@@ -176,7 +170,6 @@
             $("#goalDetailLink img").attr("src", "../media/userAvatars/" + resp.authorAvatar)
             $("#goalDetailAuthorName").text(resp.datePublished);
             $("#goalTaskForm").attr("data-goal", resp.guid);
-            console.log(resp.tasks);
             if (resp.tasks.length > 0) {
                 resp.tasks.forEach(x => {
                     let complete = true;
@@ -204,7 +197,7 @@
                         e.target.textContent = "🎯";
                         e.target.dataset.gcomplete = "false";
                         $.post("/asyncload/idea/changetask", { newStatus: 0, task, goal }, resp => {
-                            console.log(resp);
+                            //
                         })
                     }
                 });
@@ -224,7 +217,6 @@
         $("#choiceEmojiWindow").addClass("d-none");
         $("#goalWindowLoad").append(`<div class="goalMessage"><a href="/user/im" class="text-truncate idea_hide_text col-2"><img class="me-1" src="${curUserAvatar}" />Вы</a><p class="col-7">${content}</p><span class="col-1"><button disabled data-gcomplete="false" class="asyncChangeStatusBtn g-status btn">🎯</button></span><span class="idea_hide_elems col-2">сейчас</span></div>`);
         $.post("/asyncload/idea/createtask", { content, idea, goal }, resp => {
-            console.log(resp);
         });
     });    
 
@@ -245,7 +237,7 @@
         e.target.textContent = "Принят";
         e.target.setAttribute("disabled", true);
         $.post("/asyncload/idea/rejectmember", { idea, user }, resp => {
-            console.log(resp);
+            //
         })
     })
 
@@ -258,7 +250,7 @@
         e.target.textContent = "Принят";
         e.target.setAttribute("disabled", true);
         $.post("/asyncload/idea/acceptmember", { idea, user }, resp => {
-            console.log(resp);
+            //
         })
     })
 
@@ -270,7 +262,7 @@
         e.target.textContent = "Удалён";
         e.target.setAttribute("disabled", true);
         $.post("/asyncload/idea/removemember", { idea, user }, resp => {
-            console.log(resp);
+           //
         })
     })
 
@@ -357,19 +349,19 @@
         let tags = [];
         $("#updatedTagsContainer button").each((x, e) => {
             tags.push(e.dataset.tag);
+            console.log(e.dataset.tag);
         });
-
         let model = new FormData();
-
         let av = e.target.getElementsByTagName("input")[1].files[0];
         model.append('avatar', av);
         model.append('description', e.target.getElementsByTagName("textarea")[0].value);
         model.append('status', e.target.getElementsByTagName("select")[0].value);
         model.append('private', e.target.getElementsByTagName("input")[2].checked);
         model.append('idea', e.target.getElementsByTagName("input")[0].value);
-        model.append('tags', tags);
 
-        console.log(model);
+        for (var i = 0; i < tags.length; i++) {
+            model.append('tags[]', tags[i]);
+        };
 
         $.ajax({
             url: '/asyncload/idea/update',

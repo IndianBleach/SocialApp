@@ -1,4 +1,9 @@
 ﻿$(document).ready(() => {
+    //sessionStorage.removeItem("newChatLoaded");
+    //sessionStorage.removeItem("inviteIdeasLoaded");
+    //sessionStorage.removeItem("repostLoaded");
+    //sessionStorage.removeItem("participationLoaded");
+
     $("#hideBackgroundWrapper").mousedown(function (e) {
         var container = $("#checkOutContainer");
         if (container.has(e.target).length === 0) {
@@ -6,28 +11,21 @@
             $("body").removeClass("overflow-hidden");
 
             $("#newChatWindow").addClass("d-none");
-
-            //chat 
-            //$(".chatWarning").remove();
-            //$(".repostToUser").remove();
         }
     });
 
-    // CHAT - New chat window
+    // CHAT - New chat window +
     $(".showNewChatBtn").on("click", (e) => {
-        e.preventDefault();
-        $("#newChatWindowLoadPrev").removeClass("d-none");
-
+        e.preventDefault();        
         $("#hideBackgroundWrapper").removeClass("d-none");
         $("body").addClass("overflow-hidden");
         $("#newChatWindow").removeClass("d-none");
-
         let userGuid = e.target.dataset.guid;
 
-        let alreadyLoaded = Boolean(sessionStorage.getItem("new_chats_loaded"));
-        if (!alreadyLoaded) {
+        if (sessionStorage.getItem("newChatLoaded") != "true") {
+            $("#newChatWindowLoadPrev").removeClass("d-none");
             $.get("/asyncload/chat/new", { userGuid }, resp => {
-                sessionStorage.setItem("new_chats_loaded", true);
+                sessionStorage.setItem("newChatLoaded", true);
                 if (resp.length == 0) {
                     $("#newChatWindowLoadPrev").addClass("d-none");
                     $("#newChatWindowLoad").append("<div class='chatWarning h-100 d-flex justify-content-center align-items-center text-center'><p class='t-md t-med text-muted'>Добавьте друзей, <br/> чтобы общаться с ними</p></div>");
@@ -69,14 +67,14 @@
         }
     });
 
-    // CHAT - Send message
+    // CHAT - Send message +
     $("#chatMessageForm").on("submit", (e) => {
         e.preventDefault();
         let message = e.target.getElementsByTagName("input")[0].value;
         let chatUser = sessionStorage.getItem("chatWith");
         let chatGuid = sessionStorage.getItem("activeChat");
         $("#chatMessageInput").val("");
-
+        $("#choiceEmojiWindow").addClass("d-none");
         let normalizeGuid = chatGuid;
         if (chatGuid == "null") {
             normalizeGuid = null;
@@ -261,29 +259,25 @@
         e.preventDefault();
         $("#choiceEmojiWindow").removeClass("d-none");
     });
-
     $(".asyncSendEmojiBtn").on("click", (e) => {
         let messageNow = $("#chatMessageInput").val();
         let mess = `${messageNow + e.target.textContent.replace(/ /g, "")}`;
         $("#chatMessageInput").val(mess);
     });
-
     $("#closeEmojiWindowBtn").on("click", (e) => {
         $("#choiceEmojiWindow").addClass("d-none");
     });
 
-    // INVITE - Show
+    // INVITE - Show +
     $(".showInviteWindowBtn").on("click", (e) => {
         $("#inviteWindow").removeClass("d-none");
         $("#hideBackgroundWrapper").removeClass("d-none");
-        $("body").addClass("overflow-hidden");
+        $("body").addClass("overflow-hidden");        
 
-        $("#inviteWindowLoadPrev").removeClass("d-none");        
-
-        let alreadyLoaded = Boolean(sessionStorage.getItem("invite_ideas_loaded"));
-        if (!alreadyLoaded) {
+        if (sessionStorage.getItem("inviteIdeasLoaded") != "true") {
+            $("#inviteWindowLoadPrev").removeClass("d-none");
             $.get("/asyncload/user/getinvite", {}, resp => {
-                sessionStorage.setItem("invite_ideas_loaded", true);
+                sessionStorage.setItem("inviteIdeasLoaded", true);
                 if (resp.length > 0) {
                     $("#inviteWindowLoadPrev").addClass("d-none");
                     resp.forEach(x => {
@@ -309,7 +303,6 @@
             })
         };
     });
-
     $(".closeInviteWindowBtn").on("click", (e) => {
         e.preventDefault();
         $("#hideBackgroundWrapper").addClass("d-none");

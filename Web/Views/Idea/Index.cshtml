@@ -638,10 +638,10 @@
                             <span class="t-lg t-bold clr-white">@Model.Idea.Name</span>
                         </div>
                         <div class="col-12 d-flex flex-wrap">
-                            @foreach (var react in Model.Idea.Reactions)
+                            @foreach (var react in Model.Idea.AllReactionsByType)
                             {
                                 <div class="aside_reaction col-6">
-                                    @react.Value
+                                    @react.Name
                                     <span>@react.Count</span>
                                 </div>
                             }
@@ -1189,7 +1189,7 @@ else
                                 <form class="">
                                     <div class="pt-sm-3 pt-lg-5 d-flex">
                                         @{
-                                            if (Model.Idea.IsReacted)
+                                            if (Model.Idea.Reactions.Any(x => x.IsActive))
                                             {
                                                 @foreach (var react in Model.Idea.Reactions)
                                                 {
@@ -1200,7 +1200,6 @@ else
                                                             <button disabled
                                                                     class="async-reaction-btn position-absolute me-2 btn_reaction">
                                                                 @react.Value
-                                                                <span>@react.Count</span>
                                                             </button>
                                                         </div>
                                                     }
@@ -1209,9 +1208,8 @@ else
                                                         <div style="height: 58px;"
                                                              class="reaction-wrap position-relative react-wrap-noactive">
                                                             <button disabled
-                                                                    class="async-reaction-btn position-absolute me-2 btn_reaction">
+                                                                    class="bubbly-button async-reaction-btn position-absolute me-2 btn_reaction">
                                                                 @react.Value
-                                                                <span>@react.Count</span>
                                                             </button>
                                                         </div>
                                                     }
@@ -1224,16 +1222,15 @@ else
                                                 @foreach (var react in Model.Idea.Reactions)
                                                 {
                                                     string styleLine = $"height: 56px; left: {leftPadding}px;";
-                                                <div style="@styleLine"
-                                                     class="reaction-wrap position-relative">
-                                                    <button data-idea="@Model.Idea.Guid"
-                                                            data-react="@react.Guid"
-                                                            class="async-reaction-btn position-absolute me-2 btn_reaction">
-                                                        @react.Value
-                                                        <span>@react.Count</span>
-                                                    </button>
-                                                </div>
-                                                    leftPadding = leftPadding + 76;
+                                                    <div style="@styleLine"
+                                                         class="reaction-wrap position-relative">
+                                                        <button data-idea="@Model.Idea.Guid"
+                                                                data-react="@react.Guid"
+                                                                class="bubbly-button async-reaction-btn position-absolute me-2 btn_reaction">
+                                                            @react.Value
+                                                        </button>
+                                                    </div>
+                                                    leftPadding = leftPadding + 44;
                                                 }
                                             }
                                         }
