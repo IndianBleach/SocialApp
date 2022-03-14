@@ -346,11 +346,11 @@ namespace Infrastructure.Services
                 if ((author != null) && (getChat != null) &&
                     SafetyInputHelper.CheckAntiXSSRegex(message))
                 {
-                    string lastAG = getChat.Messages
+                    string? lastAG = getChat.Messages
                         .OrderBy(x => x.DateCreated)
-                        .Last().AuthorId;
+                        .LastOrDefault()?.AuthorId;
 
-                    bool isRepeatMessage = lastAG == authorGuid;
+                    bool isRepeatMessage = lastAG != null ? lastAG == authorGuid : false;
 
                     ChatMessage mess = new(authorGuid, message, getChat);                                      
 
@@ -434,15 +434,18 @@ namespace Infrastructure.Services
                 Idea getIdea = await _dbContext.Ideas
                     .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
 
-                ApplicationUser getUser = await _dbContext.Users
-                    .FirstOrDefaultAsync(x => x.Id.Equals(authorGuid));
+                bool getUser = _dbContext.Users
+                    .Any(x => x.Id.Equals(authorGuid));
 
-                if ((getIdea != null) && (getUser != null))
+                if ((getIdea != null) && (getUser == true))
                 {
-                    IdeaInvitation createInvite = new(IdeaInvitationType.Join, authorGuid, getIdea);
-                    await _dbContext.IdeaInvitations.AddAsync(createInvite);
-
-                    return new(true, "Заявка в идею отправлена");
+                    if (!_dbContext.IdeaInvitations.Any(x => x.UserId.Equals(ideaGuid) &&
+                        x.UserId.Equals(authorGuid) &&
+                        x.Type.Equals(IdeaInvitationType.Join)))
+                    {
+                        await _dbContext.IdeaInvitations.AddAsync(new(IdeaInvitationType.Join, authorGuid, getIdea));
+                        return new(true, "Заявка в идею отправлена");
+                    }                    
                 }                
             }
 
@@ -465,9 +468,7 @@ namespace Infrastructure.Services
 
                 if ((getIdea != null) && (getReact != null))
                 {
-                    IdeaReaction createReact = new(getUser, getIdea, getReact);
-                    await _dbContext.IdeaReactions.AddAsync(createReact);
-
+                    await _dbContext.IdeaReactions.AddAsync(new(getUser, getIdea, getReact));
                     return new(true, "Реакция отправлена");
                 }                
             }
@@ -497,24 +498,20 @@ namespace Infrastructure.Services
                             .ForMember("Message", opt => opt.MapFrom(x => x.Text))
                             .ForMember("DatePublish", opt => opt.MapFrom(x => GeneratePublishDate(x.DateCreated))));
 
-                    var mapper = new Mapper(config);
-
                     IEnumerable<ChatMessage> messages = getChat.Messages
                         .OrderBy(x => x.DateCreated)
                         .Take(30);
 
-                    ICollection<ChatMessageDto> dtos = mapper.Map<ICollection<ChatMessageDto>>(messages);
+                    ICollection<ChatMessageDto> dtos = new Mapper(config).Map<ICollection<ChatMessageDto>>(messages);
 
                     FillRepeatMessages(dtos);
 
-                    ChatDetailDto resultDto = new()
+                    return new()
                     {
                         ChatGuid = getChat.Id,
                         CurrentUserGuid = currentUserGuid,
                         Messages = dtos,
                     };
-
-                    return resultDto;
                 }
             }
 
@@ -613,9 +610,7 @@ namespace Infrastructure.Services
                     .ForMember("IdeaGuid", opt => opt.MapFrom(x => x.Id))
                     .ForMember("IdeaName", opt => opt.MapFrom(x => x.Name)));
 
-                var mapper = new Mapper(config);
-
-                IEnumerable<IdeaToInviteDto> dtos = mapper.Map<IEnumerable<IdeaToInviteDto>>(ideas);
+                IEnumerable<IdeaToInviteDto> dtos = new Mapper(config).Map<IEnumerable<IdeaToInviteDto>>(ideas);
 
                 return dtos;
             }
@@ -717,13 +712,11 @@ namespace Infrastructure.Services
             if (!string.IsNullOrWhiteSpace(text) &&
                 SafetyInputHelper.CheckAntiXSSRegex(text))
             {
-                IdeaTopicComment createComment = new(topicGuid, authorGuid, text);
-                await _dbContext.IdeaTopicComments.AddAsync(createComment);
+                await _dbContext.IdeaTopicComments.AddAsync(new(topicGuid, authorGuid, text));
                 await _dbContext.SaveChangesAsync();
 
                 return new(true, "Op. Success");
             }
-
             return new(true, "Op. Failed");
         }
 
@@ -748,11 +741,8 @@ namespace Infrastructure.Services
                         SafetyInputHelper.CheckAntiXSSRegex(name) &&
                         SafetyInputHelper.CheckAntiXSSRegex(content))
                     {
-                        bool isDed = getRole <= IdeaMemberRoles.Modder;
-                        IdeaTopic createTopic = new(idea, authorGuid, name, content, isDed, false);
-                        await _dbContext.IdeaTopics.AddAsync(createTopic);
+                        await _dbContext.IdeaTopics.AddAsync(new(idea, authorGuid, name, content, getRole <= IdeaMemberRoles.Modder, false));
                         await _dbContext.SaveChangesAsync();
-
                         return new(true, "Op. (Create) Success");
                     }
                 }
@@ -781,11 +771,9 @@ namespace Infrastructure.Services
                 {
                     _dbContext.IdeaTopicComments.Remove(getComment);
                     await _dbContext.SaveChangesAsync();
-
                     return new(true, "Op. (Remove) Success");
                 }
             }            
-
             return new(false, "Op. (Remove) Failed");
         }
 
@@ -798,17 +786,13 @@ namespace Infrastructure.Services
                 .Include(x => x.Author)
                 .FirstOrDefaultAsync(x => x.Id.Equals(topicGuid));
 
-            bool checkCanUserEdit = IdeaHelper.CheckUserCanEditIdeaObject(
-                getTopic.Author.Id, currentUserGuid, getTopic.Idea.Members, getTopic.IsInit);
-
-            if (checkCanUserEdit)
+            if (IdeaHelper.CheckUserCanEditIdeaObject(
+                getTopic.Author.Id, currentUserGuid, getTopic.Idea.Members, getTopic.IsInit))
             {
                 _dbContext.IdeaTopics.Remove(getTopic);
                 await _dbContext.SaveChangesAsync();
-
                 return new(true, "Op. (Remove) Success");
             }
-
             return new(false, "Op. (Remove) Failed");
         }        
 
@@ -858,11 +842,8 @@ namespace Infrastructure.Services
                     .Include(x => x.Members)
                     .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
 
-                bool isAuthor = getIdea != null ?
-                    IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Author) :
-                    false;
-
-                if (isAuthor)
+                if (getIdea != null && 
+                    IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Author))
                 {
                     IdeaMember getMember = getIdea.Members
                         .FirstOrDefault(x => x.UserId.Equals(userGuid));
@@ -887,11 +868,8 @@ namespace Infrastructure.Services
                     .Include(x => x.Members)
                     .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
 
-            bool isModderOrAuthor = getIdea != null ?
-                IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder) :
-                false;
-
-            if (isModderOrAuthor)
+            if (getIdea != null &&
+                IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder))
             {
                 IdeaInvitation getRequest = getIdea.Invitations
                     .FirstOrDefault(x => x.UserId.Equals(userGuid));
@@ -915,13 +893,8 @@ namespace Infrastructure.Services
                     .Include(x => x.Members)
                     .FirstOrDefaultAsync(x => x.Id.Equals(ideaGuid));
 
-            bool isHaving = IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder);
-
-            bool isModderOrAuthor = getIdea != null ?
-                IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder) :
-                false;
-
-            if (isModderOrAuthor)
+            if (getIdea != null && 
+                IdeaHelper.CheckUserIsHavingIdeaRole(getIdea.Members, curUserGuid, IdeaMemberRoles.Modder))
             {
                 IdeaInvitation getRequest = getIdea.Invitations
                     .FirstOrDefault(x => x.UserId.Equals(userGuid));
@@ -952,10 +925,8 @@ namespace Infrastructure.Services
 
             if (getIdea != null)
             {
-                bool isAuthorOrModder = IdeaHelper.CheckUserIsHavingIdeaRole(
-                    getIdea.Members, currentUserGuid, IdeaMemberRoles.Modder);
-
-                if (isAuthorOrModder)
+                if (IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getIdea.Members, currentUserGuid, IdeaMemberRoles.Modder))
                 {
                     IdeaGoal getGoal = getIdea.Goals
                         .FirstOrDefault(x => x.Id.Equals(goalGuid));
@@ -1018,11 +989,7 @@ namespace Infrastructure.Services
                             Status = e.Type
                         }))));
 
-                var mapper = new Mapper(config);
-
-                GoalDetailDto dto = mapper.Map<GoalDetailDto>(getGoal);
-
-                return dto;
+                return new Mapper(config).Map<GoalDetailDto>(getGoal);                
             }
 
             return null;
@@ -1038,10 +1005,8 @@ namespace Infrastructure.Services
 
             if ((getGoal != null) && (getGoal.Idea.Members != null))
             {
-                bool isUserCanEdit = IdeaHelper.CheckUserIsHavingIdeaRole(
-                    getGoal.Idea?.Members, currentUserGuid, IdeaMemberRoles.Modder);
-
-                if (isUserCanEdit)
+                if (IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getGoal.Idea?.Members, currentUserGuid, IdeaMemberRoles.Modder))
                 {
                      IdeaGoalTask getTask = getGoal.Tasks
                         .FirstOrDefault(x => x.Id.Equals(taskGuid));
@@ -1051,7 +1016,6 @@ namespace Infrastructure.Services
                         getTask.Type = newStatus;
                         _dbContext.IdeaGoalTasks.Update(getTask);
                         await _dbContext.SaveChangesAsync();
-
                         return new(true, "Update Task Type status (Success)");
                     }
                 }
@@ -1071,10 +1035,8 @@ namespace Infrastructure.Services
 
             if (getIdea != null)
             {
-                bool canUserEdit = IdeaHelper.CheckUserIsHavingIdeaRole(
-                  getIdea.Members, currentUserGuid, IdeaMemberRoles.Author);
-
-                if (canUserEdit && 
+                if (IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getIdea.Members, currentUserGuid, IdeaMemberRoles.Author) && 
                     SafetyInputHelper.CheckAntiXSSRegex(model.Description))
                 {
                     if (!string.IsNullOrWhiteSpace(model.Description))
@@ -1142,10 +1104,8 @@ namespace Infrastructure.Services
 
             if (getIdea != null)
             {
-                bool isCanEdit = IdeaHelper.CheckUserIsHavingIdeaRole(
-                    getIdea.Members, currentUserGuid, IdeaMemberRoles.Author);
-
-                if (isCanEdit)
+                if (IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getIdea.Members, currentUserGuid, IdeaMemberRoles.Author))
                 {
                     IdeaMember getMember = getIdea.Members
                         .FirstOrDefault(x => x.UserId.Equals(userGuid));
@@ -1179,18 +1139,14 @@ namespace Infrastructure.Services
 
             if (getIdea != null)
             {
-                bool isAuthor = IdeaHelper.CheckUserIsHavingIdeaRole(
-                    getIdea.Members, userGuid, IdeaMemberRoles.Author);
-
-                if (isAuthor)
+                if (IdeaHelper.CheckUserIsHavingIdeaRole(
+                    getIdea.Members, userGuid, IdeaMemberRoles.Author))
                 {
                     ApplicationUser getAuthor = getIdea.Members
                         .FirstOrDefault(x => x.UserId.Equals(userGuid))
                         .User;
 
-                    bool isValidPassword = await _userManager.CheckPasswordAsync(getAuthor, userPassword);
-
-                    if (isValidPassword)
+                    if (await _userManager.CheckPasswordAsync(getAuthor, userPassword))
                     {
                         Idea loadFullIdea = await _dbContext.Ideas
                             .Include(x => x.Reactions)

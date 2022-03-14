@@ -78,6 +78,7 @@ namespace Web.Controllers
 
         [HttpGet]
         [Route("/")]
+        [Route("/account/login")]
         public async Task<IActionResult> Index()
         {
             if (IsUserAuthenticated())

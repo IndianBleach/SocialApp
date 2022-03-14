@@ -265,7 +265,7 @@ namespace Infrastructure.Repositories
                     .Where(x => x.IdeaId.Equals(ideaGuid));
 
                 IEnumerable<IdeaTopic> getTopicsPerPage = getTopics
-                    .OrderByDescending(x => x.IsDefault)
+                    .OrderBy(x => x.IsDefault)
                     .OrderByDescending(x => x.DateCreated)
                     .Skip((correctPage - 1) * count)
                     .Take(count);                
@@ -287,23 +287,19 @@ namespace Infrastructure.Repositories
 
                     ICollection<IdeaTopicDto> dtos = mapper.Map<ICollection<IdeaTopicDto>>(getTopicsPerPage);
 
-                    IdeaTopicListDto resDto = new()
+                    return new ()
                     {
                         Pages = _globalService.CreatePages(getTopics.Count(), page),
                         Topics = dtos
                     };
-
-                    return resDto;
                 }                
             }
 
-            IdeaTopicListDto res = new()
+            return new()
             {
                 Pages = new List<PageInfoDto>(),
                 Topics = new List<IdeaTopicDto>()
             };
-
-            return res;
         }
 
 

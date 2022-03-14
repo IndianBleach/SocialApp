@@ -71,7 +71,7 @@
 
         $.post("/asyncload/idea/topiccomment", { guid, text }, resp => {
             let avatar = $("#topicCommentAvatar").attr("src");
-            $("#topicWindowCommentsLoad").append(`<div class="topicMessage"><img src="${avatar}" /><div><a disabled>Вы<span class="text-muted"> - сегодня</span></a><br />${text}</div></div>`);
+            $("#topicWindowCommentsLoad").prepend(`<div class="topicMessage"><img src="${avatar}" /><div><a disabled>Вы<span class="text-muted"> - сегодня</span></a><br />${text}</div></div>`);
             $("#topicCommentInput").val("");
             $("#choiceEmojiWindow").addClass("d-none");
         });
@@ -215,7 +215,7 @@
         let content = Validate(e.target.getElementsByTagName("input")[0].value);
         $("#goalTaskInput").val("");
         $("#choiceEmojiWindow").addClass("d-none");
-        $("#goalWindowLoad").append(`<div class="goalMessage"><a href="/user/im" class="text-truncate idea_hide_text col-2"><img class="me-1" src="${curUserAvatar}" />Вы</a><p class="col-7">${content}</p><span class="col-1"><button disabled data-gcomplete="false" class="asyncChangeStatusBtn g-status btn">🎯</button></span><span class="idea_hide_elems col-2">сейчас</span></div>`);
+        $("#goalWindowLoad").prepend(`<div class="goalMessage"><a href="/user/im" class="text-truncate idea_hide_text col-2"><img class="me-1" src="${curUserAvatar}" />Вы</a><p class="col-7">${content}</p><span class="col-1"><button disabled data-gcomplete="false" class="asyncChangeStatusBtn g-status btn">🎯</button></span><span class="idea_hide_elems col-2">сейчас</span></div>`);
         $.post("/asyncload/idea/createtask", { content, idea, goal }, resp => {
         });
     });    

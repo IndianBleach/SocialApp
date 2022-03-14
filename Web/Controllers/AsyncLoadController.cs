@@ -26,9 +26,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.RemoveIdeaAsync(idea, curUserId, password);
-
-                return Json(res);
+                return Json(await _loadService.RemoveIdeaAsync(idea, curUserId, password));
             }
             return Json(null);
         }
@@ -40,9 +38,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.SetIdeaMemberRoleAsync(idea, user, curUserId, role);
-
-                return Json(res);
+                return Json(await _loadService.SetIdeaMemberRoleAsync(idea, user, curUserId, role));
             }
             return Json(null);
         }
@@ -55,9 +51,7 @@ namespace WebUi.Controllers
 
             if ((curUserId != null) && ModelState.IsValid)
             {
-                var res = await _loadService.UpdateIdeaAsync(model, curUserId);
-
-                return Json(res);
+                return Json(await _loadService.UpdateIdeaAsync(model, curUserId));
             }
 
             return Json(null);
@@ -70,9 +64,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.CreateGoalTaskAsync(content, idea, goal, curUserId);
-
-                return Json(res);
+                return Json(await _loadService.CreateGoalTaskAsync(content, idea, goal, curUserId));
             }
             return Json(null);
         }
@@ -84,9 +76,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.ChangeGoalTaskStatusAsync(curUserId, goal, task, newStatus);
-
-                return Json(res);
+                return Json(await _loadService.ChangeGoalTaskStatusAsync(curUserId, goal, task, newStatus));
             }
             return Json(null);
         }
@@ -98,9 +88,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.GetGoalDetailOrNullAsync(curUserId, goal);
-
-                return Json(res);
+                return Json(await _loadService.GetGoalDetailOrNullAsync(curUserId, goal));
             }
             return Json(null);
         }
@@ -112,9 +100,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.RejectIdeaMemberRequestAsync(idea, user, curUserId);
-
-                return Json(res);
+                return Json(await _loadService.RejectIdeaMemberRequestAsync(idea, user, curUserId));
             }
             return Json(null);
         }
@@ -126,9 +112,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.RemoveIdeaMemberAsync(idea, user, curUserId);
-
-                return Json(res);
+                return Json(await _loadService.RemoveIdeaMemberAsync(idea, user, curUserId));
             }
             return Json(null);
         }
@@ -140,9 +124,7 @@ namespace WebUi.Controllers
             string curUserId = GetUserIdOrNull();
             if (curUserId != null)
             {
-                var res = await _loadService.AcceptIdeaMemberRequestAsync(idea, user, curUserId);
-
-                return Json(res);
+                return Json(await _loadService.AcceptIdeaMemberRequestAsync(idea, user, curUserId));
             }
             return Json(null);
         }
@@ -154,9 +136,7 @@ namespace WebUi.Controllers
             string curUserGuid = GetUserIdOrNull();
             if (curUserGuid != null)
             {
-                var res = await _loadService.CreateGoalAsync(name, desc, idea, withTasks, curUserGuid);
-
-                return Json(res);
+                return Json(await _loadService.CreateGoalAsync(name, desc, idea, withTasks, curUserGuid));
             }
             return Json(null);
         }
@@ -165,9 +145,7 @@ namespace WebUi.Controllers
         [Route("/asyncload/idea/createtopic")]
         public async Task<JsonResult> CreateTopic(string name, string content, string ideaGuid)
         {
-            var res = await _loadService.CreateTopicAsync(name, content, ideaGuid, GetUserIdOrNull());
-
-            return Json(res);
+            return Json(await _loadService.CreateTopicAsync(name, content, ideaGuid, GetUserIdOrNull()));
         }
 
         [Route("/asyncload/idea/removetopiccomment")]
@@ -176,9 +154,7 @@ namespace WebUi.Controllers
             string curUserGuid = GetUserIdOrNull();
             if (curUserGuid != null)
             {
-                var res = await _loadService.RemoveTopicCommentAsync(commentGuid, topicGuid, curUserGuid);
-
-                return Json(res);
+                return Json(await _loadService.RemoveTopicCommentAsync(commentGuid, topicGuid, curUserGuid));
             }
             return Json(null);
         }
@@ -189,9 +165,7 @@ namespace WebUi.Controllers
             string curUserGuid = GetUserIdOrNull();
             if (curUserGuid != null)
             {
-                var res = await _loadService.RemoveTopicAsync(topicGuid, curUserGuid);
-
-                return Json(res);
+                return Json(await _loadService.RemoveTopicAsync(topicGuid, curUserGuid));
             }
             return Json(null);
         }
@@ -203,9 +177,7 @@ namespace WebUi.Controllers
             string authorGuid = GetUserIdOrNull();
             if (authorGuid != null)
             {
-                var res = await _loadService.CreateTopicCommentAsync(authorGuid, guid, text);
-
-                return Json(res);
+                return Json(await _loadService.CreateTopicCommentAsync(authorGuid, guid, text));
             }
             return Json(null);
         }
@@ -218,9 +190,7 @@ namespace WebUi.Controllers
 
             if (curUserGuid != null)
             {
-                var res = await _loadService.GetTopicDetailOrNullAsync(curUserGuid, guid);
-
-                return Json(res);
+                return Json(await _loadService.GetTopicDetailOrNullAsync(curUserGuid, guid));
             }
 
             return Json(null);
@@ -230,9 +200,7 @@ namespace WebUi.Controllers
         [Route("/asyncload/user/sendinvite")]
         public async Task<JsonResult> SendUserInviteToIdea(string user, string idea)
         {
-            var res = await _loadService.SendIdeaInviteAsync(GetUserIdOrNull(), user, idea);
-
-            return Json(res);
+            return Json(await _loadService.SendIdeaInviteAsync(GetUserIdOrNull(), user, idea));
         }
 
         [HttpGet]
@@ -240,12 +208,9 @@ namespace WebUi.Controllers
         public async Task<JsonResult> GetUserIdeasToInvite()
         {
             string curUserid = GetUserIdOrNull();
-
             if (curUserid != null)
             {
-                var res = _loadService.GetUserIdeasToInvite(curUserid);
-
-                return Json(res);
+                return Json(_loadService.GetUserIdeasToInvite(curUserid));
             }
 
             return Json(null);
@@ -259,9 +224,7 @@ namespace WebUi.Controllers
 
             if ((userGuid != null) && (idea != null) && (user != null))
             {
-                var res = await _loadService.RepostIdeaAsync(user, idea, userGuid);
-
-                return Json(res);
+                return Json(await _loadService.RepostIdeaAsync(user, idea, userGuid));
             }
 
             return Json(null);
@@ -291,8 +254,6 @@ namespace WebUi.Controllers
         {
             string userId = GetUserIdOrNull();
 
-            bool auth = IsUserAuthenticated();
-
             if ((userId != null) && IsUserAuthenticated())
             {
                 var res = await _loadService.IdeaSendJoinRequestAsync(userId, idea);
@@ -311,10 +272,7 @@ namespace WebUi.Controllers
 
             if (currentUserGuid != null)
             {
-                var res = await _loadService.GetChatOrNullAsync(chatGuid, currentUserGuid);
-
-                if (res != null)
-                    return Json(res);
+                return Json(await _loadService.GetChatOrNullAsync(chatGuid, currentUserGuid));
             }
 
             return Json(null);
@@ -328,9 +286,7 @@ namespace WebUi.Controllers
 
             if (currentUser != null)
             {
-                var res = await _loadService.SendChatMessageAsync(message, currentUser, chatUser, chat);
-
-                return Json(res);
+                return Json(await _loadService.SendChatMessageAsync(message, currentUser, chatUser, chat));
             }
 
             return Json(null);
@@ -344,9 +300,7 @@ namespace WebUi.Controllers
 
             if ((curUserGuid != null) && curUserGuid.Equals(userGuid))
             {
-                var res = await _loadService.LoadNewChatUsersAsync(userGuid);
-
-                return Json(res);
+                return Json(await _loadService.LoadNewChatUsersAsync(userGuid));
             }
 
             return Json(null);
@@ -360,9 +314,7 @@ namespace WebUi.Controllers
 
             if ((curUserGuid != null) && curUserGuid == userGuid)
             {
-                var res = await _loadService.LoadNewChatUsersAsync(userGuid);
-
-                return Json(res);
+                return Json(await _loadService.LoadNewChatUsersAsync(userGuid));
             }
 
             return Json(null);
@@ -378,9 +330,7 @@ namespace WebUi.Controllers
 
             if (currentUserGuid != null)
             {
-                var res = await _loadService.AcceptFriendRequestAsync(guid);
-
-                return Json(res);
+                return Json(await _loadService.AcceptFriendRequestAsync(guid));
             }
             return Json(null);
         }
@@ -394,9 +344,7 @@ namespace WebUi.Controllers
 
             if (currentUserGuid != null)
             {
-                var res = await _loadService.RemoveFriendAsync(guid, currentUserGuid);
-
-                return Json(res);
+                return Json(await _loadService.RemoveFriendAsync(guid, currentUserGuid));
             }
             return Json(null);
         }
@@ -418,18 +366,14 @@ namespace WebUi.Controllers
         [Route("asyncload/user/getfriends")]
         public async Task<JsonResult> GetUserFriends(string userGuid)
         {
-            var res = await _loadService.LoadUserFriendsAsync(userGuid);
-
-            return Json(res);
+            return Json(await _loadService.LoadUserFriendsAsync(userGuid));
         }
 
         [HttpGet]
         [Route("asyncload/user/getfriendrequests")]
         public async Task<JsonResult> GetUserFriendRequests(string userGuid)
         {
-            var res = await _loadService.LoadUserFriendRequestsAsync(userGuid);
-
-            return Json(res);
+            return Json(await _loadService.LoadUserFriendRequestsAsync(userGuid));
         }
         #endregion
 
@@ -441,8 +385,7 @@ namespace WebUi.Controllers
 
             if ((author != null) && (author != userGuid))
             {
-                var res = await _loadService.SendFriendRequestAsync(author, userGuid);
-                return Json(res);
+                return Json(await _loadService.SendFriendRequestAsync(author, userGuid));
             }
             return Json(null);            
         }

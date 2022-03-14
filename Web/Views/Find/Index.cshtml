@@ -2,12 +2,20 @@
 @using ApplicationCore.DTOs;
 
 @{
-    ViewData["Title"] = "Найти участников";
+    ViewData["Title"] = "Поиск команды, Привлечь участников к проекту";
 }
 
 @{
     string avatar = @User.Claims.Where(x => x.Type.Equals("UserAvatarName")).Select(x => x.Value).SingleOrDefault();
     string userName = @User.Claims.Where(x => x.Type.Equals("UserName")).Select(x => x.Value).SingleOrDefault();
+}
+
+@section Metatags
+{
+    <link rel="canonical" href="/find" />
+    <meta name="robots" content="all" />
+    <meta name="keywords" content="найти единомышленников поиск команды ищу людей" />
+    <meta name="description" content="Roundile - это место для твоих идей, создавай топики и цели, обсуждай задачи, приглашай участников и взаимодействуй с другими" />
 }
 
 <div class="d-none position-fixed top-0" id="hideBackgroundWrapper">

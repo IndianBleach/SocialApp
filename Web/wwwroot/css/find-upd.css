@@ -43,7 +43,7 @@
     }
 
     .user_desc_section {
-        max-width: 480px;
+        max-width: 343px;
     }
 
     .user_tag_section {
@@ -67,6 +67,9 @@
 }
 
 @media (min-width: 1200px) {
+    .user_desc_section {
+        max-width: 481px;
+    }
     .find_user_adaptive {
         width: 626px !important;
     }
